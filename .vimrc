@@ -55,7 +55,6 @@ nnoremap <silent> <Space>O  :<C-u>for i in range(v:count1) \| call append(line('
 nnoremap ; :
 nnoremap : ;
 nnoremap <Space>t :<C-u>tab help<Space>
-nnoremap <Space>v :<C-u>vertical belowright help<Space>
 nnoremap <Space>s. :<C-u>source $HOME/.vimrc<CR>
 nnoremap <Space>. :<C-u>tabedit $HOME/.vimrc<CR>
 nnoremap <C-h> <C-w>h
