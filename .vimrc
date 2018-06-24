@@ -85,6 +85,13 @@ function! s:MoveToNewTab()
   tabnext
 endfunction
 
+"プラグイン
+call plug#begin('~/.vim/plugged')
+
+Plug 'vim-jp/vimdoc-ja'
+
+call plug#end()
+
 "見た目系
 colorscheme hybrid
 set background=dark
