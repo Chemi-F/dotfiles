@@ -2,10 +2,6 @@ set encoding=utf-8
 
 scriptencoding utf-8
 
-augroup vimrc
-  autocmd!
-augroup END
-
 "ベル
 set vb t_vb=
 set noerrorbells
@@ -23,10 +19,8 @@ set cursorline
 set showmatch
 set showcmd
 "set nowrap
-set whichwrap=h,l
 set keywordprg=:help
 set helplang=en,ja
-set listchars=tab:>-,trail:-
 
 "タブとインデント
 set expandtab
