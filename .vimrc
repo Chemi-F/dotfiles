@@ -12,15 +12,16 @@ set wildmenu
 set backspace=indent,eol,start
 set number
 set title
-set laststatus=2
 set cmdheight=2
 set ruler
 set cursorline
 set showmatch
 set showcmd
-"set nowrap
 set keywordprg=:help
 set helplang=en,ja
+
+"ステータスライン
+set laststatus=2
 
 "タブとインデント
 set expandtab
