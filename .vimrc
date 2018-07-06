@@ -83,6 +83,7 @@ endfunction
 call plug#begin('~/.vim/plugged')
 
 Plug 'vim-jp/vimdoc-ja'
+Plug 'w0ng/vim-hybrid'
 
 call plug#end()
 
