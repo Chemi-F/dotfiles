@@ -14,7 +14,6 @@ set number
 set title
 set cmdheight=2
 set ruler
-set cursorline
 set showmatch
 set showcmd
 set keywordprg=:help
@@ -85,8 +84,12 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-jp/vimdoc-ja'
 Plug 'w0ng/vim-hybrid'
+Plug 'lervag/vimtex'
 
 call plug#end()
+
+"vimtex
+let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 
 "見た目系
 colorscheme hybrid
