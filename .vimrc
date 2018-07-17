@@ -46,8 +46,6 @@ nnoremap gs :<C-u>s///g<Left><Left><Left>
 nnoremap g%s :<C-u>%s///g<Left><Left><Left>
 nnoremap <silent> <Space>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
 nnoremap <silent> <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
-nnoremap ; :
-nnoremap : ;
 nnoremap <Space>t :<C-u>tab help<Space>
 nnoremap <Space>s. :<C-u>source $HOME/.vimrc<CR>
 nnoremap <Space>. :<C-u>tabedit $HOME/.vimrc<CR>
