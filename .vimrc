@@ -15,7 +15,9 @@ set title
 set cmdheight=2
 set ruler
 set showmatch
+set matchtime=1
 set showcmd
+set display=lastline
 set keywordprg=:help
 set helplang=en,ja
 
@@ -55,6 +57,7 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap : ;
 nnoremap ; :
+nnoremap Y y$
 noremap <Space>h ^
 noremap <Space>l $
 noremap j gj
