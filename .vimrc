@@ -10,21 +10,23 @@ set hidden
 set scrolloff=3
 set wildmenu
 set backspace=indent,eol,start
-set number
-set title
 set cmdheight=2
-set ruler
-set showmatch
-set matchtime=1
-set showcmd
-set display=lastline
-set cursorline
 set keywordprg=:help
 set helplang=en,ja
 
+"表示
+set showcmd
+set ruler
+set title
+set number
+set showmatch
+set matchtime=1
+set display=lastline
+set cursorline
+
 "ステータスライン
 set laststatus=2
-set statusline=%<%f%m%r%h%w[%{strlen(&fenc)?&fenc:'none'}/%{&ff}/%Y]
+set statusline=%<%f%m%r%h%w[%{strlen(&fenc)?&fenc:'none'}/%{&ff}]
 set statusline+=%=%l\ of\ %L\ [%p%%]\ -\ col:\ %c%V
 
 "タブとインデント
