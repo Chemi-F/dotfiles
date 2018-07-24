@@ -18,11 +18,14 @@ set showmatch
 set matchtime=1
 set showcmd
 set display=lastline
+set cursorline
 set keywordprg=:help
 set helplang=en,ja
 
 "ステータスライン
 set laststatus=2
+set statusline=%<%f%m%r%h%w[%{strlen(&fenc)?&fenc:'none'}/%{&ff}/%Y]
+set statusline+=%=%l\ of\ %L\ [%p%%]\ -\ col:\ %c%V
 
 "タブとインデント
 set expandtab
