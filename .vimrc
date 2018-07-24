@@ -26,8 +26,8 @@ set cursorline
 
 "ステータスライン
 set laststatus=2
-set statusline=%<%f%m%r%h%w[%{strlen(&fenc)?&fenc:'none'}/%{&ff}]
-set statusline+=%=%l\ of\ %L\ [%p%%]\ -\ col:\ %c%V
+set statusline=%<%f%m%r%h%w
+set statusline+=%=[%{strlen(&fenc)?&fenc:'none'}/%{&ff}/%Y][%p%%][%l:%c]
 
 "タブとインデント
 set expandtab
