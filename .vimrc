@@ -91,7 +91,7 @@ endfunction
 call plug#begin('~/.vim/plugged')
 
 Plug 'vim-jp/vimdoc-ja'
-Plug 'w0ng/vim-hybrid'
+Plug 'sjl/badwolf'
 Plug 'lervag/vimtex'
 
 call plug#end()
@@ -100,7 +100,7 @@ call plug#end()
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 
 "見た目系
-colorscheme hybrid
+colorscheme badwolf
 set background=dark
 set t_Co=256
 syntax on
