@@ -44,7 +44,7 @@ set ignorecase
 set smartcase
 
 "キーマッピング
-let maplocalleader = "\<Space>"
+let mapleader = "\<Space>"
 "ノーマルモード
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
