@@ -45,18 +45,17 @@ set smartcase
 
 "キーマッピング
 let mapleader = "\<Space>"
+let maplocalleader = "\<Space>"
 "ノーマルモード
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
-nnoremap gs :<C-u>s///g<Left><Left><Left>
-nnoremap g%s :<C-u>%s///g<Left><Left><Left>
-nnoremap <silent> <Leader>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
-nnoremap <silent> <Leader>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
 nnoremap <Leader>t :<C-u>tab help<Space>
 nnoremap <Leader>s. :<C-u>source $HOME/.vimrc<CR>
 nnoremap <Leader>. :<C-u>tabedit $HOME/.vimrc<CR>
+nnoremap <silent> <Leader>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
+nnoremap <silent> <Leader>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
