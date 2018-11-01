@@ -70,13 +70,27 @@ noremap j gj
 noremap k gk
 noremap gj j
 noremap gk k
+noremap x "_x
+noremap X "_X
+noremap s "_s
+noremap S "_S
 "インサートモード
 inoremap <silent> <Esc> <Esc>:set iminsert=0<CR>
 "コマンドモード
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-d> <Del>
 
-"プラグイン
+"package
+if 1
+  packadd matchit
+endif
+
+"plugin
 call plug#begin('~/.vim/plugged')
 
 Plug 'vim-jp/vimdoc-ja'
