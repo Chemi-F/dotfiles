@@ -1,5 +1,5 @@
+"エンコーディング
 set encoding=utf-8
-
 scriptencoding utf-8
 
 "ベル
@@ -44,6 +44,7 @@ set ignorecase
 set smartcase
 
 "キーマッピング
+"リーダー
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 "ノーマルモード
@@ -74,18 +75,6 @@ inoremap <silent> <Esc> <Esc>:set iminsert=0<CR>
 "コマンドモード
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
-"その他
-nnoremap <silent> tm :<C-u>call <SID>MoveToNewTab()<CR>
-function! s:MoveToNewTab()
-  tab split
-  tabprevious
-  if winnr('$') > 1
-    close
-  elseif bufnr('$') > 1
-    buffer #
-  endif
-  tabnext
-endfunction
 
 "プラグイン
 call plug#begin('~/.vim/plugged')
