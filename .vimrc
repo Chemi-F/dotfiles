@@ -86,7 +86,7 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if 1
+if v:version >=800
   packadd matchit
 endif
 
