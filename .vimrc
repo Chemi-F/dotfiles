@@ -74,6 +74,7 @@ noremap x "_x
 noremap X "_X
 noremap s "_s
 noremap S "_S
+noremap * *N
 "インサートモード
 inoremap <silent> <Esc> <Esc>:set iminsert=0<CR>
 "コマンドモード
@@ -88,6 +89,8 @@ cnoremap <C-d> <Del>
 "package
 if v:version >=800
   packadd matchit
+else
+  runtime macros/matchit.vim
 endif
 
 "plugin
