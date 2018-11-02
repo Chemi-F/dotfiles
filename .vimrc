@@ -87,7 +87,7 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if v:version >=800
+if v:version >= 800
   packadd matchit
 else
   runtime macros/matchit.vim
