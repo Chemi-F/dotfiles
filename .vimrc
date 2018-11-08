@@ -54,6 +54,8 @@ nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>th :<C-u>tab help<Space>
+nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
+nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $HOME/.vimrc<CR>
 nnoremap <Leader>. :<C-u>tabedit $HOME/.vimrc<CR>
 nnoremap <silent> <Leader>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
