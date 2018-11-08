@@ -45,14 +45,15 @@ set smartcase
 
 "キーマッピング
 "リーダー
+noremap s <Nop>
 let mapleader = "\<Space>"
-let maplocalleader = "\<Space>"
+let maplocalleader = "s"
 "ノーマルモード
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
-nnoremap <Leader>t :<C-u>tab help<Space>
+nnoremap <Leader>th :<C-u>tab help<Space>
 nnoremap <Leader>s. :<C-u>source $HOME/.vimrc<CR>
 nnoremap <Leader>. :<C-u>tabedit $HOME/.vimrc<CR>
 nnoremap <silent> <Leader>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
@@ -72,8 +73,6 @@ noremap gj j
 noremap gk k
 noremap x "_x
 noremap X "_X
-noremap s "_s
-noremap S "_S
 noremap * *N
 "インサートモード
 inoremap <silent> <Esc> <Esc>:set iminsert=0<CR>
@@ -108,5 +107,3 @@ let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 "見た目系
 colorscheme badwolf
 set background=dark
-set t_Co=256
-syntax on
