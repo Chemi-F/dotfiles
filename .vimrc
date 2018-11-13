@@ -106,5 +106,6 @@ call plug#end()
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 
 "colorsheme
+set t_Co=256
 colorscheme badwolf
 set background=dark
