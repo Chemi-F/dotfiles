@@ -1,8 +1,8 @@
-"エンコーディング
+"encoding
 set encoding=utf-8
 scriptencoding utf-8
 
-"ベル
+"bell
 set vb t_vb=
 set noerrorbells
 
@@ -14,7 +14,6 @@ set cmdheight=2
 set keywordprg=:help
 set helplang=en,ja
 
-"表示
 set showcmd
 set ruler
 set title
@@ -24,31 +23,31 @@ set matchtime=1
 set display=lastline
 set cursorline
 
-"ステータスライン
+"status line
 set laststatus=2
 set statusline=%<%f%m%r%h%w
 set statusline+=%=[%{strlen(&fenc)?&fenc:'none'}/%{&ff}/%Y][%p%%][%l:%c]
 
-"タブとインデント
+"tab indent
 set expandtab
 set tabstop=2
 set shiftwidth=2
 set autoindent
 set smartindent
 
-"検索
+"search
 set wrapscan
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
 
-"キーマッピング
-"リーダー
+"key-mapping
+"leader
 noremap s <Nop>
 let mapleader = "\<Space>"
 let maplocalleader = "s"
-"ノーマルモード
+"normal mode
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
@@ -76,9 +75,9 @@ noremap gk k
 noremap x "_x
 noremap X "_X
 noremap * *N
-"インサートモード
+"insert mode
 inoremap <silent> <Esc> <Esc>:set iminsert=0<CR>
-"コマンドモード
+"command mode
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-f> <Right>
@@ -106,6 +105,6 @@ call plug#end()
 "vimtex
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 
-"見た目系
+"colorsheme
 colorscheme badwolf
 set background=dark
