@@ -77,6 +77,7 @@ noremap X "_X
 noremap * *N
 "insert mode
 inoremap <silent> <Esc> <Esc>:set iminsert=0<CR>
+inoremap jj <Esc>
 "command mode
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
