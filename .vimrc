@@ -13,7 +13,6 @@ set backspace=indent,eol,start
 set cmdheight=2
 set keywordprg=:help
 set helplang=en,ja
-
 set showcmd
 set ruler
 set title
@@ -22,6 +21,8 @@ set showmatch
 set matchtime=1
 set display=lastline
 set cursorline
+set title
+set titlestring=Vim:\ %f\ %h%r%m
 
 "status line
 set laststatus=2
