@@ -89,16 +89,9 @@ cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
-"package
-packadd matchit
-
 "plugin
 call plug#begin('~/.vim/plugged')
 
-Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
-Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 Plug 'thinca/vim-quickrun'
 Plug 'vim-jp/vimdoc-ja'
 Plug 'sjl/badwolf'
@@ -106,16 +99,6 @@ Plug 'lervag/vimtex'
 Plug 'kana/vim-submode'
 
 call plug#end()
-
-"deoplete
-let g:deoplete#enable_at_startup = 1
-
-"neoplete
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
-smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 "vimtex
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
