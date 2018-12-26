@@ -45,9 +45,7 @@ set smartcase
 
 "key-mapping
 "leader
-noremap s <Nop>
 let mapleader = "\<Space>"
-let maplocalleader = "s"
 "normal mode
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
@@ -64,9 +62,12 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+nnoremap <C-L> <C-l>
 nnoremap : ;
 nnoremap ; :
 nnoremap Y y$
+nnoremap <CR> G
+nnoremap <BS> gg
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -89,23 +90,50 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if v:version >= 800
-  packadd matchit
-else
-  runtime macros/matchit.vim
-endif
+packadd matchit
 
 "plugin
 call plug#begin('~/.vim/plugged')
 
+Plug 'Shougo/denite.nvim'
+Plug 'Shougo/deoplete.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
+Plug 'thinca/vim-quickrun'
 Plug 'vim-jp/vimdoc-ja'
 Plug 'sjl/badwolf'
 Plug 'lervag/vimtex'
+Plug 'kana/vim-submode'
 
 call plug#end()
 
+"deoplete
+let g:deoplete#enable_at_startup = 1
+
+"neoplete
+imap <C-k> <Plug>(neosnippet_expand_or_jump)
+smap <C-k> <Plug>(neosnippet_expand_or_jump)
+xmap <C-k> <Plug>(neosnippet_expand_target)
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
 "vimtex
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
+
+"vim-submode
+call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
+call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
+call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
+call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
+call submode#map('winsize', 'n', '', '>', '<C-w>>')
+call submode#map('winsize', 'n', '', '<', '<C-w><')
+call submode#map('winsize', 'n', '', '+', '<C-w>+')
+call submode#map('winsize', 'n', '', '-', '<C-w>-')
+call submode#enter_with('changetab', 'n', '', 'gt', 'gt')
+call submode#enter_with('changetab', 'n', '', 'gT', 'gT')
+call submode#map('changetab', 'n', '', 't', 'gt')
+call submode#map('changetab', 'n', '', 'T', 'gT')
 
 "colorsheme
 set t_Co=256
