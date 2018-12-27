@@ -1,5 +1,6 @@
 $pdf_mode = 3;
 $latex = 'uplatex -kanji=utf8 -synctex=1 %O %S';
+$lualatex = 'lualatex %O -synctex=1 %S';
 $bibtex = 'upbibtex %O %B';
 $biber = 'biber %O --bblencoding=utf8 -u -U --output_safechars %B';
 $dvipdf = 'dvipdfmx %O -o %D %S';
