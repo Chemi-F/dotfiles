@@ -117,6 +117,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   endif
   Myautocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/vim-plug'
 if ((has('nvim') || has('timers')) && has('python3'))
@@ -136,15 +137,26 @@ Plug 'kana/vim-submode'
 Plug 'sjl/badwolf'
 call plug#end()
 
-"deoplete
-let g:deoplete#enable_at_startup = 1
+let s:plug = {
+      \"plugs": get(g:, 'plugs', {})
+      \ }
+function! s:plug.is_installed(name)
+  return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
+endfunction
 
-"neoplete
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
-smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+"deoplete
+if s:plug.is_installed("deoplete.nvim")
+  let g:deoplete#enable_at_startup = 1
+endif
+
+"neosnippet
+if s:plug.is_installed("neosnippet")
+  imap <C-k> <Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k> <Plug>(neosnippet_expand_target)
+  smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+        \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+endif
 
 "vimtex
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
