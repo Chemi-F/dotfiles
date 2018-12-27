@@ -101,7 +101,9 @@ cnoremap <C-d> <Del>
 Myautocmd QuickFixCmdPost *grep* cwindow
 
 "package
-packadd! matchit
+if v:version >= 800
+  packadd! matchit
+endif
 
 "plugin
 "vim-plug
