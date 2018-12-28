@@ -2,9 +2,6 @@
 augroup myvimrc
   autocmd!
 augroup END
-command! -nargs=*
-      \ Myautocmd
-      \ autocmd myvimrc <args>
 
 "encoding
 set encoding=utf-8
@@ -32,6 +29,7 @@ set display=lastline
 set cursorline
 set title
 set titlestring=Vim:\ %f\ %h%r%m
+set viminfo='50,<500,s100,h
 
 "status line
 set laststatus=2
@@ -86,6 +84,8 @@ noremap <BS> gg
 noremap x "_x
 noremap X "_X
 noremap * *N
+noremap <silent> <C-n> :<C-u>cnext<CR>
+noremap <silent> <C-p> :<C-u>cprevious<CR>
 "insert mode
 inoremap jj <Esc>
 "command mode
@@ -98,36 +98,27 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "autocmd
-Myautocmd QuickFixCmdPost *grep* cwindow
+autocmd myvimrc QuickFixCmdPost *grep* cwindow
 
 "package
-if v:version >= 800
+if has('syntax') && has('eval')
   packadd! matchit
 endif
 
 "plugin
 "vim-plug
 if empty(glob('~/.vim/autoload/plug.vim'))
-  if !has('nvim')
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  else
-    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  endif
-  Myautocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd myvimrc VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/vim-plug'
-if ((has('nvim') || has('timers')) && has('python3'))
-  if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do' : ':UpdateRemotePlugins' }
-  else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-  endif
+if has('timers') && has('python3')
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
   Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
 Plug 'thinca/vim-quickrun'
