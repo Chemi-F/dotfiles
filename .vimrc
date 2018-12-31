@@ -30,6 +30,8 @@ set cursorline
 set title
 set titlestring=Vim:\ %f\ %h%r%m
 set viminfo='50,<500,s100,h
+set list
+set listchars=tab:^-
 
 "status line
 set laststatus=2
@@ -79,8 +81,6 @@ noremap j gj
 noremap k gk
 noremap gj j
 noremap gk k
-noremap <CR> G
-noremap <BS> gg
 noremap x "_x
 noremap X "_X
 noremap * *N
@@ -98,7 +98,7 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "autocmd
-autocmd myvimrc QuickFixCmdPost *grep* cwindow
+autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
 
 "package
 if has('syntax') && has('eval')
@@ -161,10 +161,6 @@ call submode#map('winsize', 'n', '', '>', '<C-w>>')
 call submode#map('winsize', 'n', '', '<', '<C-w><')
 call submode#map('winsize', 'n', '', '+', '<C-w>+')
 call submode#map('winsize', 'n', '', '-', '<C-w>-')
-call submode#enter_with('changetab', 'n', '', 'gt', 'gt')
-call submode#enter_with('changetab', 'n', '', 'gT', 'gT')
-call submode#map('changetab', 'n', '', 't', 'gt')
-call submode#map('changetab', 'n', '', 'T', 'gT')
 
 "colorsheme
 set t_Co=256
