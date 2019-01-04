@@ -71,7 +71,7 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <C-L> <C-l>
+nnoremap <Leader><C-l> <C-l>
 nnoremap : ;
 nnoremap ; :
 nnoremap Y y$
@@ -138,6 +138,9 @@ endfunction
 "deoplete
 if s:plug.is_installed("deoplete.nvim")
   let g:deoplete#enable_at_startup = 1
+  call deoplete#custom#var('omni', 'input_patterns', {
+        \ 'tex': g:vimtex#re#deoplete
+        \})
 endif
 
 "neosnippet
@@ -150,6 +153,7 @@ if s:plug.is_installed("neosnippet")
 endif
 
 "vimtex
+let g:tex_flavor = 'latax'
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 
 "vim-submode
