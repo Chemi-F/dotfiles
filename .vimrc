@@ -32,6 +32,9 @@ set titlestring=Vim:\ %f\ %h%r%m
 set viminfo='50,<500,s100,h
 set list
 set listchars=tab:^-
+set tags=./tags;
+set mouse=a
+set clipboard=unnamed
 
 "status line
 set laststatus=2
@@ -75,6 +78,7 @@ nnoremap <Leader><C-l> <C-l>
 nnoremap : ;
 nnoremap ; :
 nnoremap Y y$
+nnoremap <silent> <Leader>c :<C-u>cclose<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -101,7 +105,7 @@ cnoremap <C-d> <Del>
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
 
 "package
-if has('syntax') && has('eval')
+if has('syntax') && has('eval') && v:version >= 800
   packadd! matchit
 endif
 
