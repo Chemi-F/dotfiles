@@ -1,11 +1,18 @@
+if !1 | finish | endif
+
+"encoding
+set encoding=utf-8
+scriptencoding utf-8
+
+if &compatible
+  set nocompatible
+endif
+
 "autocmdreset
 augroup myvimrc
   autocmd!
 augroup END
 
-"encoding
-set encoding=utf-8
-scriptencoding utf-8
 
 "bell
 set vb t_vb=
@@ -26,12 +33,17 @@ set number
 set showmatch
 set matchtime=1
 set display=lastline
-set cursorline
 set title
 set titlestring=Vim:\ %f\ %h%r%m
 set viminfo='50,<500,s100,h
 set list
 set listchars=tab:^-
+set formatoptions-=ro
+set nobackup
+if ! isdirectory($HOME.'/.vim/swap"\')
+  call mkdir($HOME.'/.vim/swap', 'p')
+endif
+set directory=~/.vim/swap
 
 "status line
 set laststatus=2
@@ -52,11 +64,16 @@ set incsearch
 set ignorecase
 set smartcase
 
+"autocmd
+autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
+autocmd myvimrc CursorMoved,CursorMovedI,WinLeave * setlocal nocursorline
+autocmd myvimrc CursorHold,CursorHoldI,WinEnter * setlocal cursorline
+
 "key-mapping
 "leader
 let mapleader = "\<Space>"
 "normal mode
-nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
+nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>:<C-u>setlocal cursorline<CR>
 nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
@@ -71,16 +88,21 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <Leader><C-l> <C-l>
-nnoremap : ;
-nnoremap ; :
+nnoremap <silent> <Leader><C-l> <C-l>
 nnoremap Y y$
+nnoremap <silent> <Down> <C-w>-
+nnoremap <silent> <Up> <C-w>+
+nnoremap <silent> <Left> <C-w><
+nnoremap <silent> <Right> <C-w>>
+
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
 noremap k gk
 noremap gj j
 noremap gk k
+noremap : ;
+noremap ; :
 noremap x "_x
 noremap X "_X
 noremap * *N
@@ -88,6 +110,7 @@ noremap <silent> <C-n> :<C-u>cnext<CR>
 noremap <silent> <C-p> :<C-u>cprevious<CR>
 "insert mode
 inoremap jj <Esc>
+inoremap <C-c> <Esc>
 "command mode
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
@@ -96,9 +119,6 @@ cnoremap <C-b> <Left>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
-
-"autocmd
-autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
 
 "package
 if has('syntax') && has('eval')
