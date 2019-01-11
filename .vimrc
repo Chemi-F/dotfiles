@@ -44,6 +44,9 @@ if ! isdirectory($HOME.'/.vim/swap"\')
   call mkdir($HOME.'/.vim/swap', 'p')
 endif
 set directory=~/.vim/swap
+set tags=./tags;
+set mouse=a
+set clipboard=unnamed
 
 "status line
 set laststatus=2
@@ -94,7 +97,7 @@ nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Right> <C-w>>
-
+nnoremap <silent> <Leader>c :<C-u>cclose<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -121,7 +124,7 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if has('syntax') && has('eval')
+if has('syntax') && has('eval') && v:version >= 800
   packadd! matchit
 endif
 
