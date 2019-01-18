@@ -45,7 +45,6 @@ if ! isdirectory($HOME.'/.vim/swap"\')
 endif
 set directory=~/.vim/swap
 set tags=./tags;
-set mouse=a
 set clipboard=unnamed
 
 "status line
@@ -144,9 +143,9 @@ if has('timers') && has('python3')
   Plug 'roxma/vim-hug-neovim-rpc'
   Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
-Plug 'thinca/vim-quickrun'
 Plug 'vim-jp/vimdoc-ja'
 Plug 'lervag/vimtex'
+Plug 'plasticboy/vim-markdown'
 Plug 'kana/vim-submode'
 Plug 'sjl/badwolf'
 call plug#end()
