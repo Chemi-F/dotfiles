@@ -40,9 +40,6 @@ set list
 set listchars=tab:^-
 set formatoptions-=ro
 set nobackup
-if ! isdirectory($HOME.'/.vim/swap"\')
-  call mkdir($HOME.'/.vim/swap', 'p')
-endif
 set directory=~/.vim/swap
 set tags=./tags;
 set clipboard=unnamed
