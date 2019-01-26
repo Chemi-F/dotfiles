@@ -43,6 +43,7 @@ set nobackup
 set directory=~/.vim/swap
 set tags=./tags;
 set clipboard=unnamed
+set cursorline
 
 "status line
 set laststatus=2
@@ -65,14 +66,13 @@ set smartcase
 
 "autocmd
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
-autocmd myvimrc CursorMoved,CursorMovedI,WinLeave * setlocal nocursorline
-autocmd myvimrc CursorHold,CursorHoldI,WinEnter * setlocal cursorline
+autocmd myvimrc ColorScheme * highlight clear Cursorline 
 
 "key-mapping
 "leader
 let mapleader = "\<Space>"
 "normal mode
-nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>:<C-u>setlocal cursorline<CR>
+nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
@@ -81,10 +81,8 @@ nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 nnoremap <Leader>. :<C-u>tabedit $MYVIMRC<CR>
-nnoremap <Leader>o o<esc>
-nnoremap <Leader>O O<esc>
-"nnoremap <silent> <Leader>o :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
-"nnoremap <silent> <Leader>O :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
+nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Space>o", v:count1)<CR>
+nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Space>O", v:count1)<CR>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -146,6 +144,7 @@ Plug 'vim-jp/vimdoc-ja'
 Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
 Plug 'kana/vim-submode'
+Plug 'tpope/vim-repeat'
 Plug 'sjl/badwolf'
 call plug#end()
 
