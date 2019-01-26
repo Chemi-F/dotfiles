@@ -156,12 +156,6 @@ function! s:plug.is_installed(name)
 endfunction
 
 "deoplete
-if s:plug.is_installed("deoplete.nvim")
-  let g:deoplete#enable_at_startup = 1
-  call deoplete#custom#var('omni', 'input_patterns', {
-        \ 'tex': g:vimtex#re#deoplete
-        \})
-endif
 
 "neosnippet
 if s:plug.is_installed("neosnippet")
@@ -175,6 +169,12 @@ endif
 "vimtex
 let g:tex_flavor = 'latax'
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
+if s:plug.is_installed("deoplete.nvim")
+  let g:deoplete#enable_at_startup = 1
+  call deoplete#custom#var('omni', 'input_patterns', {
+        \ 'tex': g:vimtex#re#deoplete
+        \})
+endif
 
 "vim-submode
 call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
