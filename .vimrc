@@ -66,6 +66,7 @@ set smartcase
 
 "autocmd
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
+autocmd myvimrc FileType help,qf, nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc ColorScheme * highlight clear Cursorline 
 
 "key-mapping
@@ -81,8 +82,8 @@ nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 nnoremap <Leader>. :<C-u>tabedit $MYVIMRC<CR>
-nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Space>o", v:count1)<CR>
-nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Space>O", v:count1)<CR>
+nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
+nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -93,7 +94,6 @@ nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Right> <C-w>>
-nnoremap <silent> <Leader>c :<C-u>cclose<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
