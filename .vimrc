@@ -13,7 +13,6 @@ augroup myvimrc
   autocmd!
 augroup END
 
-
 "bell
 set vb t_vb=
 set noerrorbells
@@ -23,28 +22,27 @@ set hidden
 set scrolloff=3
 set wildmenu
 set backspace=indent,eol,start
-set cmdheight=2
 set keywordprg=:help
 set helplang=en,ja
-set showcmd
-set ruler
-set title
-set number
-set showmatch
-set matchtime=1
-set display=lastline
-set title
-set titlestring=Vim:\ %f\ %h%r%m
 set viminfo='50,<500,s100,h
-set list
-set listchars=tab:^-
 set formatoptions-=ro
 set nobackup
 set directory=~/.vim/swap
 set tags=./tags;
 set clipboard=unnamed
-set cursorline
 
+"appearance
+set title
+set titlestring=Vim:\ %f\ %h%r%m
+set number
+set cursorline
+set display=lastline
+set showcmd
+set showmatch
+set matchtime=1
+set list
+set listchars=tab:^-
+set cmdheight=2
 "status line
 set laststatus=2
 set statusline=%<%f%m%r%h%w
@@ -94,6 +92,9 @@ nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Right> <C-w>>
+nnoremap <silent> <C-n> :<C-u>cnext<CR>
+nnoremap <silent> <C-p> :<C-u>cprevious<CR>
+nnoremap <silent> <C-c> :<C-u>cclose<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -105,8 +106,6 @@ noremap ; :
 noremap x "_x
 noremap X "_X
 noremap * *N
-noremap <silent> <C-n> :<C-u>cnext<CR>
-noremap <silent> <C-p> :<C-u>cprevious<CR>
 "insert mode
 inoremap jj <Esc>
 inoremap <C-c> <Esc>
