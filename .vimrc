@@ -1,12 +1,13 @@
 if !1 | finish | endif
 
-"encoding
-set encoding=utf-8
 scriptencoding utf-8
 
 if &compatible
   set nocompatible
 endif
+
+"encoding
+set encoding=utf-8
 
 "autocmdreset
 augroup myvimrc
@@ -125,12 +126,6 @@ endif
 
 "plugin
 "vim-plug
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd myvimrc VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/vim-plug'
 if has('timers') && has('python3')
@@ -140,8 +135,8 @@ if has('timers') && has('python3')
   Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
 Plug 'vim-jp/vimdoc-ja'
-Plug 'lervag/vimtex'
-Plug 'plasticboy/vim-markdown'
+Plug 'lervag/vimtex', { 'for': 'tex'}
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'kana/vim-submode'
 Plug 'tpope/vim-repeat'
 Plug 'sjl/badwolf'

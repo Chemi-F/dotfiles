@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 $pdf_mode = 3;
 $latex = 'uplatex -kanji=utf8 -synctex=1 %O %S';
 $bibtex = 'upbibtex %O %B';
