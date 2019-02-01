@@ -149,8 +149,6 @@ function! s:plug.is_installed(name)
   return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
 
-"deoplete
-
 "neosnippet
 if s:plug.is_installed("neosnippet")
   imap <C-k> <Plug>(neosnippet_expand_or_jump)
