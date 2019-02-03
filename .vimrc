@@ -34,7 +34,11 @@ set clipboard=unnamed
 
 "appearance
 set title
-set titlestring=Vim:\ %f\ %h%r%m
+if has('nvim')
+  set titlestring=NeoVim:\ %f\ %h%r%m
+else
+  set titlestring=Vim:\ %f\ %h%r%m
+endif
 set number
 set cursorline
 set display=lastline
@@ -120,18 +124,26 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if has('syntax') && has('eval') && v:version >= 800
+if !has('nvim') && has('syntax') && has('eval') && v:version >= 800
   packadd! matchit
 endif
 
 "plugin
 "vim-plug
-call plug#begin('~/.vim/plugged')
+if has('nvim')
+  call plug#begin('~/.local/share/nvim/plugged')
+else
+  call plug#begin('~/.vim/plugged')
+endif
 Plug 'junegunn/vim-plug'
 if has('timers') && has('python3')
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
+  if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  else
+    Plug 'Shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+  endif
   Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
 Plug 'vim-jp/vimdoc-ja'
