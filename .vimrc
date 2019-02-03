@@ -65,7 +65,7 @@ set smartcase
 
 "autocmd
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
-autocmd myvimrc FileType help,qf, nnoremap <silent> <buffer> q :<C-u>q<CR>
+autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc ColorScheme * highlight clear Cursorline 
 
 "key-mapping
@@ -149,6 +149,9 @@ function! s:plug.is_installed(name)
   return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
 
+"deoplete
+let g:deoplete#enable_at_startup = 1
+
 "neosnippet
 if s:plug.is_installed("neosnippet")
   imap <C-k> <Plug>(neosnippet_expand_or_jump)
@@ -162,21 +165,22 @@ endif
 let g:tex_flavor = 'latax'
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 if s:plug.is_installed("deoplete.nvim")
-  let g:deoplete#enable_at_startup = 1
   call deoplete#custom#var('omni', 'input_patterns', {
         \ 'tex': g:vimtex#re#deoplete
         \})
 endif
 
 "vim-submode
-call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
-call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
-call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
-call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
-call submode#map('winsize', 'n', '', '>', '<C-w>>')
-call submode#map('winsize', 'n', '', '<', '<C-w><')
-call submode#map('winsize', 'n', '', '+', '<C-w>+')
-call submode#map('winsize', 'n', '', '-', '<C-w>-')
+if s:plug.is_installed("vim-submode")
+  call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
+  call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
+  call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
+  call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
+  call submode#map('winsize', 'n', '', '>', '<C-w>>')
+  call submode#map('winsize', 'n', '', '<', '<C-w><')
+  call submode#map('winsize', 'n', '', '+', '<C-w>+')
+  call submode#map('winsize', 'n', '', '-', '<C-w>-')
+endif
 
 "colorsheme
 set t_Co=256
