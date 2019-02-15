@@ -122,9 +122,7 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if !has('nvim') && has('syntax') && has('eval') && v:version >= 800
-    packadd! matchit
-endif
+"packadd! matchit
 
 "plugin
 "vim-plug
