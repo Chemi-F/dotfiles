@@ -70,6 +70,7 @@ set smartcase
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
 autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc ColorScheme * highlight clear Cursorline 
+"autocmd myvimrc ColorScheme * highlight Normal ctermbg=none
 
 "キーマッピング
 let g:mapleader = "\<Space>"
@@ -147,7 +148,7 @@ Plug 'lervag/vimtex', { 'for': 'tex'}
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'kana/vim-submode'
 Plug 'tpope/vim-repeat'
-Plug 'sjl/badwolf'
+Plug 'cocopon/iceberg.vim'
 call plug#end()
 
 let s:plug = {
@@ -192,5 +193,4 @@ endif
 
 "colorsheme
 set t_Co=256
-colorscheme badwolf
-set background=dark
+colorscheme iceberg
