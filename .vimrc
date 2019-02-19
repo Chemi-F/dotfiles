@@ -13,64 +13,90 @@ augroup myvimrc
     autocmd!
 augroup END
 
-"bell
-set vb t_vb=
-set noerrorbells
+"options
+"moving around, searching and patterns
+set wrapscan
+set incsearch
+set ignorecase
+set smartcase
 
-"オプション
+"tags
+set tags+=tags;
+
+"displaying text
+set scrolloff=5
+set breakindent
+set showbreak=>\
+set display=lastline
+set cmdheight=2
+set list
+set listchars=tab:^-
+set number
+
+"syntax, highlighting and spelling
+set hlsearch
+nohlsearch
+set cursorline
+
+"multiple windows
+set laststatus=2
+set statusline=%<%f%m%r%h%w
+set statusline+=%=
+set statusline+=\|\ %{&fileencoding},%{&fileformat}
+set statusline+=\ \|\ %Y
+set statusline+=\ \|\ %l/%L,%c
 set hidden
-set scrolloff=3
-set wildmenu
-set backspace=indent,eol,start
-set keywordprg=:help
-set helplang=en,ja
-set viminfo='50,<500,s100,h
-set formatoptions-=ro
-set nobackup
-set directory=~/.vim/swap
-set tags=./tags;
-set clipboard=unnamed
 
-"表示設定
+"terminal
 set title
 if has('nvim')
     set titlestring=NeoVim:\ %f\ %h%r%m
 else
     set titlestring=Vim:\ %f\ %h%r%m
 endif
-set number
-set cursorline
-set display=lastline
+
+"messages and info
 set showcmd
+set noerrorbells
+set visualbell t_vb=
+set helplang=ja,en
+
+"selecting text
+set clipboard+=unnamed
+
+"editing text
+set backspace=indent,eol,start
+set formatoptions-=ro
+set pumheight=10
 set showmatch
 set matchtime=1
-set list
-set listchars=tab:^-
-set cmdheight=2
-"ステータスライン
-set laststatus=2
-set statusline=%<%f%m%r%h%w
-set statusline+=%=[%{strlen(&fenc)?&fenc:'none'}/%{&ff}/%Y][%p%%][%l:%c]
 
-"インデント
-set expandtab
+"tabs and indenting
 set tabstop=4
 set shiftwidth=4
+set expandtab
 set autoindent
 set smartindent
 
-"検索設定
-set wrapscan
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
+"reading and writing files
+set nobackup
+
+"the swap file
+set directory=~/.vim/swap
+
+"command line editing
+set wildmenu
+
+"executing external commands
+set keywordprg=:help
+
+"various
+set viminfo='50,<500,s100,h
 
 "autocmd
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
 autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc ColorScheme * highlight clear Cursorline 
-"autocmd myvimrc ColorScheme * highlight Normal ctermbg=none
 
 "キーマッピング
 let g:mapleader = "\<Space>"
@@ -123,7 +149,9 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-"packadd! matchit
+if !has('nvim') && has('eval')
+    packadd! matchit
+endif
 
 "plugin
 "vim-plug
