@@ -13,6 +13,24 @@ augroup myvimrc
     autocmd!
 augroup END
 
+let s:is_neovim = has('nvim')
+
+if s:is_neovim
+    let s:vimfiles_dir = expand('~/.local/share/nvim')
+else
+    let s:vimfiles_dir = expand('~/.vim')
+endif
+
+let s:plug_dir = s:vimfiles_dir . '/plugged'
+let s:swap_dir = s:vimfiles_dir . '/swap'
+
+function! s:make_dir(dir) abort
+    if !isdirectory(a:dir)
+        call mkdir(a:dir, 'p')
+    endif
+endfunction
+call s:make_dir(s:swap_dir)
+
 "options
 "moving around, searching and patterns
 set wrapscan
@@ -35,7 +53,6 @@ set number
 
 "syntax, highlighting and spelling
 set hlsearch
-nohlsearch
 set cursorline
 
 "multiple windows
@@ -44,12 +61,12 @@ set statusline=%<%f%m%r%h%w
 set statusline+=%=
 set statusline+=\|\ %{&fileencoding},%{&fileformat}
 set statusline+=\ \|\ %Y
-set statusline+=\ \|\ %l/%L,%c
+set statusline+=\ \|\ %l/%L,%c\ \|
 set hidden
 
 "terminal
 set title
-if has('nvim')
+if s:is_neovim
     set titlestring=NeoVim:\ %f\ %h%r%m
 else
     set titlestring=Vim:\ %f\ %h%r%m
@@ -59,7 +76,19 @@ endif
 set showcmd
 set noerrorbells
 set visualbell t_vb=
-set helplang=ja,en
+set helplang=en,ja
+let g:helplang_is_ja = 0
+function! g:HelplangToJa() abort
+    if g:helplang_is_ja
+        set helplang=en,ja
+        let g:helplang_is_ja = 0
+        echo "Helplang is English"
+    else
+        set helplang=ja,en
+        let g:helplang_is_ja = 1
+        echo "Helplang is Japanese"
+    endif
+endfunction
 
 "selecting text
 set clipboard+=unnamed
@@ -82,7 +111,8 @@ set smartindent
 set nobackup
 
 "the swap file
-set directory=~/.vim/swap
+execute 'set directory=' . s:swap_dir
+set swapfile
 
 "command line editing
 set wildmenu
@@ -98,9 +128,12 @@ autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
 autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc ColorScheme * highlight clear Cursorline 
 
-"キーマッピング
+"command
+command! -nargs=1 VimGrepF execute 'vimgrep /\v<args>/j %'
+
+"key-mapping
 let g:mapleader = "\<Space>"
-"ノーマルモード
+"normal
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <Leader>w :<C-u>w<CR>
 nnoremap <Leader>q :<C-u>q<CR>
@@ -125,6 +158,7 @@ nnoremap <silent> <Right> <C-w>>
 nnoremap <silent> <C-n> :<C-u>cnext<CR>
 nnoremap <silent> <C-p> :<C-u>cprevious<CR>
 nnoremap <silent> <C-c> :<C-u>cclose<CR>
+nnoremap <silent> <Leader>hj :<C-u>call g:HelplangToJa()<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -136,10 +170,11 @@ noremap ; :
 noremap x "_x
 noremap X "_X
 noremap * *N
-"インサートモード
+"insert
 inoremap jj <Esc>
+inoremap <C-@> <C-[>
 inoremap <C-c> <Esc>
-"コマンドモード
+"command
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-f> <Right>
@@ -149,20 +184,16 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 
 "package
-if !has('nvim') && has('eval')
+if !s:is_neovim && has('eval')
     packadd! matchit
 endif
 
 "plugin
 "vim-plug
-if has('nvim')
-    call plug#begin('~/.local/share/nvim/plugged')
-else
-    call plug#begin('~/.vim/plugged')
-endif
+call plug#begin(s:plug_dir)
 Plug 'junegunn/vim-plug'
 if has('timers') && has('python3')
-    if has('nvim')
+    if s:is_neovim
         Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     else
         Plug 'Shougo/deoplete.nvim'
@@ -179,10 +210,8 @@ Plug 'tpope/vim-repeat'
 Plug 'cocopon/iceberg.vim'
 call plug#end()
 
-let s:plug = {
-            \"plugs": get(g:, 'plugs', {})
-            \ }
-function! s:plug.is_installed(name)
+let s:plug = { "plugs": get(g:, 'plugs', {}) }
+function! s:plug.is_installed(name) abort
     return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
 
@@ -194,17 +223,14 @@ if s:plug.is_installed("neosnippet")
     imap <C-k> <Plug>(neosnippet_expand_or_jump)
     smap <C-k> <Plug>(neosnippet_expand_or_jump)
     xmap <C-k> <Plug>(neosnippet_expand_target)
-    smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-                \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 endif
 
 "vimtex
 let g:tex_flavor = 'latax'
+let g:vimtex_quickfix_open_on_warning = 0
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 if s:plug.is_installed("deoplete.nvim")
-    call deoplete#custom#var('omni', 'input_patterns', {
-                \ 'tex': g:vimtex#re#deoplete
-                \})
+    call deoplete#custom#var('omni', 'input_patterns', { 'tex': g:vimtex#re#deoplete })
 endif
 
 "vim-submode
