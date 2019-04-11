@@ -215,7 +215,7 @@ function! s:MoveToNewTab() abort
 endfunction
 
 "package
-if !s:is_neovim && has('eval')
+if !s:is_neovim && has('eval') && v:version > 800
     packadd! matchit
 endif
 
