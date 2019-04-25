@@ -232,7 +232,7 @@ if has('timers') && has('python3')
         Plug 'roxma/nvim-yarp'
         Plug 'roxma/vim-hug-neovim-rpc'
     endif
-    Plug 'w0rp/ale'
+    Plug 'w0rp/ale', { 'for': 'c' }
     Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
 Plug 'lervag/vimtex'
@@ -261,7 +261,7 @@ endif
 
 "ale
 if s:plug.is_installed("ale")
-    autocmd myvimrc FileType C let g:ale_sign_column_always = 1
+    let g:ale_sign_column_always = 1
 endif
 
 "vimtex
