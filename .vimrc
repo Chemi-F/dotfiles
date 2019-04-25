@@ -52,7 +52,9 @@ set tags+=tags;
 
 "displaying text
 set scrolloff=5
-set breakindent
+if v:version > 800
+    set breakindent
+endif
 set showbreak=>\
 set display=lastline
 set cmdheight=2
