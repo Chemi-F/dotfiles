@@ -243,6 +243,7 @@ Plug 'thinca/vim-qfreplace'
 Plug 'kana/vim-submode'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'thinca/vim-quickrun'
 Plug 'cocopon/iceberg.vim'
 call plug#end()
 
