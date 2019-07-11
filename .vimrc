@@ -67,12 +67,6 @@ set hlsearch
 set cursorline
 
 "multiple windows
-set laststatus=2
-set statusline=%<%f%m%r%h%w
-set statusline+=%=
-set statusline+=\|\ %{&fileencoding},%{&fileformat}
-set statusline+=\ \|\ %Y
-set statusline+=\ \|\ %l/%L,%c\ \|
 set hidden
 
 "terminal
@@ -121,7 +115,7 @@ set viminfo='50,<500,s100,h
 
 "autocmd
 autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
-autocmd myvimrc ColorScheme * highlight clear Cursorline 
+autocmd myvimrc ColorScheme * highlight clear Cursorline
 autocmd myvimrc InsertLeave * set nopaste
 autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc FileType help set keywordprg=:help
@@ -147,7 +141,7 @@ nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
-nnoremap <Leader>. :<C-u>tabedit $MYVIMRC<CR>
+nnoremap <Leader>. :<C-u>split $MYVIMRC<CR>
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
@@ -189,6 +183,13 @@ cnoremap <C-b> <Left>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
+"terimnal
+if has("nvim")
+    :tnoremap <A-h> <C-\><C-N><C-w>h
+    :tnoremap <A-j> <C-\><C-N><C-w>j
+    :tnoremap <A-k> <C-\><C-N><C-w>k
+    :tnoremap <A-l> <C-\><C-N><C-w>l
+endif
 "function for map
 let s:helplang_is_ja = 0
 function! s:HelplangToJa() abort "To use K in Japanese
@@ -239,11 +240,11 @@ if has('timers') && has('python3')
 endif
 Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
-Plug 'thinca/vim-qfreplace'
 Plug 'kana/vim-submode'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'thinca/vim-quickrun'
+Plug 'vim-airline/vim-airline'
 Plug 'cocopon/iceberg.vim'
 call plug#end()
 
@@ -285,6 +286,19 @@ if s:plug.is_installed("vim-submode")
     call submode#map('winsize', 'n', '', '<', '<C-w><')
     call submode#map('winsize', 'n', '', '+', '<C-w>+')
     call submode#map('winsize', 'n', '', '-', '<C-w>-')
+endif
+
+"vim-airline
+set laststatus=2
+if s:plug.is_installed("vim-airline")
+    let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
+    let g:airline_section_z = '%l/%L,%c'
+else
+    set statusline=%<%f%m%r%h%w
+    set statusline+=%=
+    set statusline+=\|\ %{&fileencoding},%{&fileformat}
+    set statusline+=\ \|\ %Y
+    set statusline+=\ \|\ %l/%L,%c\ \|
 endif
 
 "colorsheme
