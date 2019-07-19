@@ -147,6 +147,7 @@ nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(lin
 nnoremap <silent> <Leader><C-l> <C-l>
 nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToJa()<CR>
 nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
+nnoremap <silent> <Leader>f :<C-u>call <SID>ToggleQuickfix()<CR>
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <silent> <C-n> :<C-u>cnext<CR>
 nnoremap <silent> <C-p> :<C-u>cprevious<CR>
@@ -204,6 +205,15 @@ function! s:HelplangToJa() abort "To use K in Japanese
     endif
 endfunction
 
+function! s:ToggleQuickfix() abort
+    let l:nr = winnr('$')
+    cwindow
+    let l:nr2 = winnr('$')
+    if l:nr == l:nr2
+        cclose
+    endif
+endfunction
+
 function! s:MoveToNewTab() abort
     tab split
     tabprevious
@@ -229,14 +239,15 @@ Plug 'junegunn/vim-plug'
 Plug 'vim-jp/vimdoc-ja'
 if has('timers') && has('python3')
     if s:is_neovim
-        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     else
-        Plug 'Shougo/deoplete.nvim'
-        Plug 'roxma/nvim-yarp'
-        Plug 'roxma/vim-hug-neovim-rpc'
+        "Plug 'Shougo/deoplete.nvim'
+        "Plug 'roxma/nvim-yarp'
+        "Plug 'roxma/vim-hug-neovim-rpc'
     endif
-    Plug 'w0rp/ale', { 'for': 'c' }
-    Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
+    Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+    "Plug 'w0rp/ale', { 'for': 'c' }
+    "Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
 Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
@@ -254,7 +265,28 @@ function! s:plug.is_installed(name) abort
 endfunction
 
 "deoplete
-let g:deoplete#enable_at_startup = 1
+if s:plug.is_installed("deoplete.nvim")
+    let g:deoplete#enable_at_startup = 1
+endif
+
+"coc.nvim
+if s:plug.is_installed("coc.nvim")
+    autocmd FileType json syntax match Comment +\/\/.\+$+
+    function! s:check_back_space() abort
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1]  =~ '\s'
+    endfunction
+    inoremap <silent><expr> <TAB>
+                \ pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ coc#refresh()
+    nmap <silent> gd <Plug>(coc-definition)
+    nmap <silent> gy <Plug>(coc-type-definition)
+    nmap <silent> gi <Plug>(coc-implementation)
+    nmap <silent> gr <Plug>(coc-references)
+    nmap <leader>cr <Plug>(coc-rename)
+    nmap <leader>cf  <Plug>(coc-fix-current)
+endif
 
 "neosnippet
 if s:plug.is_installed("neosnippet")
@@ -293,6 +325,7 @@ set laststatus=2
 if s:plug.is_installed("vim-airline")
     let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
     let g:airline_section_z = '%l/%L,%c'
+    "let g:airline#extensions#whitespace#enabled = 0
 else
     set statusline=%<%f%m%r%h%w
     set statusline+=%=
