@@ -246,6 +246,7 @@ if has('timers') && has('python3')
         "Plug 'roxma/vim-hug-neovim-rpc'
     endif
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+    Plug 'Shougo/denite.nvim'
     "Plug 'w0rp/ale', { 'for': 'c' }
     "Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
@@ -287,6 +288,23 @@ if s:plug.is_installed("coc.nvim")
     nmap <leader>cr <Plug>(coc-rename)
     nmap <leader>cf  <Plug>(coc-fix-current)
 endif
+
+"denite
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
 
 "neosnippet
 if s:plug.is_installed("neosnippet")
