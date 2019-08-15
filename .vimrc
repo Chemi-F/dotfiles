@@ -1,5 +1,7 @@
 if !1 | finish | endif
 
+set runtimepath+=/home/ryo/nimmt
+
 "encoding
 set encoding=utf-8
 scriptencoding utf-8
@@ -239,16 +241,15 @@ Plug 'junegunn/vim-plug'
 Plug 'vim-jp/vimdoc-ja'
 if has('timers') && has('python3')
     if s:is_neovim
-        "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+        Plug 'Shougo/denite.nvim'
     else
         "Plug 'Shougo/deoplete.nvim'
         "Plug 'roxma/nvim-yarp'
         "Plug 'roxma/vim-hug-neovim-rpc'
+        "Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
+        "Plug 'w0rp/ale', { 'for': 'c' }
     endif
-    Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-    Plug 'Shougo/denite.nvim'
-    "Plug 'w0rp/ale', { 'for': 'c' }
-    "Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
 endif
 Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
@@ -258,6 +259,7 @@ Plug 'tpope/vim-repeat'
 Plug 'thinca/vim-quickrun'
 Plug 'vim-airline/vim-airline'
 Plug 'cocopon/iceberg.vim'
+Plug 'vim-jp/vital.vim'
 call plug#end()
 
 let s:plug = { "plugs": get(g:, 'plugs', {}) }
