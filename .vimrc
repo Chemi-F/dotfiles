@@ -325,6 +325,9 @@ let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
 if s:plug.is_installed("deoplete.nvim")
     call deoplete#custom#var('omni', 'input_patterns', { 'tex': g:vimtex#re#deoplete })
 endif
+if has('python3')
+    let g:vimtex_compiler_progname = 'nvr'
+endif
 
 "vim-submode
 if s:plug.is_installed("vim-submode")
