@@ -240,24 +240,20 @@ Plug 'vim-jp/vimdoc-ja'
 if has('timers') && has('python3')
     if s:is_neovim
         Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-        Plug 'Shougo/denite.nvim'
-    else
-        "Plug 'Shougo/deoplete.nvim'
-        "Plug 'roxma/nvim-yarp'
-        "Plug 'roxma/vim-hug-neovim-rpc'
-        "Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets'
-        "Plug 'w0rp/ale', { 'for': 'c' }
     endif
 endif
+Plug 'dense-analysis/ale'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
 Plug 'kana/vim-submode'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'thinca/vim-quickrun'
+Plug 'jiangmiao/auto-pairs'
 Plug 'vim-airline/vim-airline'
+Plug 'Yggdroot/indentline'
 Plug 'cocopon/iceberg.vim'
-Plug 'vim-jp/vital.vim'
 call plug#end()
 
 let s:plug = { "plugs": get(g:, 'plugs', {}) }
