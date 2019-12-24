@@ -120,6 +120,11 @@ autocmd myvimrc InsertLeave * set nopaste
 autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc FileType help set keywordprg=:help
 autocmd myvimrc FileType qf call s:FtQuickfix()
+if has('nvim')
+    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
+else
+    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+endif
 
 function! s:FtQuickfix() abort
   setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
@@ -141,7 +146,8 @@ nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
-nnoremap <Leader>. :<C-u>split $MYVIMRC<CR>
+nnoremap <Leader>r :<C-u>registers<CR>
+nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
@@ -174,6 +180,7 @@ noremap X "_X
 noremap * *N
 "insert
 inoremap jj <Esc>
+inoremap ｊｊ <Esc>
 inoremap <C-c> <Esc>
 inoremap <C-@> <C-[>
 "command
@@ -185,27 +192,23 @@ cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 "terimnal
-if has("nvim")
-    :tnoremap <A-h> <C-\><C-N><C-w>h
-    :tnoremap <A-j> <C-\><C-N><C-w>j
-    :tnoremap <A-k> <C-\><C-N><C-w>k
-    :tnoremap <A-l> <C-\><C-N><C-w>l
-endif
+tnoremap <A-w> <C-\><C-n><C-w>w
+tnoremap <A-j> <C-\><C-n>
 "function for map
 let s:helplang_is_ja = 0
 function! s:HelplangToJa() abort "To use K in Japanese
     if s:helplang_is_ja
         set helplang=en,ja
         let s:helplang_is_ja = 0
-        echo "Helplang is English"
+        echo "Help language is English"
     else
         set helplang=ja,en
         let s:helplang_is_ja = 1
-        echo "Helplang is Japanese"
+        echo "Help language is Japanese"
     endif
 endfunction
 
-function! s:ToggleQuickfix() abort
+function! s:ToggleQuickfix() abort "quickfix window open
     let l:nr = winnr('$')
     cwindow
     let l:nr2 = winnr('$')
@@ -217,13 +220,11 @@ endfunction
 function! s:MoveToNewTab() abort
     tab split
     tabprevious
-
     if winnr('$') > 1
         close
     elseif bufnr('$') > 1
         buffer #
     endif
-
     tabnext
 endfunction
 
@@ -245,6 +246,8 @@ endif
 Plug 'dense-analysis/ale'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'kassio/neoterm'
 Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
 Plug 'kana/vim-submode'
@@ -252,6 +255,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'Yggdroot/indentline'
 Plug 'cocopon/iceberg.vim'
 call plug#end()
@@ -260,11 +264,6 @@ let s:plug = { "plugs": get(g:, 'plugs', {}) }
 function! s:plug.is_installed(name) abort
     return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
-
-"deoplete
-if s:plug.is_installed("deoplete.nvim")
-    let g:deoplete#enable_at_startup = 1
-endif
 
 "coc.nvim
 if s:plug.is_installed("coc.nvim")
@@ -285,28 +284,17 @@ if s:plug.is_installed("coc.nvim")
     nmap <leader>cf  <Plug>(coc-fix-current)
 endif
 
-"denite
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
-  \ denite#do_map('toggle_select').'j'
-endfunction
+"NERDTree
+if s:plug.is_installed("nerdtree")
+    nnoremap <Leader>n :<C-u>NERDTreeToggle<CR>
+endif
 
-"neosnippet
-if s:plug.is_installed("neosnippet")
-    imap <C-k> <Plug>(neosnippet_expand_or_jump)
-    smap <C-k> <Plug>(neosnippet_expand_or_jump)
-    xmap <C-k> <Plug>(neosnippet_expand_target)
+"neoterm
+if s:plug.is_installed("neoterm")
+    let g:neoterm_default_mod='belowright'
+    let g:neoterm_size=10
+    nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR>
+    tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
 endif
 
 "ale
@@ -318,12 +306,7 @@ endif
 let g:tex_flavor = 'latax'
 let g:vimtex_quickfix_open_on_warning = 0
 let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
-if s:plug.is_installed("deoplete.nvim")
-    call deoplete#custom#var('omni', 'input_patterns', { 'tex': g:vimtex#re#deoplete })
-endif
-if has('python3')
-    let g:vimtex_compiler_progname = 'nvr'
-endif
+let g:vimtex_compiler_progname = 'nvr'
 
 "vim-submode
 if s:plug.is_installed("vim-submode")
@@ -343,6 +326,7 @@ if s:plug.is_installed("vim-airline")
     let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
     let g:airline_section_z = '%l/%L,%c'
     "let g:airline#extensions#whitespace#enabled = 0
+    let g:airline_theme='distinguished'
 else
     set statusline=%<%f%m%r%h%w
     set statusline+=%=
@@ -352,5 +336,6 @@ else
 endif
 
 "colorsheme
+set termguicolors
 set t_Co=256
 colorscheme iceberg
