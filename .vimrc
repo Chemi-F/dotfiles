@@ -256,7 +256,7 @@ Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'Yggdroot/indentline'
+"Plug 'Yggdroot/indentline'
 Plug 'cocopon/iceberg.vim'
 call plug#end()
 
