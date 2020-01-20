@@ -133,6 +133,7 @@ endfunction
 
 "command
 command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
+command! Cd execute 'lcd %:h'
 
 "function! s:VimHelpVertical2Lang
 "endfunction
