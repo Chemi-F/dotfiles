@@ -328,6 +328,7 @@ if s:plug.is_installed("vim-airline")
     let g:airline_section_z = '%l/%L,%c'
     "let g:airline#extensions#whitespace#enabled = 0
     let g:airline_theme='distinguished'
+    let g:airline_powerline_fonts = 1
 else
     set statusline=%<%f%m%r%h%w
     set statusline+=%=
