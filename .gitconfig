@@ -1,9 +1,0 @@
-[user]
-	name = Chemi-F
-	email = ryo.u.z.0429@gmail.com
-[push]
-	default = simple
-[color]
-	ui = true
-[core]
-	editor = vim
