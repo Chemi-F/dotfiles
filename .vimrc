@@ -18,12 +18,12 @@ let s:is_windows = has('win32')
 
 if s:is_windows
     set shellslash
-    let s:vimfiles_dir = expand('~/vimfiles')
+    "let s:vimfiles_dir = expand('~/vimfiles')
 else
     if s:is_neovim
         let s:vimfiles_dir = expand('~/.local/share/nvim')
     else
-        let s:vimfiles_dir = expand('~/.vim')
+        "let s:vimfiles_dir = expand('~/.vim')
     endif
 endif
 
@@ -236,108 +236,110 @@ endif
 
 "plugin
 "vim-plug
-call plug#begin(s:plug_dir)
-Plug 'junegunn/vim-plug'
-Plug 'vim-jp/vimdoc-ja'
-if has('timers') && has('python3')
-    if s:is_neovim
-        Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-    endif
-endif
-Plug 'dense-analysis/ale'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
-Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'kassio/neoterm'
-Plug 'lervag/vimtex'
-Plug 'plasticboy/vim-markdown'
-Plug 'kana/vim-submode'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'jiangmiao/auto-pairs'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-"Plug 'Yggdroot/indentline'
-Plug 'cocopon/iceberg.vim'
-call plug#end()
+if s:is_neovim
+    call plug#begin(s:plug_dir)
+    Plug 'junegunn/vim-plug'
+    Plug 'vim-jp/vimdoc-ja'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
+    Plug 'junegunn/fzf.vim'
+    Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+    Plug 'kassio/neoterm'
+    Plug 'lervag/vimtex'
+    Plug 'plasticboy/vim-markdown'
+    Plug 'kana/vim-submode'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-repeat'
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'cocopon/iceberg.vim'
+    call plug#end()
 
-let s:plug = { "plugs": get(g:, 'plugs', {}) }
-function! s:plug.is_installed(name) abort
-    return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
-endfunction
-
-"coc.nvim
-if s:plug.is_installed("coc.nvim")
-    autocmd FileType json syntax match Comment +\/\/.\+$+
-    function! s:check_back_space() abort
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~ '\s'
+    let s:plug = { "plugs": get(g:, 'plugs', {}) }
+    function! s:plug.is_installed(name) abort
+        return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
     endfunction
-    inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ coc#refresh()
-    nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gy <Plug>(coc-type-definition)
-    nmap <silent> gi <Plug>(coc-implementation)
-    nmap <silent> gr <Plug>(coc-references)
-    nmap <leader>cr <Plug>(coc-rename)
-    nmap <leader>cf  <Plug>(coc-fix-current)
-endif
 
-"NERDTree
-if s:plug.is_installed("nerdtree")
-    nnoremap <Leader>n :<C-u>NERDTreeToggle<CR>
-endif
+    "coc.nvim
+    if s:plug.is_installed("coc.nvim")
+        autocmd FileType json syntax match Comment +\/\/.\+$+
+        function! s:check_back_space() abort
+            let col = col('.') - 1
+            return !col || getline('.')[col - 1]  =~ '\s'
+        endfunction
+        inoremap <silent><expr> <TAB>
+                    \ pumvisible() ? "\<C-n>" :
+                    \ <SID>check_back_space() ? "\<TAB>" :
+                    \ coc#refresh()
+        nmap <silent> gd <Plug>(coc-definition)
+        nmap <silent> gy <Plug>(coc-type-definition)
+        nmap <silent> gi <Plug>(coc-implementation)
+        nmap <silent> gr <Plug>(coc-references)
+        nmap <leader>cr <Plug>(coc-rename)
+        nmap <leader>cf  <Plug>(coc-fix-current)
+    endif
 
-"neoterm
-if s:plug.is_installed("neoterm")
-    let g:neoterm_default_mod='belowright'
-    let g:neoterm_size=10
-    nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR>
-    tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
-endif
+    "NERDTree
+    if s:plug.is_installed("nerdtree")
+        nnoremap <Leader>n :<C-u>NERDTreeToggle<CR>
+    endif
 
-"ale
-if s:plug.is_installed("ale")
-    let g:ale_sign_column_always = 1
-endif
+    "neoterm
+    if s:plug.is_installed("neoterm")
+        let g:neoterm_default_mod='belowright'
+        let g:neoterm_size=10
+        nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR>
+        tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
+    endif
 
-"vimtex
-let g:tex_flavor = 'latax'
-let g:vimtex_quickfix_open_on_warning = 0
-let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
-let g:vimtex_compiler_progname = 'nvr'
+    "ale
+    if s:plug.is_installed("ale")
+        let g:ale_sign_column_always = 1
+    endif
 
-"vim-submode
-if s:plug.is_installed("vim-submode")
-    call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
-    call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
-    call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
-    call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
-    call submode#map('winsize', 'n', '', '>', '<C-w>>')
-    call submode#map('winsize', 'n', '', '<', '<C-w><')
-    call submode#map('winsize', 'n', '', '+', '<C-w>+')
-    call submode#map('winsize', 'n', '', '-', '<C-w>-')
-endif
+    "vimtex
+    let g:tex_flavor = 'latax'
+    let g:vimtex_quickfix_open_on_warning = 0
+    let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
+    let g:vimtex_compiler_progname = 'nvr'
 
-"vim-airline
-set laststatus=2
-if s:plug.is_installed("vim-airline")
-    let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
-    let g:airline_section_z = '%l/%L,%c'
-    "let g:airline#extensions#whitespace#enabled = 0
-    let g:airline_theme='distinguished'
-    let g:airline_powerline_fonts = 1
+    "vim-submode
+    if s:plug.is_installed("vim-submode")
+        call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
+        call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
+        call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
+        call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
+        call submode#map('winsize', 'n', '', '>', '<C-w>>')
+        call submode#map('winsize', 'n', '', '<', '<C-w><')
+        call submode#map('winsize', 'n', '', '+', '<C-w>+')
+        call submode#map('winsize', 'n', '', '-', '<C-w>-')
+    endif
+
+    "vim-airline
+    set laststatus=2
+    if s:plug.is_installed("vim-airline")
+        let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
+        let g:airline_section_z = '%l/%L,%c'
+        "let g:airline#extensions#whitespace#enabled = 0
+        let g:airline_theme='distinguished'
+        let g:airline_powerline_fonts = 1
+    else
+        set statusline=%<%f%m%r%h%w
+        set statusline+=%=
+        set statusline+=\|\ %{&fileencoding},%{&fileformat}
+        set statusline+=\ \|\ %Y
+        set statusline+=\ \|\ %l/%L,%c\ \|
+    endif
+
+    "colorsheme
+    set termguicolors
+    set t_Co=256
+    colorscheme iceberg
 else
+    "statusline for vim
     set statusline=%<%f%m%r%h%w
     set statusline+=%=
     set statusline+=\|\ %{&fileencoding},%{&fileformat}
     set statusline+=\ \|\ %Y
     set statusline+=\ \|\ %l/%L,%c\ \|
 endif
-
-"colorsheme
-set termguicolors
-set t_Co=256
-colorscheme iceberg
