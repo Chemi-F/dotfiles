@@ -265,23 +265,15 @@ if s:is_neovim
         return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
     endfunction
 
-    "coc.nvim
-    if s:plug.is_installed("coc.nvim")
-        autocmd FileType json syntax match Comment +\/\/.\+$+
-        function! s:check_back_space() abort
-            let col = col('.') - 1
-            return !col || getline('.')[col - 1]  =~ '\s'
-        endfunction
-        inoremap <silent><expr> <TAB>
-                    \ pumvisible() ? "\<C-n>" :
-                    \ <SID>check_back_space() ? "\<TAB>" :
-                    \ coc#refresh()
-        nmap <silent> gd <Plug>(coc-definition)
-        nmap <silent> gy <Plug>(coc-type-definition)
-        nmap <silent> gi <Plug>(coc-implementation)
-        nmap <silent> gr <Plug>(coc-references)
-        nmap <leader>cr <Plug>(coc-rename)
-        nmap <leader>cf  <Plug>(coc-fix-current)
+    "vim-lsp
+    if s:plug.is_installed("vim-lsp")
+        nnoremap <silent> <Leader>d :<C-u>LspDefinition<CR>
+        nnoremap <silent> <Leader>rn :<C-u>LspRename<CR>
+        nnoremap <silent> <Leader>td :<C-u>LspTypeDefinition<CR>
+        nnoremap <silent> <Leader>rf :<C-u>LspReferences<CR>
+        let g:lsp_diagnostics_enabled = 1
+        let g:lsp_diagnostics_echo_cursor = 1
+        let g:asyncomplete_popup_delay = 200
     endif
 
     "NERDTree
@@ -295,11 +287,6 @@ if s:is_neovim
         let g:neoterm_size=10
         nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR>
         tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
-    endif
-
-    "ale
-    if s:plug.is_installed("ale")
-        let g:ale_sign_column_always = 1
     endif
 
     "vimtex
