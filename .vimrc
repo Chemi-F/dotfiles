@@ -265,6 +265,15 @@ if s:is_neovim
         return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
     endfunction
 
+    "fzf
+    if s:plug.is_installed("fzf.vim")
+        command! -bang -nargs=* Ag
+          \ call fzf#vim#ag(<q-args>,
+          \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+          \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+          \                 <bang>0)
+    endif
+
     "vim-lsp
     if s:plug.is_installed("vim-lsp")
         nnoremap <silent> <Leader>d :<C-u>LspDefinition<CR>
