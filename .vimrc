@@ -149,7 +149,7 @@ nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
-nnoremap <Leader>r :<C-u>registers<CR>
+"nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
@@ -296,17 +296,27 @@ if s:is_neovim
 
     "vim-lsp
     if s:plug.is_installed("vim-lsp")
-        nnoremap <silent> <Leader>d :<C-u>LspDefinition<CR>
-        nnoremap <silent> <Leader>rn :<C-u>LspRename<CR>
-        nnoremap <silent> <Leader>td :<C-u>LspTypeDefinition<CR>
-        nnoremap <silent> <Leader>rf :<C-u>LspReferences<CR>
+        function! s:on_lsp_buffer_enabled() abort
+            setlocal omnifunc=lsp#complete
+            setlocal signcolumn=yes
+            nmap <buffer> gd <plug>(lsp-definition)
+            nmap <buffer> <Leader>rn <plug>(lsp-rename)
+            inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
+        endfunction
+
+        augroup lsp_install
+            au!
+            autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+        augroup END
+        command! LspDebug let lsp_log_verbose=1 | let lsp_log_file = expand('~/lsp.log')
+
         let g:lsp_diagnostics_enabled = 1
         let g:lsp_diagnostics_echo_cursor = 1
         let g:asyncomplete_popup_delay = 200
     endif
 
     "asyncomplete.vim
-    if s:plug.is_installed("asyncomplete")
+    if s:plug.is_installed("asyncomplete.vim")
         inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
         inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
         inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
@@ -315,6 +325,7 @@ if s:is_neovim
     "NERDTree
     if s:plug.is_installed("nerdtree")
         nnoremap <Leader>n :<C-u>NERDTreeToggle<CR>
+        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
     endif
 
     "neoterm
