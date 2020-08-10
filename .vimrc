@@ -18,12 +18,12 @@ let s:is_windows = has('win32')
 
 if s:is_windows
     set shellslash
-    "let s:vimfiles_dir = expand('~/vimfiles')
+    let s:vimfiles_dir = expand('~/vimfiles')
 else
     if s:is_neovim
         let s:vimfiles_dir = expand('~/.local/share/nvim')
     else
-        "let s:vimfiles_dir = expand('~/.vim')
+        let s:vimfiles_dir = expand('~/.vim')
     endif
 endif
 
@@ -230,6 +230,10 @@ function! s:MoveToNewTab() abort
 endfunction
 nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
 
+if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    finish
+end
+
 "package
 if !s:is_neovim && has('eval') && v:version > 800
     packadd! matchit
@@ -239,26 +243,32 @@ endif
 "vim-plug
 if s:is_neovim
     call plug#begin(s:plug_dir)
+    "manual
     Plug 'junegunn/vim-plug'
     Plug 'vim-jp/vimdoc-ja'
+    "fzf
     Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
     Plug 'junegunn/fzf.vim'
-    Plug 'prabirshrestha/async.vim'
-    Plug 'prabirshrestha/asyncomplete.vim'
-    Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    "vim-lsp, auto-completion
     Plug 'prabirshrestha/vim-lsp'
     Plug 'mattn/vim-lsp-settings'
+    Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    "NERD Tree
     Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+    "Terminal
     Plug 'kassio/neoterm'
+    "Theme
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'cocopon/iceberg.vim'
+
     Plug 'lervag/vimtex'
     Plug 'plasticboy/vim-markdown'
     Plug 'kana/vim-submode'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'jiangmiao/auto-pairs'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'cocopon/iceberg.vim'
     call plug#end()
 
     let s:plug = { "plugs": get(g:, 'plugs', {}) }
@@ -268,11 +278,13 @@ if s:is_neovim
 
     "fzf
     if s:plug.is_installed("fzf.vim")
-        command! -bang -nargs=* Ag
-          \ call fzf#vim#ag(<q-args>,
-          \         <bang>0 ? fzf#vim#with_preview('up:60%')
-          \                 : fzf#vim#with_preview('right:50%:hidden', '?'),
-          \         <bang>0)
+        if executable('Ag')
+            command! -bang -nargs=* Ag
+                        \ call fzf#vim#ag(<q-args>,
+                        \         <bang>0 ? fzf#vim#with_preview('up:60%')
+                        \                 : fzf#vim#with_preview('right:50%:hidden', '?'),
+                        \         <bang>0)
+        endif
     endif
 
     "vim-lsp
@@ -284,6 +296,13 @@ if s:is_neovim
         let g:lsp_diagnostics_enabled = 1
         let g:lsp_diagnostics_echo_cursor = 1
         let g:asyncomplete_popup_delay = 200
+    endif
+
+    "asyncomplete.vim
+    if s:plug.is_installed("asyncomplete")
+        inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+        inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+        inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
     endif
 
     "NERDTree
@@ -337,6 +356,8 @@ if s:is_neovim
     set termguicolors
     set t_Co=256
     colorscheme iceberg
+
+"vim-plug don't install
 else
     "statusline for vim
     set statusline=%<%f%m%r%h%w
