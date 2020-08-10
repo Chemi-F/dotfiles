@@ -23,19 +23,25 @@ else
     if s:is_neovim
         let s:vimfiles_dir = expand('~/.local/share/nvim')
     else
-        let s:vimfiles_dir = expand('~/.vim')
+        "let s:vimfiles_dir = expand('~/.vim')
     endif
 endif
 
-let s:plug_dir = s:vimfiles_dir . '/plugged'
-let s:swap_dir = s:vimfiles_dir . '/swap'
+if exists('s:vimfiles_dir')
+    let s:plug_dir = s:vimfiles_dir . '/plugged'
+    let s:swap_dir = s:vimfiles_dir . '/swap'
 
-function! s:make_dir(dir) abort
-    if !isdirectory(a:dir)
-        call mkdir(a:dir, 'p')
-    endif
-endfunction
-call s:make_dir(s:swap_dir)
+    function! s:make_dir(dir) abort
+        if !isdirectory(a:dir)
+            call mkdir(a:dir, 'p')
+        endif
+    endfunction
+    call s:make_dir(s:swap_dir)
+
+    "the swap file
+    execute 'set directory=' . s:swap_dir
+    set swapfile
+endif
 
 if s:is_windows
 endif
@@ -102,10 +108,6 @@ set smartindent
 
 "reading and writing files
 set nobackup
-
-"the swap file
-execute 'set directory=' . s:swap_dir
-set swapfile
 
 "command line editing
 set wildmenu
