@@ -84,7 +84,7 @@ set visualbell t_vb=
 set helplang=en,ja
 
 "selecting text
-set clipboard+=unnamed
+"set clipboard+=unnamed
 
 "editing text
 set backspace=indent,eol,start
@@ -152,9 +152,6 @@ nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
-nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToJa()<CR>
-nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
-nnoremap <silent> <Leader>f :<C-u>call <SID>ToggleQuickfix()<CR>
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <silent> <C-n> :<C-u>cnext<CR>
 nnoremap <silent> <C-p> :<C-u>cprevious<CR>
@@ -196,6 +193,7 @@ cnoremap <C-d> <Del>
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap <A-j> <C-\><C-n>
 "function for map
+
 let s:helplang_is_ja = 0
 function! s:HelplangToJa() abort "To use K in Japanese
     if s:helplang_is_ja
@@ -208,6 +206,7 @@ function! s:HelplangToJa() abort "To use K in Japanese
         echo "Help language is Japanese"
     endif
 endfunction
+nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToJa()<CR>
 
 function! s:ToggleQuickfix() abort "quickfix window open
     let l:nr = winnr('$')
@@ -217,6 +216,7 @@ function! s:ToggleQuickfix() abort "quickfix window open
         cclose
     endif
 endfunction
+nnoremap <silent> <Leader>f :<C-u>call <SID>ToggleQuickfix()<CR>
 
 function! s:MoveToNewTab() abort
     tab split
@@ -228,6 +228,7 @@ function! s:MoveToNewTab() abort
     endif
     tabnext
 endfunction
+nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
 
 "package
 if !s:is_neovim && has('eval') && v:version > 800
@@ -269,9 +270,9 @@ if s:is_neovim
     if s:plug.is_installed("fzf.vim")
         command! -bang -nargs=* Ag
           \ call fzf#vim#ag(<q-args>,
-          \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-          \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-          \                 <bang>0)
+          \         <bang>0 ? fzf#vim#with_preview('up:60%')
+          \                 : fzf#vim#with_preview('right:50%:hidden', '?'),
+          \         <bang>0)
     endif
 
     "vim-lsp
