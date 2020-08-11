@@ -261,6 +261,8 @@ if s:is_neovim
     Plug 'mattn/vim-lsp-settings'
     Plug 'prabirshrestha/asyncomplete.vim'
     Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    "Git
+    Plug 'tpope/vim-fugitive'
     "NERD Tree
     Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
     "Terminal
@@ -283,15 +285,18 @@ if s:is_neovim
         return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
     endfunction
 
-    "fzf
+    "fzf.vim
     if s:plug.is_installed("fzf.vim")
-        if executable('Ag')
-            command! -bang -nargs=* Ag
-                        \ call fzf#vim#ag(<q-args>,
-                        \         <bang>0 ? fzf#vim#with_preview('up:60%')
-                        \                 : fzf#vim#with_preview('right:50%:hidden', '?'),
-                        \         <bang>0)
-        endif
+        autocmd! FileType fzf set laststatus=0 noshowmode noruler
+          \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+
+        "push '?' to preview
+        command! -bang -nargs=* Rg
+                    \ call fzf#vim#grep(
+          \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+          \   <bang>0 ? fzf#vim#with_preview('up:60%')
+          \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+          \   <bang>0)
     endif
 
     "vim-lsp
@@ -331,9 +336,11 @@ if s:is_neovim
     "neoterm
     if s:plug.is_installed("neoterm")
         let g:neoterm_default_mod='belowright'
-        let g:neoterm_size=10
+        let g:neoterm_size=8
+        let g:neoterm_autoscroll=1
         nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR>
         tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
+        vnoremap <silent> <C-e> V:TREPLSendSelection<CR>'>j0
     endif
 
     "vimtex
