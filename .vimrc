@@ -1,5 +1,7 @@
 if !1 | finish | endif
 
+"test
+
 "encoding
 set encoding=utf-8
 scriptencoding utf-8
