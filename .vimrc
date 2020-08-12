@@ -122,11 +122,15 @@ autocmd myvimrc InsertLeave * set nopaste
 autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
 autocmd myvimrc FileType help set keywordprg=:help
 autocmd myvimrc FileType qf call s:FtQuickfix()
+
+"terminal-mode autocmd
 if has('nvim')
     autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
 else
     autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
+autocmd myvimrc bufenter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
+
 
 function! s:FtQuickfix() abort
   setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
@@ -166,6 +170,10 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+"nnoremap <C-H> <C-w>H
+"nnoremap <C-J> <C-w>J
+"nnoremap <C-K> <C-w>K
+"nnoremap <C-L> <C-w>L
 nnoremap Y y$
 noremap <Leader>h ^
 noremap <Leader>l $
@@ -263,8 +271,9 @@ if s:is_neovim
     Plug 'prabirshrestha/asyncomplete-lsp.vim'
     "Git
     Plug 'tpope/vim-fugitive'
-    "NERD Tree
-    Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+    "Filer
+    Plug 'preservim/nerdtree'
+    "Plug 'cocopon/vaffle.vim'
     "Terminal
     Plug 'kassio/neoterm'
     "Theme
@@ -278,6 +287,7 @@ if s:is_neovim
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'jiangmiao/auto-pairs'
+    "Plug 'yuttie/comfortable-motion.vim'
     call plug#end()
 
     let s:plug = { "plugs": get(g:, 'plugs', {}) }
@@ -329,8 +339,14 @@ if s:is_neovim
 
     "NERDTree
     if s:plug.is_installed("nerdtree")
+        augroup nerdtree_autocmd
+            au!
+            autocmd StdinReadPre * let s:std_in=1
+            autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+            autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        augroup END
+        let g:NERDTreeWinSize=22
         nnoremap <Leader>n :<C-u>NERDTreeToggle<CR>
-        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
     endif
 
     "neoterm
