@@ -1,6 +1,6 @@
 if !1 | finish | endif
 
-"test
+"neovim test
 
 "encoding
 set encoding=utf-8
