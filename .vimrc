@@ -124,11 +124,11 @@ autocmd myvimrc FileType help set keywordprg=:help
 autocmd myvimrc FileType qf call s:FtQuickfix()
 
 "terminal-mode autocmd
-if has('nvim')
-    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
-else
-    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
-endif
+"if has('nvim')
+"    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
+"else
+"    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+"endif
 autocmd myvimrc bufenter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
 
 
@@ -381,9 +381,9 @@ if s:is_neovim
         let g:neoterm_default_mod='belowright'
         let g:neoterm_size=8
         let g:neoterm_autoscroll=1
-        nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR>
+        nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR><ESC>
         tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
-        vnoremap <silent> <C-e> V:TREPLSendSelection<CR>'>j0
+        vnoremap <silent> <C-e> :TREPLSendSelection<CR><ESC>
     endif
 
     "vimtex
