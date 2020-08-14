@@ -170,10 +170,10 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-"nnoremap <C-H> <C-w>H
-"nnoremap <C-J> <C-w>J
-"nnoremap <C-K> <C-w>K
-"nnoremap <C-L> <C-w>L
+nnoremap <Tab>h <C-w>H
+nnoremap <Tab>j <C-w>J
+nnoremap <Tab>k <C-w>K
+nnoremap <Tab>l <C-w>L
 nnoremap Y y$
 noremap <Leader>h ^
 noremap <Leader>l $
