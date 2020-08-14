@@ -297,8 +297,11 @@ if s:is_neovim
 
     "fzf.vim
     if s:plug.is_installed("fzf.vim")
-        autocmd! FileType fzf set laststatus=0 noshowmode noruler
-          \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+        augroup fzf
+            au!
+            autocmd FileType fzf set laststatus=0 noshowmode noruler
+              \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+        augroup END
 
         "push '?' to preview
         command! -bang -nargs=* Rg
@@ -357,12 +360,20 @@ if s:is_neovim
                 let s:nerdtreeToggle = 1
             endif
         endfunction
-
         nnoremap <silent> <Leader>n :<C-u>call <SID>NotWindowMoveWhenNERDTreeOpen()<CR>
     endif
 
     "vaffle
     if s:plug.is_installed("vaffle.vim")
+        function! s:customize_vaffle_mappings() abort
+            nmap <buffer> <Bslash> <Plug>(vaffle-open-root)
+            nmap <buffer> c <Plug>(vaffle-chdir-here)
+            map <buffer> s <Plug>(vaffle-toggle-current)
+        endfunction
+        augroup vaffle
+            au!
+            autocmd FileType vaffle call s:customize_vaffle_mappings()
+        augroup END
     endif
 
     "neoterm
