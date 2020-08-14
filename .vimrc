@@ -273,7 +273,7 @@ if s:is_neovim
     Plug 'tpope/vim-fugitive'
     "Filer
     Plug 'preservim/nerdtree'
-    "Plug 'cocopon/vaffle.vim'
+    Plug 'cocopon/vaffle.vim'
     "Terminal
     Plug 'kassio/neoterm'
     "Theme
@@ -339,14 +339,30 @@ if s:is_neovim
 
     "NERDTree
     if s:plug.is_installed("nerdtree")
+        let NERDTreeHijackNetrw = 0
+        let NERDTreeMinimalUI=1
         augroup nerdtree_autocmd
             au!
-            autocmd StdinReadPre * let s:std_in=1
-            autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
             autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
         augroup END
         let g:NERDTreeWinSize=22
-        nnoremap <Leader>n :<C-u>NERDTreeToggle<CR>
+
+        let s:nerdtreeToggle=0
+        function! s:NotWindowMoveWhenNERDTreeOpen() abort
+            if s:nerdtreeToggle
+                NERDTreeClose
+                let s:nerdtreeToggle = 0
+            else
+                NERDTreeFind | wincmd p
+                let s:nerdtreeToggle = 1
+            endif
+        endfunction
+
+        nnoremap <silent> <Leader>n :<C-u>call <SID>NotWindowMoveWhenNERDTreeOpen()<CR>
+    endif
+
+    "vaffle
+    if s:plug.is_installed("vaffle.vim")
     endif
 
     "neoterm
