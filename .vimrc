@@ -129,7 +129,7 @@ autocmd myvimrc FileType qf call s:FtQuickfix()
 "else
 "    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 "endif
-autocmd myvimrc bufenter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
+autocmd myvimrc BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
 
 
 function! s:FtQuickfix() abort
