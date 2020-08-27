@@ -240,15 +240,6 @@ function! s:MoveToNewTab() abort
 endfunction
 nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
 
-if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
-    set statusline=%<%f%m%r%h%w
-    set statusline+=%=
-    set statusline+=\|\ %{&fileencoding},%{&fileformat}
-    set statusline+=\ \|\ %Y
-    set statusline+=\ \|\ %l/%L,%c\ \|
-    finish
-end
-
 "package
 if !s:is_neovim && has('eval') && v:version > 800
     packadd! matchit
