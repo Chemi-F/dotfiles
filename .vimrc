@@ -20,7 +20,7 @@ else
     if s:is_neovim
         let s:vimfiles_dir = expand('~/.local/share/nvim')
     else
-        "let s:vimfiles_dir = expand('~/.vim')
+        let s:vimfiles_dir = expand('~/.vim')
     endif
 endif
 
@@ -55,7 +55,7 @@ set tags+=tags;
 
 "4 displaying text
 set scrolloff=5
-if v:version > 800
+if v:version >= 800
     set breakindent
 endif
 set showbreak=>\
@@ -197,6 +197,9 @@ inoremap jj <Esc>
 inoremap ｊｊ <Esc>
 inoremap <C-c> <Esc>
 inoremap <C-@> <C-[>
+"visual
+vnoremap < <gv
+vnoremap > >gv
 "command
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
@@ -247,7 +250,7 @@ endfunction
 nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
 
 "package
-if !s:is_neovim && has('eval') && v:version > 800
+if !s:is_neovim && has('eval') && v:version >= 800
     packadd! matchit
 endif
 
@@ -288,7 +291,7 @@ call plug#begin(s:plug_dir)
     Plug 'kana/vim-submode'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
-    Plug 'jiangmiao/auto-pairs'
+    Plug 'jiangmiao/auto-pairs' "<M-p> Toggle
     "Plug 'yuttie/comfortable-motion.vim'
 call plug#end()
 
