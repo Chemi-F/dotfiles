@@ -1,17 +1,14 @@
 if !1 | finish | endif
 
 "encoding
+set fileencodings=utf-8,sjis
 set encoding=utf-8
+
 scriptencoding utf-8
 
 if &compatible
     set nocompatible
 endif
-
-"autocmd reset
-augroup myvimrc
-    autocmd!
-augroup END
 
 let s:is_neovim = has('nvim')
 let s:is_windows = has('win32')
@@ -122,20 +119,23 @@ set wildmenu
 set viminfo='50,<500,s100,h
 
 "autocmd
-autocmd myvimrc QuickFixCmdPost *grep*,make cwindow
-autocmd myvimrc ColorScheme * highlight clear Cursorline
-autocmd myvimrc InsertLeave * set nopaste
-autocmd myvimrc FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
-autocmd myvimrc FileType help set keywordprg=:help
-autocmd myvimrc FileType qf call s:FtQuickfix()
+augroup myvimrc
+    autocmd!
+    autocmd QuickFixCmdPost *grep*,make cwindow
+    autocmd ColorScheme * highlight clear Cursorline
+    autocmd InsertLeave * set nopaste
+    autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
+    autocmd FileType help set keywordprg=:help
+    autocmd FileType qf call s:FtQuickfix()
 
-"terminal-mode autocmd
-"if has('nvim')
-"    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
-"else
-"    autocmd myvimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
-"endif
-autocmd myvimrc BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
+    "terminal-mode autocmd
+    "if has('nvim')
+    "    autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
+    "else
+    "    autocmd WinEnter * if &buftype ==# 'terminal' | normal i | endif
+    "endif
+    autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
+augroup END
 
 
 function! s:FtQuickfix() abort
