@@ -10,6 +10,7 @@ if &compatible
     set nocompatible
 endif
 
+"version settings
 let s:is_neovim = has('nvim')
 let s:is_windows = has('win32')
 
@@ -35,13 +36,10 @@ if exists('s:vimfiles_dir')
     endfunction
     call s:make_dir(s:swap_dir)
 
-    "the swap file
+    "swap file
     execute 'set directory=' . s:swap_dir
     set swapfile
 endif
-
-"if s:is_windows
-"endif
 
 "options (:options)
 "2 moving around, searching and patterns
@@ -90,6 +88,7 @@ endif
 set showcmd
 set noerrorbells
 set visualbell t_vb=
+set belloff=all
 set helplang=en,ja
 
 "12 selecting text
@@ -118,52 +117,23 @@ set wildmenu
 "25 various
 set viminfo='50,<500,s100,h
 
-"autocmd
-augroup myvimrc
-    autocmd!
-    autocmd QuickFixCmdPost *grep*,make cwindow
-    autocmd ColorScheme * highlight clear Cursorline
-    autocmd InsertLeave * set nopaste
-    autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
-    autocmd FileType help set keywordprg=:help
-    autocmd FileType qf call s:FtQuickfix()
-
-    "terminal-mode autocmd
-    "if has('nvim')
-    "    autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
-    "else
-    "    autocmd WinEnter * if &buftype ==# 'terminal' | normal i | endif
-    "endif
-    autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q | endif
-augroup END
-
-
-function! s:FtQuickfix() abort
-  setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
-  setlocal nowrap
-endfunction
-
-"command
-command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
-command! Cd execute 'lcd %:h'
-
-"function! s:VimHelpVertical2Lang
-"endfunction
-
 "key-mapping
 let g:mapleader = "\<Space>"
 "normal
-nnoremap <Leader>w :<C-u>w<CR>
-nnoremap <Leader>q :<C-u>q<CR>
+"Leader
+nnoremap <Leader>w :<C-u>write<CR>
+nnoremap <Leader>q :<C-u>quit<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 "nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
-nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
+nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR> "insert line break
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
+nnoremap <silent> <Leader>to :<C-u>bo terminal ++rows=5<CR><C-\><C-n><C-w>w
+"others
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <silent> <C-n> :<C-u>cnext<CR>
 nnoremap <silent> <C-p> :<C-u>cprevious<CR>
@@ -181,6 +151,7 @@ nnoremap <Tab>j <C-w>J
 nnoremap <Tab>k <C-w>K
 nnoremap <Tab>l <C-w>L
 nnoremap Y y$
+"normal, visual
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -194,25 +165,14 @@ noremap X "_X
 noremap * *N
 "insert
 inoremap jj <Esc>
-inoremap ｊｊ <Esc>
 inoremap <C-c> <Esc>
 inoremap <C-@> <C-[>
-"visual
-vnoremap < <gv
-vnoremap > >gv
-"command
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
-cnoremap <C-f> <Right>
-cnoremap <C-b> <Left>
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-d> <Del>
 "terimnal
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap <A-j> <C-\><C-n>
-"function for map
+tnoremap jj <C-\><C-n> 
 
+"function for map
 let s:helplang_is_ja = 0
 function! s:HelplangToJa() abort "To use K in Japanese
     if s:helplang_is_ja
@@ -249,6 +209,37 @@ function! s:MoveToNewTab() abort
 endfunction
 nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
 
+"autocmd
+augroup myvimrc
+    autocmd!
+    autocmd QuickFixCmdPost *grep*,make cwindow
+    autocmd ColorScheme * highlight clear Cursorline
+    autocmd InsertLeave * set nopaste
+    "help autocmd
+    autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
+    autocmd FileType help setlocal keywordprg=:help
+    autocmd FileType qf call s:quickfix_settings()
+    "terminal-mode autocmd
+    autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q! | endif
+    if !is_neovim
+        autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmode_settings() | endif
+    endif
+augroup END
+
+"function for autocmd
+function! s:quickfix_settings() abort
+    setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
+    setlocal nowrap
+endfunction
+function! s:terminalmode_settings() abort
+    setlocal bufhidden=wipe
+    nnoremap <buffer> <Leader>q :<C-u>quit!<CR>
+endfunction
+
+"command
+command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
+command! Cd execute 'lcd %:h'
+
 "package
 if !s:is_neovim && has('eval') && v:version >= 800
     packadd! matchit
@@ -256,7 +247,7 @@ endif
 
 "plugin
 "vim-plug
-if !s:is_neovim
+if empty(globpath(&rtp, 'autoload/plug.vim'))
     "vim-plug don't install
     colorscheme ron
     finish
@@ -392,10 +383,12 @@ if s:plug.is_installed("neoterm")
 endif
 
 "vimtex
-let g:tex_flavor = 'latax'
-let g:vimtex_quickfix_open_on_warning = 0
-let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
-let g:vimtex_compiler_progname = 'nvr'
+if s:plug.is_installed("vimtex")
+    let g:tex_flavor = 'latax'
+    let g:vimtex_quickfix_open_on_warning = 0
+    let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
+    let g:vimtex_compiler_progname = 'nvr'
+endif
 
 "vim-submode
 if s:plug.is_installed("vim-submode")
@@ -419,6 +412,8 @@ if s:plug.is_installed("vim-airline")
 endif
 
 "colorsheme
-set termguicolors
-set t_Co=256
-colorscheme iceberg
+if s:plug.is_installed("iceberg.vim")
+    set termguicolors
+    set t_Co=256
+    colorscheme iceberg
+endif
