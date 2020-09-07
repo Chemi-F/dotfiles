@@ -12,7 +12,7 @@ endif
 
 "version settings
 let s:is_neovim = has('nvim')
-let s:is_windows = has('win32')
+let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
     set shellslash
@@ -47,10 +47,8 @@ set wrapscan
 set incsearch
 set ignorecase
 set smartcase
-
 "3 tags
 set tags+=tags;
-
 "4 displaying text
 set scrolloff=5
 if v:version >= 800
@@ -62,11 +60,9 @@ set cmdheight=2
 set list
 set listchars=tab:^-
 set number
-
 "5 syntax, highlighting and spelling
 set hlsearch
 set cursorline
-
 "6 multiple windows
 set laststatus=2
 set statusline=%<%f%m%r%h%w
@@ -75,7 +71,6 @@ set statusline+=\|\ %{&fileencoding},%{&fileformat}
 set statusline+=\ \|\ %Y
 set statusline+=\ \|\ %l/%L,%c\ \|
 set hidden
-
 "8 terminal
 set title
 if s:is_neovim
@@ -83,44 +78,42 @@ if s:is_neovim
 else
     set titlestring=Vim:\ %f\ %h%r%m
 endif
-
 "11 messages and info
 set showcmd
 set noerrorbells
 set visualbell t_vb=
 set belloff=all
 set helplang=en,ja
-
 "12 selecting text
 "set clipboard+=unnamed
-
 "13 editing text
 set backspace=indent,eol,start
 set formatoptions-=ro
 set pumheight=10
 set showmatch
 set matchtime=1
-
 "14 tabs and indenting
 set tabstop=4
 set shiftwidth=4
 set expandtab
 set autoindent
 set smartindent
-
 "18 reading and writing files
 set nobackup
-
 "20 command line editing
 set wildmenu
-
+"21 executing external commands
+if !s:is_windows
+    set shell=/bin/bash
+endif
 "25 various
 set viminfo='50,<500,s100,h
 
 "key-mapping
 let g:mapleader = "\<Space>"
+nnoremap <Space> <Nop>
 "normal
-"Leader
+"Leader mapping
 nnoremap <Leader>w :<C-u>write<CR>
 nnoremap <Leader>q :<C-u>quit<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
@@ -129,10 +122,13 @@ nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 "nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
-nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR> "insert line break
+"insert line break
+nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
-nnoremap <silent> <Leader>to :<C-u>bo terminal ++rows=5<CR><C-\><C-n><C-w>w
+if !s:is_neovim
+    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=5<CR><C-\><C-n><C-w>w
+endif
 "others
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <silent> <C-n> :<C-u>cnext<CR>
@@ -169,8 +165,7 @@ inoremap <C-c> <Esc>
 inoremap <C-@> <C-[>
 "terimnal
 tnoremap <A-w> <C-\><C-n><C-w>w
-tnoremap <A-j> <C-\><C-n>
-tnoremap jj <C-\><C-n> 
+tnoremap jj <C-\><C-n>
 
 "function for map
 let s:helplang_is_ja = 0
@@ -212,16 +207,19 @@ nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
 "autocmd
 augroup myvimrc
     autocmd!
-    autocmd QuickFixCmdPost *grep*,make cwindow
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
     "help autocmd
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
-    autocmd FileType help setlocal keywordprg=:help
+    autocmd FileType help,vim setlocal keywordprg=:help
+
+    "quickfix autocmd
+    autocmd QuickFixCmdPost *grep*,make cwindow
     autocmd FileType qf call s:quickfix_settings()
+
     "terminal-mode autocmd
     autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q! | endif
-    if !is_neovim
+    if !s:is_neovim
         autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmode_settings() | endif
     endif
 augroup END
@@ -231,14 +229,20 @@ function! s:quickfix_settings() abort
     setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
     setlocal nowrap
 endfunction
+
 function! s:terminalmode_settings() abort
     setlocal bufhidden=wipe
-    nnoremap <buffer> <Leader>q :<C-u>quit!<CR>
+    nnoremap <silent> <buffer> q :<C-u>quit!<CR>
 endfunction
 
 "command
 command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
 command! Cd execute 'lcd %:h'
+
+"finish when use git commit
+if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    finish
+end
 
 "package
 if !s:is_neovim && has('eval') && v:version >= 800
@@ -248,7 +252,7 @@ endif
 "plugin
 "vim-plug
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    "vim-plug don't install
+    "finish when vim-plug isn't installed
     colorscheme ron
     finish
 endif
@@ -271,19 +275,19 @@ call plug#begin(s:plug_dir)
     Plug 'preservim/nerdtree'
     Plug 'cocopon/vaffle.vim'
     "Terminal
-    Plug 'kassio/neoterm'
+    if s:is_neovim
+        Plug 'kassio/neoterm'
+    endif
     "Theme
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
     Plug 'cocopon/iceberg.vim'
 
     Plug 'lervag/vimtex'
-    Plug 'plasticboy/vim-markdown'
     Plug 'kana/vim-submode'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-repeat'
     Plug 'jiangmiao/auto-pairs' "<M-p> Toggle
-    "Plug 'yuttie/comfortable-motion.vim'
 call plug#end()
 
 let s:plug = { "plugs": get(g:, 'plugs', {}) }
@@ -382,6 +386,15 @@ if s:plug.is_installed("neoterm")
     vnoremap <silent> <C-e> :TREPLSendSelection<CR><ESC>
 endif
 
+"vim-airline
+if s:plug.is_installed("vim-airline")
+    let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
+    let g:airline_section_z = '%l/%L,%c'
+    "let g:airline#extensions#whitespace#enabled = 0
+    let g:airline_theme='distinguished'
+    let g:airline_powerline_fonts = 1
+endif
+
 "vimtex
 if s:plug.is_installed("vimtex")
     let g:tex_flavor = 'latax'
@@ -402,18 +415,19 @@ if s:plug.is_installed("vim-submode")
     call submode#map('winsize', 'n', '', '-', '<C-w>-')
 endif
 
-"vim-airline
-if s:plug.is_installed("vim-airline")
-    let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
-    let g:airline_section_z = '%l/%L,%c'
-    "let g:airline#extensions#whitespace#enabled = 0
-    let g:airline_theme='distinguished'
-    let g:airline_powerline_fonts = 1
+if s:plug.is_installed("auto-pairs")
+    nnoremap <Leader>p :<C-u>call AutoPairsToggle()<CR>
 endif
 
 "colorsheme
 if s:plug.is_installed("iceberg.vim")
     set termguicolors
     set t_Co=256
+    set background=dark
     colorscheme iceberg
 endif
+
+augroup delay_autocmd
+    autocmd!
+    autocmd Filetype * set formatoptions-=ro
+augroup END
