@@ -115,7 +115,7 @@ nnoremap <Space> <Nop>
 "normal
 "Leader mapping
 nnoremap <Leader>w :<C-u>write<CR>
-nnoremap <Leader>q :<C-u>quit<CR>
+nnoremap <silent> <Leader>q :<C-u>quit<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
@@ -221,6 +221,9 @@ augroup myvimrc
     autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q! | endif
     if !s:is_neovim
         autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmode_settings() | endif
+        autocmd WinEnter * if &buftype ==# 'terminal' | normal i | endif
+    else
+        autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
     endif
 augroup END
 
@@ -232,7 +235,7 @@ endfunction
 
 function! s:terminalmode_settings() abort
     setlocal bufhidden=wipe
-    nnoremap <silent> <buffer> q :<C-u>quit!<CR>
+    nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
 endfunction
 
 "command
