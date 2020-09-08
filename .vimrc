@@ -215,7 +215,7 @@ augroup myvimrc
     autocmd FileType qf call s:quickfix_settings()
 
     "terminal-mode autocmd
-    autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q! | endif
+    autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'terminal') | q! | endif
     if !s:is_neovim
         autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmode_settings() | endif
     else
@@ -290,7 +290,7 @@ Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
-let s:plug = { "plugs": get(g:, 'plugs', {}) }
+let s:plug = { 'plugs': get(g:, 'plugs', {}) }
 function! s:plug.is_installed(name) abort
     return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
@@ -343,11 +343,11 @@ if s:plug.is_installed("nerdtree")
     let g:NERDTreeWinSize=22
     augroup nerdtree_autocmd
         autocmd!
-        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        autocmd bufenter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
     augroup END
 
     let s:nerdtree_toggle=0
-    function! s:dont_move_windwo_whenNERDTreeopen() abort
+    function! s:dont_move_window_whenNERDTreeopen() abort
         if s:nerdtree_toggle
             NERDTreeClose
             let s:nerdtree_toggle = 0
@@ -436,7 +436,7 @@ if s:plug.is_installed("lightline.vim")
     endfunction
     function! LightlineFugitive() abort
         if winwidth(0) > 70 && &filetype !=# "help"
-            if exists("*FugitiveHead")
+            if exists('*FugitiveHead')
                 let l:branch = FugitiveHead()
                 return branch !=# "" ? " ". l:branch : ""
             endif
@@ -444,7 +444,7 @@ if s:plug.is_installed("lightline.vim")
         return ""
     endfunction
     function! LightlineModified() abort
-        if &filetype !~# "\v(help|nerdtree)"
+        if &filetype !~# '\v(help|nerdtree)'
             if &modified
                 return "[+]"
             elseif !&modifiable
@@ -457,12 +457,12 @@ if s:plug.is_installed("lightline.vim")
         if &filetype ==# "vaffle"
             return b:vaffle.dir
         else
-            let l:filename = expand("%:t") !=# "" ? expand("%:t") : "[No Name]"
+            let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
             return l:filename . LightlineModified()
         endif
     endfunction
     function! LightlineReadonly() abort
-        return &readonly && &filetype !~# "\v(help|nerdtree)" ? "RO" : ""
+        return &readonly && &filetype !~# '\v(help|nerdtree)' ? "RO" : ""
     endfunction
     function! LightlineEncandFt() abort
         if winwidth(0) > 70
