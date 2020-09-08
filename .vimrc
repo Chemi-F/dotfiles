@@ -143,10 +143,6 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <Tab>h <C-w>H
-nnoremap <Tab>j <C-w>J
-nnoremap <Tab>k <C-w>K
-nnoremap <Tab>l <C-w>L
 nnoremap Y y$
 "normal, visual
 noremap <Leader>h ^
@@ -170,7 +166,7 @@ tnoremap jj <C-\><C-n>
 
 "function for map
 let s:helplang_is_ja = 0
-function! s:HelplangToJa() abort "To use K in Japanese
+function! s:helplang_to_Japanese() abort "To use K in Japanese
     if s:helplang_is_ja
         set helplang=en,ja
         let s:helplang_is_ja = 0
@@ -181,9 +177,9 @@ function! s:HelplangToJa() abort "To use K in Japanese
         echo "Help language is Japanese"
     endif
 endfunction
-nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToJa()<CR>
+nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang_to_Japanese()<CR>
 
-function! s:ToggleQuickfix() abort "quickfix window open
+function! s:toggle_quickfix() abort "quickfix window open
     let l:nr = winnr('$')
     cwindow
     let l:nr2 = winnr('$')
@@ -191,9 +187,9 @@ function! s:ToggleQuickfix() abort "quickfix window open
         cclose
     endif
 endfunction
-nnoremap <silent> <Leader>f :<C-u>call <SID>ToggleQuickfix()<CR>
+nnoremap <silent> <Leader>f :<C-u>call <SID>toggle_quickfix()<CR>
 
-function! s:MoveToNewTab() abort
+function! s:move_to_newtab() abort
     tab split
     tabprevious
     if winnr('$') > 1
@@ -203,7 +199,7 @@ function! s:MoveToNewTab() abort
     endif
     tabnext
 endfunction
-nnoremap <silent> <Leader>tm :<C-u>call <SID>MoveToNewTab()<CR>
+nnoremap <silent> <Leader>tm :<C-u>call <SID>move_to_newtab()<CR>
 
 "autocmd
 augroup myvimrc
@@ -261,37 +257,37 @@ if empty(globpath(&rtp, 'autoload/plug.vim'))
 endif
 
 call plug#begin(s:plug_dir)
-    "manual
-    Plug 'junegunn/vim-plug'
-    Plug 'vim-jp/vimdoc-ja'
-    "fzf
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
-    Plug 'junegunn/fzf.vim'
-    "vim-lsp, auto-completion
-    Plug 'prabirshrestha/vim-lsp'
-    Plug 'mattn/vim-lsp-settings'
-    Plug 'prabirshrestha/asyncomplete.vim'
-    Plug 'prabirshrestha/asyncomplete-lsp.vim'
-    "Git
-    Plug 'tpope/vim-fugitive'
-    "Filer
-    Plug 'preservim/nerdtree'
-    Plug 'cocopon/vaffle.vim'
-    "Terminal
-    if s:is_neovim
-        Plug 'kassio/neoterm'
-    endif
-    "Theme
-    "Plug 'vim-airline/vim-airline'
-    "Plug 'vim-airline/vim-airline-themes'
-    Plug 'itchyny/lightline.vim'
-    Plug 'cocopon/iceberg.vim'
-
-    Plug 'lervag/vimtex'
-    Plug 'kana/vim-submode'
-    Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-repeat'
-    Plug 'jiangmiao/auto-pairs' "<M-p> Toggle
+"manual
+Plug 'junegunn/vim-plug'
+Plug 'vim-jp/vimdoc-ja'
+"fzf
+Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
+Plug 'junegunn/fzf.vim'
+"vim-lsp, auto-completion
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+"Git
+Plug 'tpope/vim-fugitive'
+"Filer
+Plug 'preservim/nerdtree'
+Plug 'cocopon/vaffle.vim'
+"Terminal
+if s:is_neovim
+    Plug 'kassio/neoterm'
+endif
+"Theme
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
+Plug 'cocopon/iceberg.vim'
+"Others
+Plug 'lervag/vimtex'
+Plug 'kana/vim-submode'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 let s:plug = { "plugs": get(g:, 'plugs', {}) }
@@ -301,10 +297,10 @@ endfunction
 
 "fzf.vim
 if s:plug.is_installed("fzf.vim")
-    augroup fzf
+    augroup fzf_autocmd
         au!
         autocmd FileType fzf set laststatus=0 noshowmode noruler
-        \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+                    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
     augroup END
     "push '?' to preview
     command! -bang -nargs=* Rg
@@ -320,18 +316,17 @@ if s:plug.is_installed("vim-lsp")
     let g:lsp_diagnostics_enabled = 1
     let g:lsp_diagnostics_echo_cursor = 1
     let g:asyncomplete_popup_delay = 200
-    function! s:on_lsp_buffer_enabled() abort
+    function! s:lsp_buffer_settings() abort
         setlocal omnifunc=lsp#complete
         setlocal signcolumn=yes
         nmap <buffer> gd <plug>(lsp-definition)
         nmap <buffer> <Leader>rn <plug>(lsp-rename)
         inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
     endfunction
-    augroup vimlsp
-        au!
-        autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+    augroup vimlsp_autocmd
+        autocmd!
+        autocmd User lsp_buffer_enabled call s:lsp_buffer_settings()
     augroup END
-    command! LspDebug let lsp_log_verbose=1 | let lsp_log_file = expand('~/lsp.log')
 endif
 
 "asyncomplete.vim
@@ -343,36 +338,35 @@ endif
 
 "NERDTree
 if s:plug.is_installed("nerdtree")
-    let NERDTreeHijackNetrw = 0
-    let NERDTreeMinimalUI=1
-    augroup nerdtree
-        au!
+    let g:NERDTreeHijackNetrw = 0
+    let g:NERDTreeMinimalUI=1
+    let g:NERDTreeWinSize=22
+    augroup nerdtree_autocmd
+        autocmd!
         autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
     augroup END
-    let g:NERDTreeWinSize=22
 
-    let s:nerdtreeToggle=0
-    function! s:NotWindowMoveWhenNERDTreeOpen() abort
-        if s:nerdtreeToggle
+    let s:nerdtree_toggle=0
+    function! s:dont_move_windwo_whenNERDTreeopen() abort
+        if s:nerdtree_toggle
             NERDTreeClose
-            let s:nerdtreeToggle = 0
+            let s:nerdtree_toggle = 0
         else
             NERDTreeFind | wincmd p
-            let s:nerdtreeToggle = 1
+            let s:nerdtree_toggle = 1
         endif
     endfunction
-    nnoremap <silent> <Leader>n :<C-u>call <SID>NotWindowMoveWhenNERDTreeOpen()<CR>
+    nnoremap <silent> <Leader>n :<C-u>call <SID>dont_move_window_whenNERDTreeopen()<CR>
 endif
 
 "vaffle
 if s:plug.is_installed("vaffle.vim")
     function! s:customize_vaffle_mappings() abort
-        nmap <buffer> <Bslash> <Plug>(vaffle-open-root)
         nmap <buffer> c <Plug>(vaffle-chdir-here)
         map <buffer> s <Plug>(vaffle-toggle-current)
     endfunction
-    augroup vaffle
-        au!
+    augroup vaffle_autocmd
+        autocmd!
         autocmd FileType vaffle call s:customize_vaffle_mappings()
     augroup END
 endif
@@ -401,48 +395,56 @@ endif
 if s:plug.is_installed("lightline.vim")
     set noshowmode
     let g:lightline = {
-        \ 'colorscheme': 'ayu_mirage',
-        \ 'active': {
-        \   'left' : [ ['mode', 'paste'],
-        \              ['fugitive', 'readonly', 'filename'] ],
-        \   'right': [ ['lineinfo'],
-        \              ['filetype'],
-        \              ['fileencodingandfileformat'] ],
-        \ },
-        \ 'inactive': {
-        \   'right': [ ['lineinfo'] ],
-        \ },
-        \ 'component': {
-        \   'lineinfo': '%2l/%L,%-2c%<',
-        \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
-        \ },
-        \ 'component_function': {
-        \   'mode': 'LightlineMode',
-        \   'fugitive': 'LightlineFugitive',
-        \   'filename': 'LightlineFilename',
-        \   'readonly': 'LightlineReadonly',
-        \   'fileencodingandfileformat': 'LightlineEncandFt',
-        \ },
-        \ }
+                \ 'colorscheme': 'ayu_mirage',
+                \ 'active': {
+                \   'left' : [ ['mode', 'paste'],
+                \              ['fugitive', 'readonly', 'filename'] ],
+                \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
+                \              ['filetype'],
+                \              ['fileencoding_and_fileformat'] ],
+                \ },
+                \ 'inactive': {
+                \   'right': [ ['lineinfo'] ],
+                \ },
+                \ 'component': {
+                \   'lineinfo': '%2l/%L,%-2c%<',
+                \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
+                \ },
+                \ 'component_function': {
+                \   'mode': 'LightlineMode',
+                \   'fugitive': 'LightlineFugitive',
+                \   'filename': 'LightlineFilename',
+                \   'readonly': 'LightlineReadonly',
+                \   'fileencoding_and_fileformat': 'LightlineEncandFt',
+                \ },
+                \ 'component_expand': {
+                \   'lsp_errors': 'LightlineLSPErrors',
+                \   'lsp_warnings': 'LightlineLSPWarnings',
+                \ },
+                \ 'component_type': {
+                \   'lsp_errors': 'error',
+                \   'lsp_warnings': 'warning',
+                \ },
+                \ }
 
-    function! LightlineMode()
+    function! LightlineMode() abort
         return &buftype ==# "terminal" ? "TERMINAL" :
-              \ &filetype ==# "help" ? "HELP" :
-              \ &filetype ==# "vaffle" ? "VAFFLE" :
-              \ &filetype ==# "nerdtree" ? "NERDTREE" :
-              \ lightline#mode()
+                    \ &filetype ==# "help" ? "HELP" :
+                    \ &filetype ==# "vaffle" ? "VAFFLE" :
+                    \ &filetype ==# "nerdtree" ? "NERDTREE" :
+                    \ lightline#mode()
     endfunction
-    function! LightlineFugitive()
+    function! LightlineFugitive() abort
         if winwidth(0) > 70 && &filetype !=# "help"
             if exists("*FugitiveHead")
-                let branch = FugitiveHead()
-                return branch !=# "" ? " ". branch : ""
+                let l:branch = FugitiveHead()
+                return branch !=# "" ? " ". l:branch : ""
             endif
         endif
         return ""
     endfunction
-	function! LightlineModified()
-	    if &filetype !~# "\v(help|nerdtree)"
+    function! LightlineModified() abort
+        if &filetype !~# "\v(help|nerdtree)"
             if &modified
                 return "[+]"
             elseif !&modifiable
@@ -450,26 +452,38 @@ if s:plug.is_installed("lightline.vim")
             endif
         endif
         return ""
-	endfunction
-    function! LightlineFilename()
+    endfunction
+    function! LightlineFilename() abort
         if &filetype ==# "vaffle"
             return b:vaffle.dir
         else
-		    let filename = expand("%:t") !=# "" ? expand("%:t") : "[No Name]"
-            return filename . LightlineModified()
+            let l:filename = expand("%:t") !=# "" ? expand("%:t") : "[No Name]"
+            return l:filename . LightlineModified()
         endif
     endfunction
-    function! LightlineReadonly()
+    function! LightlineReadonly() abort
         return &readonly && &filetype !~# "\v(help|nerdtree)" ? "RO" : ""
     endfunction
-    function! LightlineEncandFt()
+    function! LightlineEncandFt() abort
         if winwidth(0) > 70
-            let encoding = &fileencoding !=# "" ? &fileencoding : &encoding
-            let format = &fileformat
-            return encoding . "," . format
+            let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
+            let l:format = &fileformat
+            return l:encoding . "," . l:format
         endif
         return ""
     endfunction
+    function! LightlineLSPWarnings() abort
+        let l:counts = lsp#ui#vim#diagnostics#get_buffer_diagnostics_counts()
+        return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
+    endfunction
+    function! LightlineLSPErrors() abort
+        let l:counts = lsp#ui#vim#diagnostics#get_buffer_diagnostics_counts()
+        return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
+    endfunction
+    augroup lightline_autocmd
+        autocmd!
+        autocmd User lsp_diagnostics_updated call lightline#update()
+    augroup END
 endif
 
 "vimtex
