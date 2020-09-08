@@ -379,7 +379,7 @@ endif
 
 "neoterm
 if s:plug.is_installed("neoterm")
-    let g:neoterm_default_mod='belowright'
+    let g:neoterm_default_mod="belowright"
     let g:neoterm_size=8
     let g:neoterm_autoscroll=1
     nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR><ESC>
@@ -404,7 +404,7 @@ if s:plug.is_installed("lightline.vim")
         \ 'colorscheme': 'ayu_mirage',
         \ 'active': {
         \   'left' : [ ['mode', 'paste'],
-        \              ['fugitive', 'vaffle', 'readonly', 'filename'] ],
+        \              ['fugitive', 'readonly', 'filename'] ],
         \   'right': [ ['lineinfo'],
         \              ['filetype'],
         \              ['fileencodingandfileformat'] ],
@@ -413,48 +413,62 @@ if s:plug.is_installed("lightline.vim")
         \   'right': [ ['lineinfo'] ],
         \ },
         \ 'component': {
-        \   'filename': '%<%f%m',
         \   'lineinfo': '%2l/%L,%-2c%<',
         \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
         \ },
         \ 'component_function': {
         \   'mode': 'LightlineMode',
         \   'fugitive': 'LightlineFugitive',
-        \   'vaffle': 'LightlineVaffle',
+        \   'filename': 'LightlineFilename',
         \   'readonly': 'LightlineReadonly',
         \   'fileencodingandfileformat': 'LightlineEncandFt',
         \ },
         \ }
 
     function! LightlineMode()
-        return &buftype ==# 'terminal' ? 'TERMINAL' :
-              \ &filetype ==# 'help' ? 'HELP' :
-              \ &filetype ==# 'vaffle' ? 'VAFFLE' :
-              \ &filetype ==# 'nerdtree' ? 'NERDTREE' :
+        return &buftype ==# "terminal" ? "TERMINAL" :
+              \ &filetype ==# "help" ? "HELP" :
+              \ &filetype ==# "vaffle" ? "VAFFLE" :
+              \ &filetype ==# "nerdtree" ? "NERDTREE" :
               \ lightline#mode()
     endfunction
     function! LightlineFugitive()
-        if winwidth(0) > 70 && &filetype !=# 'help'
-            if exists('*FugitiveHead')
+        if winwidth(0) > 70 && &filetype !=# "help"
+            if exists("*FugitiveHead")
                 let branch = FugitiveHead()
-                return branch !=# '' ? ' '. branch : ''
+                return branch !=# "" ? " ". branch : ""
             endif
         endif
-        return ''
+        return ""
     endfunction
-    function! LightlineVaffle()
-        return &filetype ==# "vaffle" ? b:vaffle.dir : ""
+	function! LightlineModified()
+	    if &filetype !~# "\v(help|nerdtree)"
+            if &modified
+                return "[+]"
+            elseif !&modifiable
+                return "[-]"
+            endif
+        endif
+        return ""
+	endfunction
+    function! LightlineFilename()
+        if &filetype ==# "vaffle"
+            return b:vaffle.dir
+        else
+		    let filename = expand("%:t") !=# "" ? expand("%:t") : "[No Name]"
+            return filename . LightlineModified()
+        endif
     endfunction
     function! LightlineReadonly()
-        return &readonly && &filetype !~# '\v(help|nerdtree)' ? 'RO' : ''
+        return &readonly && &filetype !~# "\v(help|nerdtree)" ? "RO" : ""
     endfunction
     function! LightlineEncandFt()
         if winwidth(0) > 70
-            let encoding = &fileencoding !=# '' ? &fileencoding : &encoding
+            let encoding = &fileencoding !=# "" ? &fileencoding : &encoding
             let format = &fileformat
-            return encoding . ',' . format
+            return encoding . "," . format
         endif
-        return ''
+        return ""
     endfunction
 endif
 
