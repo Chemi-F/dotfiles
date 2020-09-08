@@ -127,7 +127,7 @@ nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(lin
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
 if !s:is_neovim
-    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=5<CR><C-\><C-n><C-w>w
+    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
 "others
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
@@ -221,7 +221,6 @@ augroup myvimrc
     autocmd BufEnter * if (winnr("$") == 1 && &buftype ==# 'terminal') | q! | endif
     if !s:is_neovim
         autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmode_settings() | endif
-        autocmd WinEnter * if &buftype ==# 'terminal' | normal i | endif
     else
         autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
     endif
@@ -282,8 +281,9 @@ call plug#begin(s:plug_dir)
         Plug 'kassio/neoterm'
     endif
     "Theme
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
+    "Plug 'vim-airline/vim-airline'
+    "Plug 'vim-airline/vim-airline-themes'
+    Plug 'itchyny/lightline.vim'
     Plug 'cocopon/iceberg.vim'
 
     Plug 'lervag/vimtex'
@@ -391,11 +391,30 @@ endif
 
 "vim-airline
 if s:plug.is_installed("vim-airline")
+    set noshowmode
     let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
     let g:airline_section_z = '%l/%L,%c'
     "let g:airline#extensions#whitespace#enabled = 0
     let g:airline_theme='distinguished'
     let g:airline_powerline_fonts = 1
+endif
+
+if s:plug.is_installed("lightline.vim")
+    set noshowmode
+    let g:lightline = {
+        \ 'colorscheme': 'ayu_mirage',
+        \ 'active': {
+        \   'right': [ ['lineinfo'],
+        \              ['filetype'],
+        \              ['fileencodingandfileformat'] ]
+        \ },
+        \ 'component': {
+        \   'lineinfo': '%3l/%L,%-2c',
+        \   'filetype': '%{&filetype!=#""?&filetype:""}',
+        \   'fileencodingandfileformat': 
+        \       '%{&fileencoding!=#""?&fileencoding:&encoding},%{&fileformat}'
+        \ },
+        \ }
 endif
 
 "vimtex
@@ -405,6 +424,7 @@ if s:plug.is_installed("vimtex")
     let g:vimtex_compiler_latexmk_engines = { '_' : '-pdfdvi' }
     let g:vimtex_compiler_progname = 'nvr'
 endif
+
 
 "vim-submode
 if s:plug.is_installed("vim-submode")
