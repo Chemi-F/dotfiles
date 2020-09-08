@@ -74,10 +74,11 @@ set hidden
 "8 terminal
 set title
 if s:is_neovim
-    set titlestring=NeoVim:\ %f\ %h%r%m
+    set titlestring=NeoVim
 else
-    set titlestring=Vim:\ %f\ %h%r%m
+    set titlestring=Vim
 endif
+set titlestring+=:\ %f%m
 "11 messages and info
 set showcmd
 set noerrorbells
@@ -303,9 +304,8 @@ if s:plug.is_installed("fzf.vim")
     augroup fzf
         au!
         autocmd FileType fzf set laststatus=0 noshowmode noruler
-                    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+        \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
     augroup END
-
     "push '?' to preview
     command! -bang -nargs=* Rg
                 \ call fzf#vim#grep(
@@ -317,6 +317,9 @@ endif
 
 "vim-lsp
 if s:plug.is_installed("vim-lsp")
+    let g:lsp_diagnostics_enabled = 1
+    let g:lsp_diagnostics_echo_cursor = 1
+    let g:asyncomplete_popup_delay = 200
     function! s:on_lsp_buffer_enabled() abort
         setlocal omnifunc=lsp#complete
         setlocal signcolumn=yes
@@ -324,16 +327,11 @@ if s:plug.is_installed("vim-lsp")
         nmap <buffer> <Leader>rn <plug>(lsp-rename)
         inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
     endfunction
-
-    augroup lsp_install
+    augroup vimlsp
         au!
         autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
     augroup END
     command! LspDebug let lsp_log_verbose=1 | let lsp_log_file = expand('~/lsp.log')
-
-    let g:lsp_diagnostics_enabled = 1
-    let g:lsp_diagnostics_echo_cursor = 1
-    let g:asyncomplete_popup_delay = 200
 endif
 
 "asyncomplete.vim
@@ -347,7 +345,7 @@ endif
 if s:plug.is_installed("nerdtree")
     let NERDTreeHijackNetrw = 0
     let NERDTreeMinimalUI=1
-    augroup nerdtree_autocmd
+    augroup nerdtree
         au!
         autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
     augroup END
@@ -399,22 +397,65 @@ if s:plug.is_installed("vim-airline")
     let g:airline_powerline_fonts = 1
 endif
 
+"lightline
 if s:plug.is_installed("lightline.vim")
     set noshowmode
     let g:lightline = {
         \ 'colorscheme': 'ayu_mirage',
         \ 'active': {
+        \   'left' : [ ['mode', 'paste'],
+        \              ['fugitive', 'vaffle', 'readonly', 'filename'] ],
         \   'right': [ ['lineinfo'],
         \              ['filetype'],
-        \              ['fileencodingandfileformat'] ]
+        \              ['fileencodingandfileformat'] ],
+        \ },
+        \ 'inactive': {
+        \   'right': [ ['lineinfo'] ],
         \ },
         \ 'component': {
-        \   'lineinfo': '%3l/%L,%-2c',
-        \   'filetype': '%{&filetype!=#""?&filetype:""}',
-        \   'fileencodingandfileformat': 
-        \       '%{&fileencoding!=#""?&fileencoding:&encoding},%{&fileformat}'
+        \   'filename': '%<%f%m',
+        \   'lineinfo': '%2l/%L,%-2c%<',
+        \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
+        \ },
+        \ 'component_function': {
+        \   'mode': 'LightlineMode',
+        \   'fugitive': 'LightlineFugitive',
+        \   'vaffle': 'LightlineVaffle',
+        \   'readonly': 'LightlineReadonly',
+        \   'fileencodingandfileformat': 'LightlineEncandFt',
         \ },
         \ }
+
+    function! LightlineMode()
+        return &buftype ==# 'terminal' ? 'TERMINAL' :
+              \ &filetype ==# 'help' ? 'HELP' :
+              \ &filetype ==# 'vaffle' ? 'VAFFLE' :
+              \ &filetype ==# 'nerdtree' ? 'NERDTREE' :
+              \ lightline#mode()
+    endfunction
+    function! LightlineFugitive()
+        if winwidth(0) > 70 && &filetype !=# 'help'
+            if exists('*FugitiveHead')
+                let branch = FugitiveHead()
+                return branch !=# '' ? ' '. branch : ''
+            endif
+        endif
+        return ''
+    endfunction
+    function! LightlineVaffle()
+        return &filetype ==# "vaffle" ? b:vaffle.dir : ""
+    endfunction
+    function! LightlineReadonly()
+        return &readonly && &filetype !~# '\v(help|nerdtree)' ? 'RO' : ''
+    endfunction
+    function! LightlineEncandFt()
+        if winwidth(0) > 70
+            let encoding = &fileencoding !=# '' ? &fileencoding : &encoding
+            let format = &fileformat
+            return encoding . ',' . format
+        endif
+        return ''
+    endfunction
 endif
 
 "vimtex
@@ -438,6 +479,7 @@ if s:plug.is_installed("vim-submode")
     call submode#map('winsize', 'n', '', '-', '<C-w>-')
 endif
 
+"auto-pairs
 if s:plug.is_installed("auto-pairs")
     nnoremap <Leader>p :<C-u>call AutoPairsToggle()<CR>
 endif
