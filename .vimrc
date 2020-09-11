@@ -215,6 +215,7 @@ augroup myvimrc
     autocmd FileType qf call s:quickfix_settings()
 
     "terminal-mode autocmd
+    autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
     autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'terminal') | q! | endif
     if !s:is_neovim
         autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmode_settings() | endif
