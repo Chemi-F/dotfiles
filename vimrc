@@ -163,8 +163,13 @@ inoremap <C-@> <C-[>
 "terimnal
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
+"function mapping
+nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang_to_Japanese()<CR>
+nnoremap <silent> <Leader>f :<C-u>call <SID>toggle_quickfix()<CR>
+nnoremap <silent> <Leader>tm :<C-u>call <SID>move_to_newtab()<CR>
 
-"function for map
+"function
+"for map
 let s:helplang_is_ja = 0
 function! s:helplang_to_Japanese() abort "To use K in Japanese
     if s:helplang_is_ja
@@ -177,7 +182,6 @@ function! s:helplang_to_Japanese() abort "To use K in Japanese
         echo "Help language is Japanese"
     endif
 endfunction
-nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang_to_Japanese()<CR>
 
 function! s:toggle_quickfix() abort "quickfix window open
     let l:nr = winnr('$')
@@ -187,7 +191,6 @@ function! s:toggle_quickfix() abort "quickfix window open
         cclose
     endif
 endfunction
-nnoremap <silent> <Leader>f :<C-u>call <SID>toggle_quickfix()<CR>
 
 function! s:move_to_newtab() abort
     tab split
@@ -199,7 +202,22 @@ function! s:move_to_newtab() abort
     endif
     tabnext
 endfunction
-nnoremap <silent> <Leader>tm :<C-u>call <SID>move_to_newtab()<CR>
+
+"for autocmd
+function! s:quickfix_settings() abort
+    setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
+    setlocal nowrap
+endfunction
+
+function! s:terminalmode_settings() abort
+    setlocal bufhidden=wipe
+    nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
+endfunction
+
+"command
+command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
+command! Cd execute 'lcd %:h'
+command! -nargs=* TermOpen execute 'botright terminal ++rows=8 <args>'
 
 "autocmd
 augroup myvimrc
@@ -223,22 +241,6 @@ augroup myvimrc
         autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
     endif
 augroup END
-
-"function for autocmd
-function! s:quickfix_settings() abort
-    setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
-    setlocal nowrap
-endfunction
-
-function! s:terminalmode_settings() abort
-    setlocal bufhidden=wipe
-    nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
-endfunction
-
-"command
-command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
-command! Cd execute 'lcd %:h'
-command! -nargs=* TermOpen execute 'botright terminal ++rows=8 <args>'
 
 "finish when use git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
@@ -299,11 +301,6 @@ endfunction
 
 "fzf.vim
 if s:plug.is_installed("fzf.vim")
-    augroup fzf_autocmd
-        au!
-        autocmd FileType fzf set laststatus=0 noshowmode noruler
-                    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-    augroup END
     "push '?' to preview
     command! -bang -nargs=* Rg
                 \ call fzf#vim#grep(
@@ -311,13 +308,19 @@ if s:plug.is_installed("fzf.vim")
                 \   <bang>0 ? fzf#vim#with_preview('up:60%')
                 \           : fzf#vim#with_preview('right:50%:hidden', '?'),
                 \   <bang>0)
+
+    augroup fzf_autocmd
+        au!
+        autocmd FileType fzf set laststatus=0 noshowmode noruler
+                    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+    augroup END
 endif
 
 "vim-lsp
 if s:plug.is_installed("vim-lsp")
     let g:lsp_diagnostics_enabled = 1
     let g:lsp_diagnostics_echo_cursor = 1
-    let g:asyncomplete_popup_delay = 200
+
     function! s:lsp_buffer_settings() abort
         setlocal omnifunc=lsp#complete
         setlocal signcolumn=yes
@@ -325,6 +328,7 @@ if s:plug.is_installed("vim-lsp")
         nmap <buffer> <Leader>rn <plug>(lsp-rename)
         inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
     endfunction
+
     augroup vimlsp_autocmd
         autocmd!
         autocmd User lsp_buffer_enabled call s:lsp_buffer_settings()
@@ -333,6 +337,8 @@ endif
 
 "asyncomplete.vim
 if s:plug.is_installed("asyncomplete.vim")
+    let g:asyncomplete_popup_delay = 200
+
     inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
     inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
     inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
@@ -343,10 +349,8 @@ if s:plug.is_installed("nerdtree")
     let g:NERDTreeHijackNetrw = 0
     let g:NERDTreeMinimalUI=1
     let g:NERDTreeWinSize=22
-    augroup nerdtree_autocmd
-        autocmd!
-        autocmd bufenter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
-    augroup END
+
+    nnoremap <silent> <Leader>n :<C-u>call <SID>dont_move_window_whenNERDTreeopen()<CR>
 
     let s:nerdtree_toggle=0
     function! s:dont_move_window_whenNERDTreeopen() abort
@@ -358,7 +362,11 @@ if s:plug.is_installed("nerdtree")
             let s:nerdtree_toggle = 1
         endif
     endfunction
-    nnoremap <silent> <Leader>n :<C-u>call <SID>dont_move_window_whenNERDTreeopen()<CR>
+
+    augroup nerdtree_autocmd
+        autocmd!
+        autocmd bufenter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
+    augroup END
 endif
 
 "vaffle
@@ -367,6 +375,7 @@ if s:plug.is_installed("vaffle.vim")
         nmap <buffer> c <Plug>(vaffle-chdir-here)
         map <buffer> s <Plug>(vaffle-toggle-current)
     endfunction
+
     augroup vaffle_autocmd
         autocmd!
         autocmd FileType vaffle call s:customize_vaffle_mappings()
@@ -378,6 +387,7 @@ if s:plug.is_installed("neoterm")
     let g:neoterm_default_mod="belowright"
     let g:neoterm_size=8
     let g:neoterm_autoscroll=1
+
     nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR><ESC>
     tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
     vnoremap <silent> <C-e> :TREPLSendSelection<CR><ESC>
@@ -388,7 +398,6 @@ if s:plug.is_installed("vim-airline")
     set noshowmode
     let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
     let g:airline_section_z = '%l/%L,%c'
-    "let g:airline#extensions#whitespace#enabled = 0
     let g:airline_theme='distinguished'
     let g:airline_powerline_fonts = 1
 endif
@@ -436,6 +445,7 @@ if s:plug.is_installed("lightline.vim")
                     \ &filetype ==# "nerdtree" ? "NERDTREE" :
                     \ lightline#mode()
     endfunction
+
     function! LightlineFugitive() abort
         if winwidth(0) > 70 && &filetype !=# "help"
             if exists('*FugitiveHead')
@@ -445,6 +455,7 @@ if s:plug.is_installed("lightline.vim")
         endif
         return ""
     endfunction
+
     function! LightlineModified() abort
         if &filetype !~# '\v(help|nerdtree)'
             if &modified
@@ -455,6 +466,7 @@ if s:plug.is_installed("lightline.vim")
         endif
         return ""
     endfunction
+
     function! LightlineFilename() abort
         if &filetype ==# "vaffle"
             return b:vaffle.dir
@@ -463,9 +475,11 @@ if s:plug.is_installed("lightline.vim")
             return l:filename . LightlineModified()
         endif
     endfunction
+
     function! LightlineReadonly() abort
         return &readonly && &filetype !~# '\v(help|nerdtree)' ? "RO" : ""
     endfunction
+
     function! LightlineEncandFt() abort
         if winwidth(0) > 70
             let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
@@ -474,14 +488,17 @@ if s:plug.is_installed("lightline.vim")
         endif
         return ""
     endfunction
+
     function! LightlineLSPWarnings() abort
         let l:counts = lsp#ui#vim#diagnostics#get_buffer_diagnostics_counts()
         return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
     endfunction
+
     function! LightlineLSPErrors() abort
         let l:counts = lsp#ui#vim#diagnostics#get_buffer_diagnostics_counts()
         return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
     endfunction
+
     augroup lightline_autocmd
         autocmd!
         autocmd User lsp_diagnostics_updated call lightline#update()
