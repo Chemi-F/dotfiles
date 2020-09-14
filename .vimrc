@@ -238,6 +238,7 @@ endfunction
 "command
 command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
 command! Cd execute 'lcd %:h'
+command! -nargs=* TermOpen execute 'botright terminal ++rows=8 <args>'
 
 "finish when use git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
