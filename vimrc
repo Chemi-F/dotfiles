@@ -226,6 +226,7 @@ augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
+    "autocmd BufWritePre * :%s/\s\+$//e
 
     " Help autocmd
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
@@ -251,8 +252,15 @@ if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
 end
 
 " Package
-if !s:is_neovim && has('eval') && v:version >= 800
-    packadd! matchit
+if !s:is_neovim
+    if has('eval') && v:version >= 800
+        packadd! matchit
+    endif
+    if v:version >= 801
+        packadd! termdebug
+        set mouse=a
+        let g:termdebug_wide = 163
+    endif
 endif
 
 " Plugin
@@ -327,8 +335,12 @@ if s:plug.isInstalled("vim-lsp")
     function! s:lsp_buffer_settings() abort
         setlocal omnifunc=lsp#complete
         setlocal signcolumn=yes
+        if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+        nmap <buffer> <C-p> <plug>(lsp-previous-diagnostic)
+        nmap <buffer> <C-n> <plug>(lsp-next-diagnostic)
         nmap <buffer> gd <plug>(lsp-definition)
         nmap <buffer> <Leader>rn <plug>(lsp-rename)
+        nmap <buffer> K <plug>(lsp-hover)
         inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
     endfunction
 
