@@ -258,7 +258,6 @@ if !s:is_neovim
     endif
     if v:version >= 801
         packadd! termdebug
-        set mouse=a
         let g:termdebug_wide = 163
     endif
 endif
@@ -278,7 +277,7 @@ Plug 'vim-jp/vimdoc-ja'
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
 Plug 'junegunn/fzf.vim'
-" vim-lsp, auto-completion
+" vim-lsp, auto complete
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'prabirshrestha/asyncomplete.vim'
