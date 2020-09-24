@@ -1,3 +1,15 @@
-# for WSL2 (in .bashrc)
+# For using git push with ssh
+# 1. Write the following sentence in .ssh/config
+Host github.com
+    HostName github.com
+    IdentityFile ~/.ssh/id_rsa_github
+    User git
+# 2. Execute the following command 
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa_github
+# 3. Execute the following command in dotfiles
+git remote set-url origin git@github.com:Chemi-F/dotfiles.git
+
+# For WSL2 (in .bashrc)
 LOCAL_IP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
 export DISPLAY=$LOCAL_IP:0

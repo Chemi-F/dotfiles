@@ -171,7 +171,7 @@ nnoremap <silent> <Leader>tm :<C-u>call <SID>moveToNewtab()<CR>
 " Function
 " For map
 let s:helplang_is_ja = 0
-" To use K in Japanese when vim help use
+" For displaying help in Japanese
 function! s:helplangToJapanese() abort
     if s:helplang_is_ja
         set helplang=en,ja
@@ -246,7 +246,7 @@ augroup myAutocmd
     endif
 augroup END
 
-" Finish when use git commit
+" Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
     finish
 end
