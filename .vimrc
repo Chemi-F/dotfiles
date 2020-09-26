@@ -15,7 +15,7 @@ let s:is_neovim = has('nvim')
 let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
-    set shellslash
+    "set shellslash
     let s:vimfiles_dir = expand('~/vimfiles')
 else
     if s:is_neovim
