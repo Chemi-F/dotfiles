@@ -13,6 +13,7 @@ git config --global user.name "username"
 git config --global color.ui true
 git config --global push.default simple
 git config --global core.editor vim
+git config --global core.autoCRLF false
 # 1. Write the following sentence in .ssh/config
 # chmod 600 id_rsa_****
 Host github.com
