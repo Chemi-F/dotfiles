@@ -15,9 +15,9 @@ let s:is_neovim = has('nvim')
 let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
-    "set shellslash
     let s:vimfiles_dir = expand('~/vimfiles')
 else
+    set shell=/bin/bash
     if s:is_neovim
         let s:vimfiles_dir = expand('~/.local/share/nvim')
     else
@@ -103,10 +103,6 @@ set smartindent
 set nobackup
 " 20 command line editing
 set wildmenu
-" 21 executing external commands
-if !s:is_windows
-    set shell=/bin/bash
-endif
 " 25 various
 set viminfo='50,<500,s100,h
 
@@ -277,6 +273,8 @@ Plug 'vim-jp/vimdoc-ja'
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
 Plug 'junegunn/fzf.vim'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'mattn/ctrlp-matchfuzzy'
 " vim-lsp, auto complete
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
@@ -285,20 +283,17 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 " Git
 Plug 'tpope/vim-fugitive'
 " Filer
-Plug 'preservim/nerdtree'
 Plug 'cocopon/vaffle.vim'
+Plug 'lambdalisue/fern.vim'
 " Terminal
 if s:is_neovim
     Plug 'kassio/neoterm'
 endif
 " Theme
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
 " Others
 Plug 'lervag/vimtex'
-Plug 'kana/vim-submode'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
@@ -311,7 +306,6 @@ endfunction
 
 " fzf.vim
 if s:plug.isInstalled("fzf.vim")
-    "push '?' to preview
     command! -bang -nargs=* Rg
                 \ call fzf#vim#grep(
                 \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
@@ -326,6 +320,17 @@ if s:plug.isInstalled("fzf.vim")
     augroup END
 endif
 
+" ctrlp.vim
+if s:plug.isInstalled("ctrlp.vim")
+    let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
+    if executable('rg')
+        let g:ctrlp_user_command = 'rg --files %s'
+        let g:ctrlp_use_caching = 0
+        let g:ctrlp_working_path_mode = 'ra'
+        let g:ctrlp_switch_buffer = 'et'
+    endif
+endif
+
 " vim-lsp
 if s:plug.isInstalled("vim-lsp")
     let g:lsp_diagnostics_enabled = 1
@@ -335,17 +340,24 @@ if s:plug.isInstalled("vim-lsp")
         setlocal omnifunc=lsp#complete
         setlocal signcolumn=yes
         if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-        nmap <buffer> <C-p> <plug>(lsp-previous-diagnostic)
-        nmap <buffer> <C-n> <plug>(lsp-next-diagnostic)
-        nmap <buffer> gd <plug>(lsp-definition)
-        nmap <buffer> <Leader>rn <plug>(lsp-rename)
-        nmap <buffer> K <plug>(lsp-hover)
+        nmap <silent> <buffer> <C-p> <plug>(lsp-previous-diagnostic)
+        nmap <silent> <buffer> <C-n> <plug>(lsp-next-diagnostic)
+        nmap <silent> <buffer> gd <plug>(lsp-definition)
+        nmap <silent> <buffer> <Leader>rn <plug>(lsp-rename)
+        nmap <silent> <buffer> K <plug>(lsp-hover)
         inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
     endfunction
 
     augroup vimlspAutocmd
         autocmd!
         autocmd User lsp_buffer_enabled call s:lsp_buffer_settings()
+        if executable('haskell-language-server')
+            autocmd User lsp_setup call lsp#register_server({
+                    \ 'name': 'haskell-language-server',
+                    \ 'cmd': {server_info->['haskell-language-server-wrapper', '--lsp']},
+                    \ 'allowlist': ['haskell','lhaskell'],
+                    \})
+        endif
     augroup END
 endif
 
@@ -356,31 +368,6 @@ if s:plug.isInstalled("asyncomplete.vim")
     inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
     inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
     inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
-endif
-
-" NERDTree
-if s:plug.isInstalled("nerdtree")
-    let g:NERDTreeHijackNetrw = 0
-    let g:NERDTreeMinimalUI=1
-    let g:NERDTreeWinSize=22
-
-    nnoremap <silent> <Leader>n :<C-u>call <SID>dont_move_window_whenNERDTreeopen()<CR>
-
-    let s:nerdtree_toggle=0
-    function! s:dont_move_window_whenNERDTreeopen() abort
-        if s:nerdtree_toggle
-            NERDTreeClose
-            let s:nerdtree_toggle = 0
-        else
-            NERDTreeFind | wincmd p
-            let s:nerdtree_toggle = 1
-        endif
-    endfunction
-
-    augroup nerdtreeAutocmd
-        autocmd!
-        autocmd bufenter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
-    augroup END
 endif
 
 " vaffle
@@ -396,6 +383,16 @@ if s:plug.isInstalled("vaffle.vim")
     augroup END
 endif
 
+" fern
+if s:plug.isInstalled("fern.vim")
+    nnoremap <silent> <leader>n :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+
+    augroup fernAutocmd
+        autocmd!
+        autocmd FileType fern setlocal nonumber
+    augroup END
+endif
+
 " neoterm
 if s:plug.isInstalled("neoterm")
     let g:neoterm_default_mod="belowright"
@@ -405,15 +402,6 @@ if s:plug.isInstalled("neoterm")
     nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR><ESC>
     tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
     vnoremap <silent> <C-e> :TREPLSendSelection<CR><ESC>
-endif
-
-" vim-airline
-if s:plug.isInstalled("vim-airline")
-    set noshowmode
-    let g:airline_section_y = '%{&fileencoding},%{&fileformat}'
-    let g:airline_section_z = '%l/%L,%c'
-    let g:airline_theme='distinguished'
-    let g:airline_powerline_fonts = 1
 endif
 
 " lightline.vim
@@ -438,8 +426,8 @@ if s:plug.isInstalled("lightline.vim")
                 \ 'component_function': {
                 \   'mode': 'LightlineMode',
                 \   'fugitive': 'LightlineFugitive',
-                \   'filename': 'LightlineFilename',
                 \   'readonly': 'LightlineReadonly',
+                \   'filename': 'LightlineFilename',
                 \   'fileencoding_and_fileformat': 'LightlineEncandFt',
                 \ },
                 \ 'component_expand': {
@@ -456,7 +444,7 @@ if s:plug.isInstalled("lightline.vim")
         return &buftype ==# "terminal" ? "TERMINAL" :
                     \ &filetype ==# "help" ? "HELP" :
                     \ &filetype ==# "vaffle" ? "VAFFLE" :
-                    \ &filetype ==# "nerdtree" ? "NERDTREE" :
+                    \ &filetype ==# "fern" ? "FERN" :
                     \ lightline#mode()
     endfunction
 
@@ -471,7 +459,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineModified() abort
-        if &filetype !~# '\v(help|nerdtree)'
+        if &filetype !=# 'help'
             if &modified
                 return "[+]"
             elseif !&modifiable
@@ -484,6 +472,8 @@ if s:plug.isInstalled("lightline.vim")
     function! LightlineFilename() abort
         if &filetype ==# "vaffle"
             return b:vaffle.dir
+        elseif &filetype ==# "fern"
+            return b:fern.root._path
         else
             let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
             return l:filename . LightlineModified()
@@ -491,7 +481,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineReadonly() abort
-        return &readonly && &filetype !~# '\v(help|nerdtree)' ? "RO" : ""
+        return &readonly && &filetype !=# 'help' ? "RO" : ""
     endfunction
 
     function! LightlineEncandFt() abort
@@ -526,19 +516,6 @@ if s:plug.isInstalled("vimtex")
     if s:is_neovim
         let g:vimtex_compiler_progname = 'nvr'
     endif
-endif
-
-
-" vim-submode
-if s:plug.isInstalled("vim-submode")
-    call submode#enter_with('winsize', 'n', '', '<C-w>>', '<C-w>>')
-    call submode#enter_with('winsize', 'n', '', '<C-w><', '<C-w><')
-    call submode#enter_with('winsize', 'n', '', '<C-w>+', '<C-w>+')
-    call submode#enter_with('winsize', 'n', '', '<C-w>-', '<C-w>-')
-    call submode#map('winsize', 'n', '', '>', '<C-w>>')
-    call submode#map('winsize', 'n', '', '<', '<C-w><')
-    call submode#map('winsize', 'n', '', '+', '<C-w>+')
-    call submode#map('winsize', 'n', '', '-', '<C-w>-')
 endif
 
 " auto-pairs
