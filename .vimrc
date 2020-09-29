@@ -213,7 +213,8 @@ function! s:terminalmodeSettings() abort
 endfunction
 
 " Command
-command! -nargs=1 VimGrepF execute 'vimgrep /<args>/j %'
+command! -nargs=1 VimGrepF execute 'vimgrep <args> %'
+command! -nargs=1 VimGrepD execute 'vimgrep <args> **'
 command! Cd execute 'lcd %:h'
 command! -nargs=* TermOpen execute 'botright terminal ++rows=8 <args>'
 
@@ -322,13 +323,8 @@ endif
 
 " ctrlp.vim
 if s:plug.isInstalled("ctrlp.vim")
+    let g:ctrlp_map = '<Leader>p'
     let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
-    if executable('rg')
-        let g:ctrlp_user_command = 'rg --files %s'
-        let g:ctrlp_use_caching = 0
-        let g:ctrlp_working_path_mode = 'ra'
-        let g:ctrlp_switch_buffer = 'et'
-    endif
 endif
 
 " vim-lsp
@@ -520,7 +516,7 @@ endif
 
 " auto-pairs
 if s:plug.isInstalled("auto-pairs")
-    nnoremap <Leader>p :<C-u>call AutoPairsToggle()<CR>
+    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 endif
 
 " Colorscheme
