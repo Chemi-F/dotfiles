@@ -155,6 +155,7 @@ noremap * *N
 " Insert mode
 inoremap jj <Esc>
 inoremap <C-c> <Esc>
+inoremap <S-Tab> <C-d>
 inoremap <C-@> <C-[>
 " Terimnal mode
 tnoremap <A-w> <C-\><C-n><C-w>w
@@ -362,7 +363,7 @@ if s:plug.isInstalled("asyncomplete.vim")
     let g:asyncomplete_popup_delay = 200
 
     inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
     inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
 endif
 
