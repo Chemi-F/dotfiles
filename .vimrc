@@ -65,7 +65,7 @@ set hlsearch
 set cursorline
 " 6 multiple windows
 set laststatus=2
-set statusline=%<%f%m%r%h%w
+set statusline=%<%t%m%r%h%w
 set statusline+=%=
 set statusline+=\|\ %{&fileencoding},%{&fileformat}
 set statusline+=\ \|\ %Y
@@ -204,7 +204,6 @@ endfunction
 
 " For autocmd functions
 function! s:quickfixSettings() abort
-    setlocal statusline=%t%{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%l/%L
     setlocal nowrap
 endfunction
 
@@ -233,6 +232,7 @@ augroup myAutocmd
     " Quickfix autocmd
     autocmd QuickFixCmdPost *grep*,make cwindow
     autocmd FileType qf call s:quickfixSettings()
+    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'qf') | q | endif
 
     " Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
@@ -285,7 +285,7 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 " Git
 Plug 'tpope/vim-fugitive'
 " Filer
-Plug 'cocopon/vaffle.vim'
+Plug 'mattn/vim-molder'
 Plug 'lambdalisue/fern.vim'
 " Terminal
 if s:is_neovim
@@ -367,22 +367,22 @@ if s:plug.isInstalled("asyncomplete.vim")
     inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
 endif
 
-" vaffle
-if s:plug.isInstalled("vaffle.vim")
-    function! s:customize_vaffle_mappings() abort
-        nmap <buffer> c <Plug>(vaffle-chdir-here)
-        map <buffer> s <Plug>(vaffle-toggle-current)
+" vim-molder
+if s:plug.isInstalled("vim-molder")
+    function! s:customize_vimmolder_mappings() abort
+        nmap <buffer> l <Plug>(molder-open)
+        nmap <buffer> h <Plug>(molder-up)
     endfunction
 
-    augroup vaffleAutocmd
+    augroup vimmolderAutocmd
         autocmd!
-        autocmd FileType vaffle call s:customize_vaffle_mappings()
+        autocmd FileType molder call s:customize_vimmolder_mappings()
     augroup END
 endif
 
 " fern
 if s:plug.isInstalled("fern.vim")
-    nnoremap <silent> <leader>n :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+    nnoremap <silent> <leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
     augroup fernAutocmd
         autocmd!
@@ -440,13 +440,15 @@ if s:plug.isInstalled("lightline.vim")
     function! LightlineMode() abort
         return &buftype ==# "terminal" ? "TERMINAL" :
                     \ &filetype ==# "help" ? "HELP" :
-                    \ &filetype ==# "vaffle" ? "VAFFLE" :
+                    \ &filetype ==# "qf" ? "" :
+                    \ &filetype ==# "molder" ? "MOLDER" :
+                    \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
                     \ &filetype ==# "fern" ? "FERN" :
                     \ lightline#mode()
     endfunction
 
     function! LightlineFugitive() abort
-        if winwidth(0) > 70 && &filetype !=# "help"
+        if winwidth(0) > 70 && &filetype !~ "\v(help|qf)"
             if exists('*FugitiveHead')
                 let l:branch = FugitiveHead()
                 return branch !=# "" ? " ". l:branch : ""
@@ -467,10 +469,12 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineFilename() abort
-        if &filetype ==# "vaffle"
-            return b:vaffle.dir
+        if &filetype ==# "molder"
+            return expand('%')
         elseif &filetype ==# "fern"
             return b:fern.root._path
+        elseif &filetype ==# "qf"
+            return "QuickFix"
         else
             let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
             return l:filename . LightlineModified()
