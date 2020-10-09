@@ -112,7 +112,7 @@ nnoremap <Space> <Nop>
 " Normal mode
 " Leader mappings
 nnoremap <Leader>w :<C-u>write<CR>
-nnoremap <silent> <Leader>q :<C-u>quit<CR>
+nnoremap <Leader>q :<C-u>quit<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
@@ -128,13 +128,13 @@ if !s:is_neovim
 endif
 " Others
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
-nnoremap <silent> <C-n> :<C-u>cnext<CR>
-nnoremap <silent> <C-p> :<C-u>cprevious<CR>
-nnoremap <silent> <C-c> :<C-u>cclose<CR>
 nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Right> <C-w>>
+"nnoremap <C-n> :<C-u>cnext<CR>
+"nnoremap <C-p> :<C-u>cprevious<CR>
+"nnoremap <C-c> :<C-u>cclose<CR>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -230,7 +230,7 @@ augroup myAutocmd
     autocmd FileType help,vim setlocal keywordprg=:help
 
     " Quickfix autocmd
-    autocmd QuickFixCmdPost *grep*,make cwindow
+    autocmd QuickFixCmdPost vim,grep,make if len(getqflist()) != 0 | cwindow | endif
     autocmd FileType qf call s:quickfixSettings()
     autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'qf') | q | endif
 
@@ -324,7 +324,6 @@ endif
 
 " ctrlp.vim
 if s:plug.isInstalled("ctrlp.vim")
-    let g:ctrlp_map = '<Leader>p'
     let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 endif
 
@@ -337,11 +336,11 @@ if s:plug.isInstalled("vim-lsp")
         setlocal omnifunc=lsp#complete
         setlocal signcolumn=yes
         if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-        nmap <silent> <buffer> <C-p> <plug>(lsp-previous-diagnostic)
-        nmap <silent> <buffer> <C-n> <plug>(lsp-next-diagnostic)
-        nmap <silent> <buffer> gd <plug>(lsp-definition)
-        nmap <silent> <buffer> <Leader>rn <plug>(lsp-rename)
-        nmap <silent> <buffer> K <plug>(lsp-hover)
+        nmap <buffer> <Leader>p <plug>(lsp-previous-diagnostic)
+        nmap <buffer> <Leader>n <plug>(lsp-next-diagnostic)
+        nmap <buffer> gd <plug>(lsp-definition)
+        nmap <buffer> <Leader>rn <plug>(lsp-rename)
+        if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
         inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
     endfunction
 
@@ -372,6 +371,7 @@ if s:plug.isInstalled("vim-molder")
     function! s:customize_vimmolder_mappings() abort
         nmap <buffer> l <Plug>(molder-open)
         nmap <buffer> h <Plug>(molder-up)
+        nmap <buffer> . <Plug>(molder-toggle-hidden)
     endfunction
 
     augroup vimmolderAutocmd
@@ -448,7 +448,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineFugitive() abort
-        if winwidth(0) > 70 && &filetype !~ "\v(help|qf)"
+        if winwidth(0) > 70 && &filetype !=# "qf"
             if exists('*FugitiveHead')
                 let l:branch = FugitiveHead()
                 return branch !=# "" ? " ". l:branch : ""
@@ -458,11 +458,18 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineModified() abort
-        if &filetype !=# 'help'
+        if &buftype ==# "terminal"
             if &modified
-                return "[+]"
+                return " [Runnning]"
             elseif !&modifiable
-                return "[-]"
+                return " [Finished]"
+            endif
+        endif
+        if &filetype !=# "help"
+            if &modified
+                return " [+]"
+            elseif !&modifiable
+                return " [-]"
             endif
         endif
         return ""
@@ -474,7 +481,12 @@ if s:plug.isInstalled("lightline.vim")
         elseif &filetype ==# "fern"
             return b:fern.root._path
         elseif &filetype ==# "qf"
-            return "QuickFix"
+            let l:quickfix_str = "[Quickfix List]"
+            if exists('w:quickfix_title')
+                return l:quickfix_str ." | " . w:quickfix_title
+            else
+                return l:quickfix_str
+            endif
         else
             let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
             return l:filename . LightlineModified()
