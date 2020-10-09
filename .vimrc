@@ -230,7 +230,7 @@ augroup myAutocmd
     autocmd FileType help,vim setlocal keywordprg=:help
 
     " Quickfix autocmd
-    autocmd QuickFixCmdPost vim,grep,make if len(getqflist()) != 0 | cwindow | endif
+    autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
     autocmd FileType qf call s:quickfixSettings()
     autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'qf') | q | endif
 
@@ -438,8 +438,7 @@ if s:plug.isInstalled("lightline.vim")
                 \ }
 
     function! LightlineMode() abort
-        return &buftype ==# "terminal" ? "TERMINAL" :
-                    \ &filetype ==# "help" ? "HELP" :
+        return &filetype ==# "help" ? "HELP" :
                     \ &filetype ==# "qf" ? "" :
                     \ &filetype ==# "molder" ? "MOLDER" :
                     \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
@@ -448,7 +447,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineFugitive() abort
-        if winwidth(0) > 70 && &filetype !=# "qf"
+        if winwidth(0) > 70 && &filetype !~# '\v(help|qf)'
             if exists('*FugitiveHead')
                 let l:branch = FugitiveHead()
                 return branch !=# "" ? " ". l:branch : ""
@@ -476,17 +475,16 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineFilename() abort
-        if &filetype ==# "molder"
+        if &filetype ==# "qf"
+            if exists('w:quickfix_title')
+                return "[Quickfix List]" . " | " . w:quickfix_title
+            else
+                return "[Quickfix List]"
+            endif
+        elseif &filetype ==# "molder"
             return expand('%')
         elseif &filetype ==# "fern"
             return b:fern.root._path
-        elseif &filetype ==# "qf"
-            let l:quickfix_str = "[Quickfix List]"
-            if exists('w:quickfix_title')
-                return l:quickfix_str ." | " . w:quickfix_title
-            else
-                return l:quickfix_str
-            endif
         else
             let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
             return l:filename . LightlineModified()
@@ -494,7 +492,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineReadonly() abort
-        return &readonly && &filetype !=# 'help' ? "RO" : ""
+        return &readonly && &filetype !~# '\v(help|molder)' ? "RO" : ""
     endfunction
 
     function! LightlineEncandFt() abort
