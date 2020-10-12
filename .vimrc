@@ -120,10 +120,10 @@ nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
 "nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
+nnoremap <silent> <Leader><C-l> <C-l>
 " Insert line break
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
-nnoremap <silent> <Leader><C-l> <C-l>
 if !s:is_neovim
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
