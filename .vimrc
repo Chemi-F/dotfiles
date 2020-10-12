@@ -117,6 +117,7 @@ nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
+nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
 "nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
 " Insert line break
@@ -382,11 +383,12 @@ endif
 
 " fern
 if s:plug.isInstalled("fern.vim")
-    nnoremap <silent> <leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+    nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
     augroup fernAutocmd
         autocmd!
         autocmd FileType fern setlocal nonumber
+        autocmd FileType fern nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
     augroup END
 endif
 
