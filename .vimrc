@@ -364,7 +364,7 @@ if s:plug.isInstalled("asyncomplete.vim")
 
     inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
     inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
-    inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
+    inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 endif
 
 " vim-molder
@@ -373,6 +373,7 @@ if s:plug.isInstalled("vim-molder")
         nmap <buffer> l <Plug>(molder-open)
         nmap <buffer> h <Plug>(molder-up)
         nmap <buffer> . <Plug>(molder-toggle-hidden)
+        nnoremap <buffer> cd :<C-u>lcd %<CR>
     endfunction
 
     augroup vimmolderAutocmd
@@ -407,7 +408,7 @@ endif
 if s:plug.isInstalled("lightline.vim")
     set noshowmode
     let g:lightline = {
-                \ 'colorscheme': 'ayu_mirage',
+                \ 'colorscheme': 'iceberg',
                 \ 'active': {
                 \   'left' : [ ['mode', 'paste'],
                 \              ['fugitive', 'readonly', 'filename'] ],
