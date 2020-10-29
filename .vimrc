@@ -350,7 +350,7 @@ augroup vimlspAutocmd
         autocmd User lsp_setup call lsp#register_server({
                 \ 'name': 'haskell-language-server',
                 \ 'cmd': {server_info->['haskell-language-server-wrapper', '--lsp']},
-                \ 'allowlist': ['haskell','lhaskell'],
+                \ 'allowlist': ['haskell', 'lhaskell'],
                 \})
     endif
 augroup END
