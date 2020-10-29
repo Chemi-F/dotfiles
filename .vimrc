@@ -17,7 +17,7 @@ set incsearch
 set ignorecase
 set smartcase
 " 3 tags
-set tags+=tags;
+set tags=./tags;
 " 4 displaying text
 set scrolloff=5
 if v:version >= 800
@@ -34,11 +34,9 @@ set hlsearch
 set cursorline
 " 6 multiple windows
 set laststatus=2
-set statusline=%<%t%m%r%h%w
-set statusline+=%=
-set statusline+=\|\ %{&fileencoding},%{&fileformat}
-set statusline+=\ \|\ %Y
-set statusline+=\ \|\ %l/%L,%c\ \|
+set statusline=%<%t%m%r%h%w%=
+set statusline+=\|\ %{&fileencoding},%{&fileformat}\ \|
+set statusline+=\ %Y\ \|\ %l/%L,%c\ \|
 set hidden
 " 8 terminal
 set title
@@ -86,7 +84,7 @@ nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
 " Insert line break
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
-nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
+nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
 " Others
 nnoremap <silent> <Esc><Esc> :<C-u>nohlsearch<CR>
 nnoremap <silent> <Down> <C-w>-
@@ -123,11 +121,11 @@ tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
 " Function mappings
 nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToJapanese()<CR>
-nnoremap <silent> <Leader>f :<C-u>call <SID>toggleQuickfix()<CR>
+nnoremap <silent> <Leader>cf :<C-u>call <SID>toggleQuickfix()<CR>
 nnoremap <silent> <Leader>tm :<C-u>call <SID>moveToNewtab()<CR>
 
 " Function
-" For map
+" For map Functions
 " For displaying help in Japanese
 let s:helplang_is_ja = 0
 function! s:helplangToJapanese() abort
@@ -164,8 +162,13 @@ function! s:moveToNewtab() abort
 endfunction
 
 " For autocmd functions
+function! s:adjustWindowHeight(minHeight, maxHeight) abort
+    execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
+endfunction
+
 function! s:quickfixSettings() abort
     setlocal nowrap
+    call s:adjustWindowHeight(3,10)
 endfunction
 
 function! s:terminalmodeSettings() abort
@@ -185,13 +188,13 @@ augroup myAutocmd
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
 
-    " Help autocmd
-    autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
+    " Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
+    autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
+    autocmd FileType qf call s:quickfixSettings()
 
     " Quickfix autocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
-    autocmd FileType qf call s:quickfixSettings()
     autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'qf') | q | endif
 
     " Terminal mode autocmd
@@ -219,14 +222,16 @@ else
     set titlestring=Vim:\ %f%m
     if s:is_windows
         let s:vimfiles_dir = expand('~/vimfiles')
+        nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
     else
         set shell=/bin/bash
         let s:vimfiles_dir = expand('~/.vim')
+        nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
     endif
-    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
     augroup vimSettings
         autocmd!
-        autocmd TerminalOpen * if &buftype ==# 'terminal' | call s:terminalmodeSettings() | endif
+        autocmd TerminalOpen * if &buftype ==# 'terminal' 
+                    \| call s:terminalmodeSettings() | endif
     augroup END
 endif
 
@@ -235,12 +240,12 @@ if exists('s:vimfiles_dir')
     let s:swap_dir = s:vimfiles_dir . '/swap'
 
     " Make directory
-    "function! s:makeDir(dir) abort
-    "    if !isdirectory(a:dir)
-    "        call mkdir(a:dir, 'p')
-    "    endif
-    "endfunction
-    "call s:makeDir(s:swap_dir)
+    function! s:makeDir(dir) abort
+        if !isdirectory(a:dir)
+            call mkdir(a:dir, 'p')
+        endif
+    endfunction
+    call s:makeDir(s:swap_dir)
 
     execute 'set directory=' . s:swap_dir
     set swapfile
