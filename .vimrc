@@ -372,6 +372,7 @@ function! s:customize_vimmolder_mappings() abort
     nmap <buffer> l <Plug>(molder-open)
     nmap <buffer> h <Plug>(molder-up)
     nmap <buffer> . <Plug>(molder-toggle-hidden)
+    nnoremap <buffer> e :<C-u>e<Space>
     nnoremap <buffer> cd :<C-u>lcd %<CR>
 endfunction
 
