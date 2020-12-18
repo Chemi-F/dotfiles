@@ -125,6 +125,24 @@ nnoremap <silent> <Leader>cf :<C-u>call <SID>toggleQuickfix()<CR>
 nnoremap <silent> <Leader>tm :<C-u>call <SID>moveToNewtab()<CR>
 
 " Function
+function! ShowModified() abort
+    if &buftype ==# "terminal"
+        if &modified
+            return " [Runnning]"
+        elseif !&modifiable
+            return " [Finished]"
+        endif
+    endif
+    if &filetype !=# "help"
+        if &modified
+            return " [+]"
+        elseif !&modifiable
+            return " [-]"
+        endif
+    endif
+    return ""
+endfunction
+
 " For map Functions
 " For displaying help in Japanese
 let s:helplang_is_ja = 0
@@ -219,7 +237,7 @@ if s:is_neovim
         autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
     augroup END
 else
-    set titlestring=Vim:\ %f%m
+    set titlestring=Vim:\ %f%{ShowModified()}
     if s:is_windows
         let s:vimfiles_dir = expand('~/vimfiles')
         nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
@@ -457,24 +475,6 @@ function! LightlineFugitive() abort
     return ""
 endfunction
 
-function! LightlineModified() abort
-    if &buftype ==# "terminal"
-        if &modified
-            return " [Runnning]"
-        elseif !&modifiable
-            return " [Finished]"
-        endif
-    endif
-    if &filetype !=# "help"
-        if &modified
-            return " [+]"
-        elseif !&modifiable
-            return " [-]"
-        endif
-    endif
-    return ""
-endfunction
-
 function! LightlineFilename() abort
     if &filetype ==# "qf"
         if exists('w:quickfix_title')
@@ -488,7 +488,7 @@ function! LightlineFilename() abort
         return b:fern.root._path
     else
         let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
-        return l:filename . LightlineModified()
+        return l:filename . ShowModified()
     endif
 endfunction
 
