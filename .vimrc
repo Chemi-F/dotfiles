@@ -225,7 +225,7 @@ let s:is_neovim = has('nvim')
 let s:is_windows = has('win32') || has('win64')
 
 if s:is_neovim
-    set titlestring=NeoVim:\ %f%m
+    set titlestring=NeoVim:\ %f%{ShowModified()}
     if s:is_windows
         let s:vimfiles_dir = expand('~/vimfiles')
     else
@@ -528,7 +528,9 @@ if s:is_neovim
 endif
 
 " auto-pairs
-" let g:AutoPairsShortcutToggle = '<Leader>('
+if s:plug.isInstalled("auto-pairs")
+    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR> 
+endif
 
 " Colorscheme
 if s:plug.isInstalled("iceberg.vim")
