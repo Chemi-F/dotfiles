@@ -528,9 +528,7 @@ if s:is_neovim
 endif
 
 " auto-pairs
-if s:plug.isInstalled("auto-pairs")
-    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
-endif
+" let g:AutoPairsShortcutToggle = '<Leader>('
 
 " Colorscheme
 if s:plug.isInstalled("iceberg.vim")
