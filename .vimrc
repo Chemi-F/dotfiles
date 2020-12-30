@@ -304,7 +304,7 @@ call plug#begin(s:plug_dir)
 Plug 'junegunn/vim-plug'
 Plug 'vim-jp/vimdoc-ja'
 " fzf
-Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " vim-lsp, auto complete
 Plug 'prabirshrestha/vim-lsp'
@@ -373,8 +373,8 @@ augroup vimlspAutocmd
         autocmd User lsp_setup call lsp#register_server({
                 \ 'name': 'haskell-language-server',
                 \ 'cmd': {server_info->['haskell-language-server-wrapper', '--lsp']},
-                \ 'allowlist': ['haskell', 'lhaskell'],
-                \})
+                \ 'allowlist': ['haskell', 'lhaskell']
+                \ })
     endif
 augroup END
 
