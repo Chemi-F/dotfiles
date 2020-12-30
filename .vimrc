@@ -531,7 +531,7 @@ let g:quickrun_config = {
             \   },
             \ 'tex' : {
             \   'command': 'lualatex',
-            \   'exec': ['%c -halt-on-error -interaction=nonstopmode -file-line-error %s']
+            \   'exec': ['%c -interaction=nonstopmode -file-line-error %s']
             \   }
             \ }
 
