@@ -219,7 +219,7 @@ augroup myAutocmd
 
     " Quickfix autocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
-    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'qf') | q | endif
+    autocmd BufEnter * if (winnr('$') == 1 && &filetype =~# '\v(qf|quickrun)') | q | endif
 
     " Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
@@ -306,9 +306,6 @@ Plug 'vim-jp/vimdoc-ja'
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
 Plug 'junegunn/fzf.vim'
-" CtrlP
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'mattn/ctrlp-matchfuzzy'
 " vim-lsp, auto complete
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
@@ -326,11 +323,10 @@ endif
 " Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
-" Language
-"Plug 'lervag/vimtex', { 'for': 'tex' }
 " Others
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'thinca/vim-quickrun'
 Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
@@ -352,9 +348,6 @@ augroup fzfAutocmd
     autocmd FileType fzf set laststatus=0 noshowmode noruler
                 \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 augroup END
-
-" ctrlp.vim
-let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 
 " vim-lsp
 let g:lsp_diagnostics_enabled = 1
@@ -438,29 +431,29 @@ let g:lightline = {
             \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
             \              ['filetype'],
             \              ['fileencoding_and_fileformat'] ],
-            \ },
+            \   },
             \ 'inactive': {
             \   'right': [ ['lineinfo'] ],
-            \ },
+            \   },
             \ 'component': {
             \   'lineinfo': '%2l/%L,%-2c%<',
             \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
-            \ },
+            \   },
             \ 'component_function': {
             \   'mode': 'LightlineMode',
             \   'fugitive': 'LightlineFugitive',
             \   'readonly': 'LightlineReadonly',
             \   'filename': 'LightlineFilename',
             \   'fileencoding_and_fileformat': 'LightlineEncandFt',
-            \ },
+            \   },
             \ 'component_expand': {
             \   'lsp_errors': 'LightlineLSPErrors',
             \   'lsp_warnings': 'LightlineLSPWarnings',
-            \ },
+            \   },
             \ 'component_type': {
             \   'lsp_errors': 'error',
             \   'lsp_warnings': 'warning',
-            \ },
+            \   },
             \ }
 
 function! LightlineMode() abort
@@ -473,7 +466,7 @@ function! LightlineMode() abort
 endfunction
 
 function! LightlineFugitive() abort
-    if winwidth(0) > 70 && &filetype !~# '\v(help|qf)'
+    if winwidth(0) > 70 && &filetype !~# '\v(help|qf|quickrun)'
         if exists('*FugitiveHead')
             let l:branch = FugitiveHead()
             return branch !=# "" ? " ". l:branch : ""
@@ -527,12 +520,20 @@ augroup lightlineAutocmd
     autocmd User lsp_diagnostics_updated call lightline#update()
 augroup END
 
-" vimtex
-"let g:tex_flavor = 'latax'
-"let g:vimtex_quickfix_open_on_warning = 0
-"if s:is_neovim
-"    let g:vimtex_compiler_progname = 'nvr'
-"endif
+" quickrun
+let g:quickrun_config = {
+            \ '_': {
+            \   'outputter': 'buffer',
+            \   'outputter/buffer/name': "[Quickrun Output]",
+            \   'outputter/buffer/split': ":botright 8",
+            \   'outputter/buffer/running_mark': "[Runninng...]",
+            \   'runner': 'job',
+            \   },
+            \ 'tex' : {
+            \   'command': 'lualatex',
+            \   'exec': ['%c -halt-on-error -interaction=nonstopmode -file-line-error %s']
+            \   }
+            \ }
 
 " auto-pairs
 if s:plug.isInstalled("auto-pairs")
