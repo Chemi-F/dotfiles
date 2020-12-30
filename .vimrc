@@ -80,7 +80,7 @@ nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
 nnoremap <Leader>rg :<C-u>registers<CR>
-nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
+nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
 " Insert line break
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
@@ -120,9 +120,9 @@ inoremap <C-@> <C-[>
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
 " Function mappings
-nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToJapanese()<CR>
+nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang2Japanese()<CR>
 nnoremap <silent> <Leader>cf :<C-u>call <SID>toggleQuickfix()<CR>
-nnoremap <silent> <Leader>tm :<C-u>call <SID>moveToNewtab()<CR>
+nnoremap <silent> <Leader>tm :<C-u>call <SID>move2Newtab()<CR>
 
 " Function
 function! ShowModified() abort
@@ -143,10 +143,10 @@ function! ShowModified() abort
     return ""
 endfunction
 
-" For map Functions
+" Map functions
 " For displaying help in Japanese
 let s:helplang_is_ja = 0
-function! s:helplangToJapanese() abort
+function! s:helplang2Japanese() abort
     if s:helplang_is_ja
         set helplang=en,ja
         let s:helplang_is_ja = 0
@@ -168,7 +168,7 @@ function! s:toggleQuickfix() abort
     endif
 endfunction
 
-function! s:moveToNewtab() abort
+function! s:move2Newtab() abort
     tab split
     tabprevious
     if winnr('$') > 1
@@ -179,7 +179,13 @@ function! s:moveToNewtab() abort
     tabnext
 endfunction
 
-" For autocmd functions
+" For editing symbolic link file
+function! s:editActualFile(filename) abort
+    let l:actualFilename = resolve(expand(a:filename))
+    execute "e" . l:actualFilename
+endfunction
+
+" Autocmd functions
 function! s:adjustWindowHeight(minHeight, maxHeight) abort
     execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
 endfunction
@@ -321,7 +327,7 @@ endif
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
 " Language
-Plug 'lervag/vimtex', { 'for': 'tex' }
+"Plug 'lervag/vimtex', { 'for': 'tex' }
 " Others
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -353,6 +359,7 @@ let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 " vim-lsp
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_settings_enable_suggestions = 0
 
 function! s:lsp_buffer_settings() abort
     setlocal omnifunc=lsp#complete
@@ -521,11 +528,11 @@ augroup lightlineAutocmd
 augroup END
 
 " vimtex
-let g:tex_flavor = 'latax'
-let g:vimtex_quickfix_open_on_warning = 0
-if s:is_neovim
-    let g:vimtex_compiler_progname = 'nvr'
-endif
+"let g:tex_flavor = 'latax'
+"let g:vimtex_quickfix_open_on_warning = 0
+"if s:is_neovim
+"    let g:vimtex_compiler_progname = 'nvr'
+"endif
 
 " auto-pairs
 if s:plug.isInstalled("auto-pairs")
