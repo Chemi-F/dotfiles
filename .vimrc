@@ -63,6 +63,7 @@ set smartindent
 " 18 reading and writing files
 set nobackup
 " 20 command line editing
+set wildmode=longest,full
 set wildmenu
 " 25 various
 set viminfo='50,<500,s100,h
