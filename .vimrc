@@ -478,7 +478,7 @@ endfunction
 
 function! LightlineFilename() abort
     if &filetype ==# "qf"
-        if exists('w:quickfix_title')
+        if exists("w:quickfix_title")
             return "[Quickfix List]" . " | " . w:quickfix_title
         else
             return "[Quickfix List]"
@@ -507,12 +507,12 @@ function! LightlineEncandFt() abort
 endfunction
 
 function! LightlineLSPWarnings() abort
-    let l:counts = lsp#ui#vim#diagnostics#get_buffer_diagnostics_counts()
+    let l:counts = lsp#get_buffer_diagnostics_counts()
     return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
 endfunction
 
 function! LightlineLSPErrors() abort
-    let l:counts = lsp#ui#vim#diagnostics#get_buffer_diagnostics_counts()
+    let l:counts = lsp#get_buffer_diagnostics_counts()
     return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
 endfunction
 
