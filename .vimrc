@@ -220,11 +220,11 @@ augroup myAutocmd
 
     " Quickfix autocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
-    autocmd BufEnter * if (winnr('$') == 1 && &filetype =~# '\v(qf|quickrun)') | q | endif
 
     " Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
-    autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'terminal') | q! | endif
+
+    autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) | q! | endif
 augroup END
 
 " Version settings
