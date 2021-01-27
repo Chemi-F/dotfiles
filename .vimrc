@@ -80,7 +80,7 @@ nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
-nnoremap <Leader>rg :<C-u>registers<CR>
+"nnoremap <Leader>g :<C-u>registers<CR>
 nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> <C-l>
 " Insert line break
