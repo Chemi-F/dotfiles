@@ -360,7 +360,7 @@ function! s:lsp_buffer_settings() abort
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> <silent> <Leader>p <plug>(lsp-previous-diagnostic)
-    nmap <buffer> <silent> <Leader>n <plug>(lsp-next-diagnosticj
+    nmap <buffer> <silent> <Leader>n <plug>(lsp-next-diagnostic)
     nmap <buffer> <silent> gd <plug>(lsp-definition)
     "nmap <buffer> <silent> <Leader>r <plug>(lsp-rename)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
