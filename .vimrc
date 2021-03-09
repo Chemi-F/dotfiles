@@ -370,13 +370,6 @@ endfunction
 augroup vimlspAutocmd
     autocmd!
     autocmd User lsp_buffer_enabled call s:lsp_buffer_settings()
-    if executable('haskell-language-server')
-        autocmd User lsp_setup call lsp#register_server({
-                \ 'name': 'haskell-language-server',
-                \ 'cmd': {server_info->['haskell-language-server-wrapper', '--lsp']},
-                \ 'allowlist': ['haskell', 'lhaskell']
-                \ })
-    endif
 augroup END
 
 " asyncomplete.vim
