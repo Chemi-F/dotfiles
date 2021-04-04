@@ -98,6 +98,7 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
+nnoremap <C-]> g<C-]>
 " Normal, visual mode
 noremap <Leader>h ^
 noremap <Leader>l $
@@ -231,26 +232,30 @@ let s:is_windows = has('win32') || has('win64')
 
 if s:is_neovim
     set titlestring=NeoVim:\ %f%{ShowModified()}
+
     if s:is_windows
         let s:vimfiles_dir = expand('~/vimfiles')
     else
-        set shell=/bin/bash
         let s:vimfiles_dir = expand('~/.local/share/nvim')
+        set shell=/bin/bash
     endif
+
     augroup neovimSettings
         autocmd!
         autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
     augroup END
 else
     set titlestring=Vim:\ %f%{ShowModified()}
+
     if s:is_windows
         let s:vimfiles_dir = expand('~/vimfiles')
         nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
     else
-        set shell=/bin/bash
         let s:vimfiles_dir = expand('~/.vim')
+        set shell=/bin/bash
         nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
     endif
+
     augroup vimSettings
         autocmd!
         autocmd TerminalOpen * if &buftype ==# 'terminal' 
@@ -258,20 +263,25 @@ else
     augroup END
 endif
 
-if exists('s:vimfiles_dir')
-    let s:plug_dir = s:vimfiles_dir . '/plugged'
-    let s:swap_dir = s:vimfiles_dir . '/swap'
+let s:plug_dir = s:vimfiles_dir . '/plugged'
+let s:swap_dir = s:vimfiles_dir . '/swap'
+let s:undo_dir = s:vimfiles_dir . '/undo'
 
-    " Make directory
-    function! s:makeDir(dir) abort
-        if !isdirectory(a:dir)
-            call mkdir(a:dir, 'p')
-        endif
-    endfunction
-    call s:makeDir(s:swap_dir)
+" Make directory
+function! s:makeDir(dir) abort
+    if !isdirectory(a:dir)
+        call mkdir(a:dir, 'p')
+    endif
+endfunction
 
-    execute 'set directory=' . s:swap_dir
-    set swapfile
+call s:makeDir(s:swap_dir)
+execute 'set directory=' . s:swap_dir
+set swapfile
+
+if has('persistent_undo')
+    call s:makeDir(s:undo_dir)
+    execute 'set undodir=' . s:undo_dir
+    set undofile
 endif
 
 " Finish when using git commit
