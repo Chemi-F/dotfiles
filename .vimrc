@@ -76,9 +76,12 @@ nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
 nnoremap <Leader>q :<C-u>quit<CR>
 nnoremap <Leader>wq :<C-u>wq<CR>
+nnoremap <Leader>m :<C-u>marks<CR>
+nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
+"erace space
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
 nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
@@ -99,6 +102,11 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 nnoremap <C-]> g<C-]>
+nnoremap t <Nop>
+nnoremap tt <C-]>
+nnoremap tj :<C-u>tag<CR>
+nnoremap tk :<C-u>pop<CR>
+nnoremap tl :<C-u>tags<CR>
 " Normal, visual mode
 noremap <Leader>h ^
 noremap <Leader>l $
@@ -258,7 +266,7 @@ else
 
     augroup vimSettings
         autocmd!
-        autocmd TerminalOpen * if &buftype ==# 'terminal' 
+        autocmd TerminalOpen * if &buftype ==# 'terminal'
                     \| call s:terminalmodeSettings() | endif
     augroup END
 endif
@@ -370,7 +378,6 @@ function! s:lsp_buffer_settings() abort
     nmap <buffer> <silent> <Leader>p <plug>(lsp-previous-diagnostic)
     nmap <buffer> <silent> <Leader>n <plug>(lsp-next-diagnostic)
     nmap <buffer> <silent> gd <plug>(lsp-definition)
-    "nmap <buffer> <silent> <Leader>r <plug>(lsp-rename)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
 endfunction
@@ -539,7 +546,7 @@ let g:quickrun_config = {
 
 " auto-pairs
 if s:plug.isInstalled("auto-pairs")
-    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR> 
+    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 endif
 
 " Colorscheme
