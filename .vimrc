@@ -83,6 +83,10 @@ nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 "erace space
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
+nnoremap <Leader>tt <C-]>
+nnoremap <Leader>tj :<C-u>tag<CR>
+nnoremap <Leader>tk :<C-u>pop<CR>
+nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 " Insert line break
@@ -102,11 +106,6 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 nnoremap <C-]> g<C-]>
-nnoremap t <Nop>
-nnoremap tt <C-]>
-nnoremap tj :<C-u>tag<CR>
-nnoremap tk :<C-u>pop<CR>
-nnoremap tl :<C-u>tags<CR>
 " Normal, visual mode
 noremap <Leader>h ^
 noremap <Leader>l $
@@ -239,14 +238,9 @@ let s:is_neovim = has('nvim')
 let s:is_windows = has('win32') || has('win64')
 
 if s:is_neovim
+    let s:vimfiles_dir = expand('~/.local/share/nvim')
     set titlestring=NeoVim:\ %f%{ShowModified()}
-
-    if s:is_windows
-        let s:vimfiles_dir = expand('~/vimfiles')
-    else
-        let s:vimfiles_dir = expand('~/.local/share/nvim')
-        set shell=/bin/bash
-    endif
+    set shell=/bin/bash
 
     augroup neovimSettings
         autocmd!
@@ -258,6 +252,8 @@ else
     if s:is_windows
         let s:vimfiles_dir = expand('~/vimfiles')
         nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
+        nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
+        nnoremap <silent><Leader>g. :<C-u>e $MYGVIMRC<CR>
     else
         let s:vimfiles_dir = expand('~/.vim')
         set shell=/bin/bash
