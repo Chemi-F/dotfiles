@@ -25,3 +25,6 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa_github
 # 3. Execute the following command in dotfiles
 git remote set-url origin git@github.com:Chemi-F/dotfiles.git
+
+# windows
+cmd /c mklink .vimrc "path\to\.vimrc"
