@@ -1,6 +1,6 @@
 if !1 | finish | endif
 
-" Encoding
+"Encoding
 set fileencodings=utf-8,sjis
 set encoding=utf-8
 
@@ -10,15 +10,15 @@ if &compatible
     set nocompatible
 endif
 
-" Options (:options)
-" 2 moving around, searching and patterns
+"Options (:options)
+"2 moving around, searching and patterns
 set wrapscan
 set incsearch
 set ignorecase
 set smartcase
-" 3 tags
+"3 tags
 set tags=./tags;
-" 4 displaying text
+"4 displaying text
 set scrolloff=5
 if v:version >= 800
     set breakindent
@@ -29,53 +29,52 @@ set cmdheight=2
 set list
 set listchars=tab:^-
 set number
-" 5 syntax, highlighting and spelling
+"5 syntax, highlighting and spelling
 set hlsearch
 set cursorline
-" 6 multiple windows
+"6 multiple windows
 set laststatus=2
 set statusline=%<%t%m%r%h%w%=
 set statusline+=\|\ %{&fileencoding},%{&fileformat}\ \|
 set statusline+=\ %Y\ \|\ %l/%L,%c\ \|
 set hidden
-" 8 terminal
+"8 terminal
 set title
-" 11 messages and info
+"11 messages and info
 set showcmd
 set noerrorbells
 set visualbell t_vb=
 set belloff=all
 set helplang=en,ja
-" 12 selecting text
-"set clipboard+=unnamed
-" 13 editing text
+"12 selecting text
+" set clipboard+=unnamed
+"13 editing text
 set backspace=indent,eol,start
 set formatoptions-=ro
 set pumheight=10
 set showmatch
 set matchtime=1
-" 14 tabs and indenting
+"14 tabs and indenting
 set tabstop=4
 set shiftwidth=4
 set expandtab
 set autoindent
 set smartindent
-" 18 reading and writing files
+"18 reading and writing files
 set nobackup
-" 20 command line editing
+"20 command line editing
 set wildmode=longest,full
 set wildmenu
-" 25 various
+"25 various
 set viminfo='50,<500,s100,h
 
-" Key-mappings
+"Key-mappings
 let g:mapleader = "\<Space>"
 nnoremap <Space> <Nop>
-" Normal mode
-" Leader mappings
+"Normal mode
+"Leader mappings
 nnoremap <Leader>w :<C-u>write<CR>
 nnoremap <Leader>q :<C-u>quit<CR>
-nnoremap <Leader>wq :<C-u>wq<CR>
 nnoremap <Leader>m :<C-u>marks<CR>
 nnoremap <Leader>r :<C-u>registers<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
@@ -83,16 +82,16 @@ nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
 "erace space
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
-nnoremap <Leader>tt <C-]>
 nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
 nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
-" Insert line break
+"Insert line break
+"http://deris.hatenablog.jp/entry/20130404/1365086716
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
-" Others
+"Others
 nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
@@ -106,7 +105,7 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 nnoremap <C-]> g<C-]>
-" Normal, visual mode
+"Normal, visual mode
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -118,20 +117,27 @@ noremap ; :
 noremap x "_x
 noremap X "_X
 noremap * *N
-" Insert mode
+"Insert mode
 inoremap jj <Esc>
 inoremap <C-c> <Esc>
 inoremap <S-Tab> <C-d>
 inoremap <C-@> <C-[>
-" Terimnal mode
+"Command mode
+cnoremap <C-q> <C-f>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-d> <Del>
+"Terimnal mode
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
-" Function mappings
+"Function mappings
 nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang2Japanese()<CR>
 nnoremap <silent> <Leader>cf :<C-u>call <SID>toggleQuickfix()<CR>
 nnoremap <silent> <Leader>tm :<C-u>call <SID>move2Newtab()<CR>
 
-" Function
+"Function
 function! ShowModified() abort
     if &buftype ==# "terminal"
         if &modified
@@ -150,8 +156,8 @@ function! ShowModified() abort
     return ""
 endfunction
 
-" Map functions
-" For displaying help in Japanese
+"Map functions
+"For displaying help in Japanese
 let s:helplang_is_ja = 0
 function! s:helplang2Japanese() abort
     if s:helplang_is_ja
@@ -165,7 +171,7 @@ function! s:helplang2Japanese() abort
     endif
 endfunction
 
-" Quickfix window open
+"Quickfix window open
 function! s:toggleQuickfix() abort
     let l:nr = winnr('$')
     cwindow
@@ -186,13 +192,13 @@ function! s:move2Newtab() abort
     tabnext
 endfunction
 
-" For editing symbolic link file
+"For editing symbolic link file
 function! s:editActualFile(filename) abort
     let l:actualFilename = resolve(expand(a:filename))
     execute "e" . l:actualFilename
 endfunction
 
-" Autocmd functions
+"Autocmd functions
 function! s:adjustWindowHeight(minHeight, maxHeight) abort
     execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
 endfunction
@@ -207,33 +213,33 @@ function! s:terminalmodeSettings() abort
     nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
 endfunction
 
-" Command
+"Command
 command! -nargs=1 VimGrepF execute 'vimgrep <args> %'
 command! -nargs=1 VimGrepD execute 'vimgrep <args> **'
 command! -nargs=* TermOpen execute 'botright terminal ++rows=8 <args>'
 command! Cd execute 'lcd %:h'
 
-" Autocmd
+"Autocmd
 augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
 
-    " Filetype autocmd
+    "Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
     autocmd FileType qf call s:quickfixSettings()
 
-    " Quickfix autocmd
+    "Quickfix autocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-    " Terminal mode autocmd
+    "Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
 
     autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) | q! | endif
 augroup END
 
-" Version settings
+"Version settings
 let s:is_neovim = has('nvim')
 let s:is_windows = has('win32') || has('win64')
 
@@ -271,7 +277,7 @@ let s:plug_dir = s:vimfiles_dir . '/plugged'
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
-" Make directory
+"Make directory
 function! s:makeDir(dir) abort
     if !isdirectory(a:dir)
         call mkdir(a:dir, 'p')
@@ -288,12 +294,12 @@ if has('persistent_undo')
     set undofile
 endif
 
-" Finish when using git commit
+"Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
     finish
 end
 
-" Package
+"Package
 if !s:is_neovim
     if has('eval') && v:version >= 800
         packadd! matchit
@@ -304,43 +310,47 @@ if !s:is_neovim
     endif
 endif
 
-" Plugin
-" vim-plug
+"Plugin
+"vim-plug
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    " Finish when vim-plug isn't installed
+    "Finish when vim-plug isn't installed
     colorscheme ron
     finish
 endif
 
 call plug#begin(s:plug_dir)
-" Manual
+"Manual
 Plug 'junegunn/vim-plug'
 Plug 'vim-jp/vimdoc-ja'
-" fzf
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-" vim-lsp, auto complete
+"vim-lsp, auto complete
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
-" Git
+"Language
+"html
+Plug 'mattn/emmet-vim', { 'for': 'html' }
+"fuzzy finder
+Plug 'ctrlpvim/ctrlp.vim'
+"Git
 Plug 'tpope/vim-fugitive'
-" Filer
+"Filer
 Plug 'mattn/vim-molder'
 Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-" Terminal
+"Terminal
 if s:is_neovim
     Plug 'kassio/neoterm'
 endif
-" Theme
+"Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
-" Others
+"Others
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'thinca/vim-quickrun'
 Plug 'jiangmiao/auto-pairs'
+Plug 'kana/vim-operator-user'
+Plug 'kana/vim-operator-replace'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -348,21 +358,7 @@ function! s:plug.isInstalled(name) abort
     return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
 
-" fzf.vim
-command! -bang -nargs=* Rg
-            \ call fzf#vim#grep(
-            \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
-            \   <bang>0 ? fzf#vim#with_preview('up:60%')
-            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-            \   <bang>0)
-
-augroup fzfAutocmd
-    autocmd!
-    autocmd FileType fzf set laststatus=0 noshowmode noruler
-                \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-augroup END
-
-" vim-lsp
+"vim-lsp
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_settings_enable_suggestions = 0
@@ -383,14 +379,14 @@ augroup vimlspAutocmd
     autocmd User lsp_buffer_enabled call s:lsp_buffer_settings()
 augroup END
 
-" asyncomplete.vim
+"asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
 
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
 inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
-" vim-molder
+"vim-molder
 function! s:customize_vimmolder_mappings() abort
     nmap <buffer> l <Plug>(molder-open)
     nmap <buffer> h <Plug>(molder-up)
@@ -404,9 +400,9 @@ augroup vimmolderAutocmd
     autocmd FileType molder call s:customize_vimmolder_mappings()
 augroup END
 
-" fern
+"fern
 if s:plug.isInstalled("fern.vim")
-    nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+    nnoremap <silent> <Leader><C-b> :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
     augroup fernAutocmd
         autocmd!
@@ -415,7 +411,7 @@ if s:plug.isInstalled("fern.vim")
     augroup END
 endif
 
-" neoterm
+"neoterm
 if s:plug.isInstalled("neoterm")
     let g:neoterm_default_mod="belowright"
     let g:neoterm_size=8
@@ -426,7 +422,7 @@ if s:plug.isInstalled("neoterm")
     vnoremap <silent> <C-e> :TREPLSendSelection<CR><ESC>
 endif
 
-" lightline.vim
+"lightline.vim
 set noshowmode
 let g:lightline = {
             \ 'colorscheme': 'iceberg',
@@ -525,7 +521,7 @@ augroup lightlineAutocmd
     autocmd User lsp_diagnostics_updated call lightline#update()
 augroup END
 
-" quickrun
+"quickrun
 let g:quickrun_config = {
             \ '_': {
             \   'outputter': 'buffer',
@@ -540,12 +536,12 @@ let g:quickrun_config = {
             \   }
             \ }
 
-" auto-pairs
+"auto-pairs
 if s:plug.isInstalled("auto-pairs")
     nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 endif
 
-" Colorscheme
+"Colorscheme
 if s:plug.isInstalled("iceberg.vim")
     set termguicolors
     set t_Co=256

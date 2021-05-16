@@ -1,3 +1,17 @@
+# Linux
+
+# Link
+#For vim
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+ln -sf ./.vimrc ~/.vimrc
+
+#For neovim
+#curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+#    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+#mkdir -p ~/.config/nvim
+#ln -sf ./.vimrc ~/.config/nvim/init.vim
+
 # apt setting
 cd /etc/apt
 sudo sed -i.bak -e "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" sources.list
@@ -26,5 +40,5 @@ ssh-add ~/.ssh/id_rsa_github
 # 3. Execute the following command in dotfiles
 git remote set-url origin git@github.com:Chemi-F/dotfiles.git
 
-# windows
+# For Windows
 cmd /c mklink .vimrc "path\to\.vimrc"
