@@ -40,6 +40,7 @@ set statusline+=\ %Y\ \|\ %l/%L,%c\ \|
 set hidden
 "8 terminal
 set title
+set titlestring=Vim:\ %f%{ShowModified()}
 "11 messages and info
 set showcmd
 set noerrorbells
@@ -96,9 +97,6 @@ nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Right> <C-w>>
-"nnoremap <C-n> :<C-u>cnext<CR>
-"nnoremap <C-p> :<C-u>cprevious<CR>
-"nnoremap <C-c> :<C-u>cclose<CR>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -206,6 +204,8 @@ endfunction
 function! s:quickfixSettings() abort
     setlocal nowrap
     call s:adjustWindowHeight(3,10)
+    "nnoremap <Leader>n :<C-u>cnext<CR>
+    "nnoremap <Leader>p :<C-u>cprevious<CR>
 endfunction
 
 function! s:terminalmodeSettings() abort
@@ -240,39 +240,29 @@ augroup myAutocmd
 augroup END
 
 "Version settings
-let s:is_neovim = has('nvim')
 let s:is_windows = has('win32') || has('win64')
 
-if s:is_neovim
-    let s:vimfiles_dir = expand('~/.local/share/nvim')
-    set titlestring=NeoVim:\ %f%{ShowModified()}
-    set shell=/bin/bash
-
-    augroup neovimSettings
-        autocmd!
-        autocmd WinEnter * if &buftype ==# 'terminal' | startinsert | endif
-    augroup END
+if s:is_windows
+    let s:vimfiles_dir = expand('~/vimfiles')
+    set noshellslash
+    "set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*
+    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
+    nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
+    nnoremap <silent><Leader>g. :<C-u>e $MYGVIMRC<CR>
 else
-    set titlestring=Vim:\ %f%{ShowModified()}
-
-    if s:is_windows
-        let s:vimfiles_dir = expand('~/vimfiles')
-        nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
-        nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
-        nnoremap <silent><Leader>g. :<C-u>e $MYGVIMRC<CR>
-    else
-        let s:vimfiles_dir = expand('~/.vim')
-        set shell=/bin/bash
-        nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
-    endif
-
-    augroup vimSettings
-        autocmd!
-        autocmd TerminalOpen * if &buftype ==# 'terminal'
-                    \| call s:terminalmodeSettings() | endif
-    augroup END
+    let s:vimfiles_dir = expand('~/.vim')
+    set shell=/bin/bash
+    "set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
 
+augroup vimSettings
+    autocmd!
+    autocmd TerminalOpen * if &buftype ==# 'terminal'
+                \| call s:terminalmodeSettings() | endif
+augroup END
+
+let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
 let s:plug_dir = s:vimfiles_dir . '/plugged'
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
@@ -285,6 +275,7 @@ function! s:makeDir(dir) abort
 endfunction
 
 call s:makeDir(s:swap_dir)
+execute 'set viminfo+=n' . s:viminfo_path
 execute 'set directory=' . s:swap_dir
 set swapfile
 
@@ -300,14 +291,12 @@ if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
 end
 
 "Package
-if !s:is_neovim
-    if has('eval') && v:version >= 800
-        packadd! matchit
-    endif
-    if v:version >= 801
-        packadd! termdebug
-        let g:termdebug_wide = 163
-    endif
+if has('eval') && v:version >= 800
+    packadd! matchit
+endif
+if v:version >= 801
+    packadd! termdebug
+    let g:termdebug_wide = 163
 endif
 
 "Plugin
@@ -337,10 +326,6 @@ Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
 Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-"Terminal
-if s:is_neovim
-    Plug 'kassio/neoterm'
-endif
 "Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
@@ -363,7 +348,7 @@ let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_settings_enable_suggestions = 0
 
-function! s:lsp_buffer_settings() abort
+function! s:vimlspSettings() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
@@ -376,7 +361,7 @@ endfunction
 
 augroup vimlspAutocmd
     autocmd!
-    autocmd User lsp_buffer_enabled call s:lsp_buffer_settings()
+    autocmd User lsp_buffer_enabled call s:vimlspSettings()
 augroup END
 
 "asyncomplete.vim
@@ -386,8 +371,16 @@ inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
 inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
+"ctrlP
+let g:ctrlp_match_window = 'min:8,max:8'
+let g:ctrlp_cache_dir = s:vimfiles_dir . '.cache/ctrlp'
+let g:ctrlp_custom_ignore = {
+            \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+            \ 'file': '\v\.(exe|so|dll)$',
+            \ }
+
 "vim-molder
-function! s:customize_vimmolder_mappings() abort
+function! s:vimmolderSettings() abort
     nmap <buffer> l <Plug>(molder-open)
     nmap <buffer> h <Plug>(molder-up)
     nmap <buffer> . <Plug>(molder-toggle-hidden)
@@ -397,29 +390,22 @@ endfunction
 
 augroup vimmolderAutocmd
     autocmd!
-    autocmd FileType molder call s:customize_vimmolder_mappings()
+    autocmd FileType molder call s:vimmolderSettings()
 augroup END
 
 "fern
 if s:plug.isInstalled("fern.vim")
-    nnoremap <silent> <Leader><C-b> :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+    nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+
+    function! s:fernSettings()
+        setlocal nonumber
+        nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
+    endfunction
 
     augroup fernAutocmd
         autocmd!
-        autocmd FileType fern setlocal nonumber
-        autocmd FileType fern nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
+        autocmd FileType fern call s:fernSettings()
     augroup END
-endif
-
-"neoterm
-if s:plug.isInstalled("neoterm")
-    let g:neoterm_default_mod="belowright"
-    let g:neoterm_size=8
-    let g:neoterm_autoscroll=1
-
-    nnoremap <silent> <Leader>to :<C-u>Ttoggle<CR><ESC>
-    tnoremap <A-t> <C-\><C-n>:Ttoggle<CR>
-    vnoremap <silent> <C-e> :TREPLSendSelection<CR><ESC>
 endif
 
 "lightline.vim
@@ -547,6 +533,8 @@ if s:plug.isInstalled("iceberg.vim")
     set t_Co=256
     set background=dark
     colorscheme iceberg
+else
+    colorscheme ron
 endif
 
 augroup delayAutocmd
