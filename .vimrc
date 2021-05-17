@@ -244,7 +244,7 @@ let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
-    set noshellslash
+    "set noshellslash
     "set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
     nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
@@ -373,7 +373,7 @@ inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
 "ctrlP
 let g:ctrlp_match_window = 'min:8,max:8'
-let g:ctrlp_cache_dir = s:vimfiles_dir . '.cache/ctrlp'
+let g:ctrlp_cache_dir = s:vimfiles_dir . '/.cache/ctrlp'
 let g:ctrlp_custom_ignore = {
             \ 'dir':  '\v[\/]\.(git|hg|svn)$',
             \ 'file': '\v\.(exe|so|dll)$',
