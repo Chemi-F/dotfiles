@@ -244,7 +244,7 @@ let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
-    "set noshellslash
+    set noshellslash
     "set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
     nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
