@@ -246,6 +246,9 @@ if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
     set noshellslash
     "set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*
+
+    set viminfo+=n~/vimfiles/.viminfo
+
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
     nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
     nnoremap <silent><Leader>g. :<C-u>e $MYGVIMRC<CR>
@@ -253,6 +256,10 @@ else
     let s:vimfiles_dir = expand('~/.vim')
     set shell=/bin/bash
     "set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+
+    let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
+    execute 'set viminfo+=n' . s:viminfo_path
+
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
 
@@ -262,7 +269,6 @@ augroup vimSettings
                 \| call s:terminalmodeSettings() | endif
 augroup END
 
-let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
 let s:plug_dir = s:vimfiles_dir . '/plugged'
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
@@ -275,7 +281,6 @@ function! s:makeDir(dir) abort
 endfunction
 
 call s:makeDir(s:swap_dir)
-execute 'set viminfo+=n' . s:viminfo_path
 execute 'set directory=' . s:swap_dir
 set swapfile
 
