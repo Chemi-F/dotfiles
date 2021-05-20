@@ -316,11 +316,14 @@ call plug#begin(s:plug_dir)
 "Manual
 Plug 'junegunn/vim-plug'
 Plug 'vim-jp/vimdoc-ja'
-"vim-lsp, auto complete
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
+"vim-lsp, auto complete, snippet
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'mattn/vim-lsp-icons'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 "Language
 "html
 Plug 'mattn/emmet-vim', { 'for': 'html' }
@@ -348,6 +351,13 @@ function! s:plug.isInstalled(name) abort
     return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
 endfunction
 
+"asyncomplete.vim
+let g:asyncomplete_popup_delay = 200
+
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
+inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
+
 "vim-lsp
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
@@ -368,13 +378,6 @@ augroup vimlspAutocmd
     autocmd!
     autocmd User lsp_buffer_enabled call s:vimlspSettings()
 augroup END
-
-"asyncomplete.vim
-let g:asyncomplete_popup_delay = 200
-
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
-inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
 "ctrlP
 let g:ctrlp_match_window = 'min:8,max:8'
