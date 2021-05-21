@@ -342,6 +342,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'thinca/vim-quickrun'
 Plug 'jiangmiao/auto-pairs'
+Plug 'alvan/closetag.vim'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 call plug#end()
@@ -367,8 +368,6 @@ function! s:vimlspSettings() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> <silent> <Leader>p <plug>(lsp-previous-diagnostic)
-    nmap <buffer> <silent> <Leader>n <plug>(lsp-next-diagnostic)
     nmap <buffer> <silent> gd <plug>(lsp-definition)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
@@ -533,6 +532,11 @@ let g:quickrun_config = {
 "auto-pairs
 if s:plug.isInstalled("auto-pairs")
     nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
+endif
+
+"vim-operator-replace
+if s:plug.isInstalled("vim-operator-replace")
+    map _ <Plug>(operator-replace)
 endif
 
 "Colorscheme
