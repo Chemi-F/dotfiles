@@ -86,6 +86,7 @@ nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
 nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
 nnoremap <Leader>tl :<C-u>tags<CR>
+nnoremap <Leader>tm <C-w>T
 nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 "Insert line break
@@ -120,6 +121,7 @@ inoremap jj <Esc>
 inoremap <C-c> <Esc>
 inoremap <S-Tab> <C-d>
 inoremap <C-@> <C-[>
+inoremap <C-U> <C-G>u<C-U>
 "Command mode
 cnoremap <C-q> <C-f>
 cnoremap <C-b> <Left>
@@ -130,10 +132,12 @@ cnoremap <C-d> <Del>
 "Terimnal mode
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
+"Quickfix 
+nnoremap cn :<C-u>cnext<CR>
+nnoremap cp :<C-u>cprevious<CR>
+nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
 "Function mappings
 nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang2Japanese()<CR>
-nnoremap <silent> <Leader>cf :<C-u>call <SID>toggleQuickfix()<CR>
-nnoremap <silent> <Leader>tm :<C-u>call <SID>move2Newtab()<CR>
 
 "Function
 function! ShowModified() abort
@@ -179,21 +183,10 @@ function! s:toggleQuickfix() abort
     endif
 endfunction
 
-function! s:move2Newtab() abort
-    tab split
-    tabprevious
-    if winnr('$') > 1
-        close
-    elseif bufnr('$') > 1
-        buffer #
-    endif
-    tabnext
-endfunction
-
 "For editing symbolic link file
 function! s:editActualFile(filename) abort
     let l:actualFilename = resolve(expand(a:filename))
-    execute "e" . l:actualFilename
+    execute "e " . l:actualFilename
 endfunction
 
 "Autocmd functions
@@ -203,9 +196,7 @@ endfunction
 
 function! s:quickfixSettings() abort
     setlocal nowrap
-    call s:adjustWindowHeight(3,10)
-    "nnoremap <Leader>n :<C-u>cnext<CR>
-    "nnoremap <Leader>p :<C-u>cprevious<CR>
+    call s:adjustWindowHeight(3,8)
 endfunction
 
 function! s:terminalmodeSettings() abort
@@ -224,6 +215,8 @@ augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+      \ | exe "normal! g`\"" | endif
 
     "Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
@@ -244,21 +237,18 @@ let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
+    set viminfo+=n~/vimfiles/.viminfo
     set noshellslash
     "set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*
 
-    set viminfo+=n~/vimfiles/.viminfo
-
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
-    nnoremap <silent><Leader>. :<C-u>e $MYVIMRC<CR>
-    nnoremap <silent><Leader>g. :<C-u>e $MYGVIMRC<CR>
+    nnoremap <silent><Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
-    set shell=/bin/bash
-    "set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
-
     let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
     execute 'set viminfo+=n' . s:viminfo_path
+    set shell=/bin/bash
+    "set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
@@ -304,6 +294,12 @@ if v:version >= 801
     let g:termdebug_wide = 163
 endif
 
+"Use Ripgrep in Quickfix
+if (executable('rg'))
+    let &grepprg = 'rg --vimgrep --hidden'
+    set grepformat=%f:%l:%c:%m
+endif
+
 "Plugin
 "vim-plug
 if empty(globpath(&rtp, 'autoload/plug.vim'))
@@ -321,7 +317,6 @@ Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
-Plug 'mattn/vim-lsp-icons'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 "Language
@@ -421,7 +416,7 @@ let g:lightline = {
             \ 'colorscheme': 'iceberg',
             \ 'active': {
             \   'left' : [ ['mode', 'paste'],
-            \              ['fugitive', 'readonly', 'filename'] ],
+            \              ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
             \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
             \              ['filetype'],
             \              ['fileencoding_and_fileformat'] ],
@@ -439,6 +434,7 @@ let g:lightline = {
             \   'readonly': 'LightlineReadonly',
             \   'filename': 'LightlineFilename',
             \   'fileencoding_and_fileformat': 'LightlineEncandFt',
+            \   'ctrlpmark': 'CtrlPMark',
             \   },
             \ 'component_expand': {
             \   'lsp_errors': 'LightlineLSPErrors',
@@ -453,14 +449,15 @@ let g:lightline = {
 function! LightlineMode() abort
     return &filetype ==# "help" ? "HELP" :
                 \ &filetype ==# "qf" ? "" :
+                \ &filetype ==# 'ctrlp' ? 'CtrlP' :
                 \ &filetype ==# "molder" ? "MOLDER" :
-                \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
                 \ &filetype ==# "fern" ? "FERN" :
+                \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
                 \ lightline#mode()
 endfunction
 
 function! LightlineFugitive() abort
-    if winwidth(0) > 70 && &filetype !~# '\v(help|qf|quickrun)'
+    if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)'
         if exists('*FugitiveHead')
             let l:branch = FugitiveHead()
             return branch !=# "" ? " ". l:branch : ""
@@ -476,6 +473,8 @@ function! LightlineFilename() abort
         else
             return "[Quickfix List]"
         endif
+    elseif &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item') 
+        return g:lightline.ctrlp_item
     elseif &filetype ==# "molder"
         return expand('%')
     elseif &filetype ==# "fern"
@@ -507,6 +506,34 @@ endfunction
 function! LightlineLSPErrors() abort
     let l:counts = lsp#get_buffer_diagnostics_counts()
     return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
+endfunction
+
+function! CtrlPMark()
+    if &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item')
+        call lightline#link('iR'[g:lightline.ctrlp_regex])
+        return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+                    \ , g:lightline.ctrlp_next], 0)
+    else
+        return ''
+    endif
+endfunction
+
+"lightline in CtrlP
+let g:ctrlp_status_func = {
+            \ 'main': 'CtrlPStatusFunc_1',
+            \ 'prog': 'CtrlPStatusFunc_2',
+            \ }
+
+function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+  let g:lightline.ctrlp_regex = a:regex
+  let g:lightline.ctrlp_prev = a:prev
+  let g:lightline.ctrlp_item = a:item
+  let g:lightline.ctrlp_next = a:next
+  return lightline#statusline(0)
+endfunction
+
+function! CtrlPStatusFunc_2(str)
+  return lightline#statusline(0)
 endfunction
 
 augroup lightlineAutocmd
