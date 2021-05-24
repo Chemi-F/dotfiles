@@ -30,8 +30,11 @@ set list
 set listchars=tab:^-
 set number
 "5 syntax, highlighting and spelling
+set background=dark
 set hlsearch
+set termguicolors
 set cursorline
+set t_Co=256
 "6 multiple windows
 set laststatus=2
 set statusline=%<%t%m%r%h%w%=
@@ -259,7 +262,6 @@ augroup vimSettings
                 \| call s:terminalmodeSettings() | endif
 augroup END
 
-let s:plug_dir = s:vimfiles_dir . '/plugged'
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
@@ -301,51 +303,52 @@ if (executable('rg'))
 endif
 
 "Plugin
-"vim-plug
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    "Finish when vim-plug isn't installed
-    colorscheme ron
-    finish
+    function! s:plug.isInstalled(name) abort
+        return globpath(&runtimepath, 'pack/*/*/' . a:plugin, 1) != ''
+    endfunction
+else
+    "vim-plug
+    let s:plug_dir = s:vimfiles_dir . '/plugged'
+    call plug#begin(s:plug_dir)
+    "Manual
+    Plug 'junegunn/vim-plug'
+    Plug 'vim-jp/vimdoc-ja'
+    "vim-lsp, auto complete, snippet
+    Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'mattn/vim-lsp-settings'
+    Plug 'hrsh7th/vim-vsnip'
+    Plug 'hrsh7th/vim-vsnip-integ'
+    "Language
+    "html
+    Plug 'mattn/emmet-vim', { 'for': 'html' }
+    "fuzzy finder
+    Plug 'ctrlpvim/ctrlp.vim'
+    "Git
+    Plug 'tpope/vim-fugitive'
+    "Filer
+    Plug 'mattn/vim-molder'
+    Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
+    "Theme
+    Plug 'itchyny/lightline.vim'
+    Plug 'cocopon/iceberg.vim'
+    "Others
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-repeat'
+    Plug 'thinca/vim-quickrun'
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'alvan/closetag.vim'
+    Plug 'kana/vim-operator-user'
+    Plug 'kana/vim-operator-replace'
+    call plug#end()
+
+    let s:plug = { 'plugs': get(g:, 'plugs', {}) }
+    function! s:plug.isInstalled(name) abort
+        return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
+    endfunction
 endif
-
-call plug#begin(s:plug_dir)
-"Manual
-Plug 'junegunn/vim-plug'
-Plug 'vim-jp/vimdoc-ja'
-"vim-lsp, auto complete, snippet
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-"Language
-"html
-Plug 'mattn/emmet-vim', { 'for': 'html' }
-"fuzzy finder
-Plug 'ctrlpvim/ctrlp.vim'
-"Git
-Plug 'tpope/vim-fugitive'
-"Filer
-Plug 'mattn/vim-molder'
-Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-"Theme
-Plug 'itchyny/lightline.vim'
-Plug 'cocopon/iceberg.vim'
-"Others
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'thinca/vim-quickrun'
-Plug 'jiangmiao/auto-pairs'
-Plug 'alvan/closetag.vim'
-Plug 'kana/vim-operator-user'
-Plug 'kana/vim-operator-replace'
-call plug#end()
-
-let s:plug = { 'plugs': get(g:, 'plugs', {}) }
-function! s:plug.isInstalled(name) abort
-    return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
-endfunction
 
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
@@ -568,9 +571,6 @@ endif
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
-    set termguicolors
-    set t_Co=256
-    set background=dark
     colorscheme iceberg
 else
     colorscheme ron
