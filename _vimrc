@@ -304,9 +304,9 @@ endif
 
 "Plugin
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    function! s:plugIsInstalled(name) abort
-        return globpath(&runtimepath, 'pack/*/*/' . a:plugin, 1) != ''
-    endfunction
+    "function! s:plugIsInstalled(name) abort
+    "    return globpath(&runtimepath, 'pack/*/*/' . a:plugin, 1) != ''
+    "endfunction
 
     filetype plugin indent on
     syntax enable
@@ -412,19 +412,17 @@ augroup vimmolderAutocmd
 augroup END
 
 "fern
-if s:plugIsInstalled("fern.vim")
-    nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
-    function! s:fernSettings()
-        setlocal nonumber
-        nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
-    endfunction
+function! s:fernSettings()
+    setlocal nonumber
+    nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
+endfunction
 
-    augroup fernAutocmd
-        autocmd!
-        autocmd FileType fern call s:fernSettings()
-    augroup END
-endif
+augroup fernAutocmd
+    autocmd!
+    autocmd FileType fern call s:fernSettings()
+augroup END
 
 "lightline.vim
 set noshowmode
@@ -573,21 +571,13 @@ let g:quickrun_config = {
             \ }
 
 "auto-pairs
-if s:plugIsInstalled("auto-pairs")
-    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
-endif
+nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 
 "vim-operator-replace
-if s:plugIsInstalled("vim-operator-replace")
-    map _ <Plug>(operator-replace)
-endif
+map _ <Plug>(operator-replace)
 
 "Colorscheme
-if s:plugIsInstalled("iceberg.vim")
-    colorscheme iceberg
-else
-    colorscheme ron
-endif
+colorscheme iceberg
 
 augroup delayAutocmd
     autocmd!
