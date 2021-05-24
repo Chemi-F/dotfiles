@@ -307,41 +307,54 @@ if empty(globpath(&rtp, 'autoload/plug.vim'))
     function! s:plug.isInstalled(name) abort
         return globpath(&runtimepath, 'pack/*/*/' . a:plugin, 1) != ''
     endfunction
+
+    filetype plugin indent on
+    syntax enable
+
+    function! s:configHtml() abort
+        packadd emmet-vim
+        packadd vim-closetag
+    endfunction
+
+    augroup pluginDelay
+        autocmd!
+        autocmd Filetype html call s:configHtml()
+    augroup END
 else
     "vim-plug
     let s:plug_dir = s:vimfiles_dir . '/plugged'
     call plug#begin(s:plug_dir)
-    "Manual
-    Plug 'junegunn/vim-plug'
-    Plug 'vim-jp/vimdoc-ja'
-    "vim-lsp, auto complete, snippet
-    Plug 'prabirshrestha/asyncomplete.vim'
-    Plug 'prabirshrestha/asyncomplete-lsp.vim'
-    Plug 'prabirshrestha/vim-lsp'
-    Plug 'mattn/vim-lsp-settings'
-    Plug 'hrsh7th/vim-vsnip'
-    Plug 'hrsh7th/vim-vsnip-integ'
-    "Language
-    "html
-    Plug 'mattn/emmet-vim', { 'for': 'html' }
-    "fuzzy finder
-    Plug 'ctrlpvim/ctrlp.vim'
-    "Git
-    Plug 'tpope/vim-fugitive'
-    "Filer
-    Plug 'mattn/vim-molder'
-    Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-    "Theme
-    Plug 'itchyny/lightline.vim'
-    Plug 'cocopon/iceberg.vim'
-    "Others
-    Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-repeat'
-    Plug 'thinca/vim-quickrun'
-    Plug 'jiangmiao/auto-pairs'
-    Plug 'alvan/closetag.vim'
-    Plug 'kana/vim-operator-user'
-    Plug 'kana/vim-operator-replace'
+        "Manual
+        Plug 'junegunn/vim-plug'
+        Plug 'vim-jp/vimdoc-ja'
+        "vim-lsp, auto complete, snippet
+        Plug 'prabirshrestha/asyncomplete.vim'
+        Plug 'prabirshrestha/asyncomplete-lsp.vim'
+        Plug 'prabirshrestha/vim-lsp'
+        Plug 'mattn/vim-lsp-settings'
+        Plug 'hrsh7th/vim-vsnip'
+        Plug 'hrsh7th/vim-vsnip-integ'
+        "Language
+        "html
+        Plug 'mattn/emmet-vim', { 'for': 'html' }
+        Plug 'alvan/closetag.vim', { 'for': 'html' }
+        "fuzzy finder
+        Plug 'ctrlpvim/ctrlp.vim'
+        "Git
+        Plug 'tpope/vim-fugitive'
+        "Filer
+        Plug 'mattn/vim-molder'
+        Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
+        "Theme
+        Plug 'itchyny/lightline.vim'
+        Plug 'cocopon/iceberg.vim'
+        "Others
+        Plug 'tpope/vim-surround'
+        Plug 'tpope/vim-repeat'
+        Plug 'thinca/vim-quickrun'
+        Plug 'jiangmiao/auto-pairs'
+        Plug 'kana/vim-operator-user'
+        Plug 'kana/vim-operator-replace'
     call plug#end()
 
     let s:plug = { 'plugs': get(g:, 'plugs', {}) }
