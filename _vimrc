@@ -304,7 +304,7 @@ endif
 
 "Plugin
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    function! s:plug.isInstalled(name) abort
+    function! s:plugIsInstalled(name) abort
         return globpath(&runtimepath, 'pack/*/*/' . a:plugin, 1) != ''
     endfunction
 
@@ -357,10 +357,10 @@ else
         Plug 'kana/vim-operator-replace'
     call plug#end()
 
-    let s:plug = { 'plugs': get(g:, 'plugs', {}) }
-    function! s:plug.isInstalled(name) abort
-        return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
-    endfunction
+    "let s:plug = { 'plugs': get(g:, 'plugs', {}) }
+    "function! s:plug.isInstalled(name) abort
+    "    return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
+    "endfunction
 endif
 
 "asyncomplete.vim
@@ -412,7 +412,7 @@ augroup vimmolderAutocmd
 augroup END
 
 "fern
-if s:plug.isInstalled("fern.vim")
+if s:plugIsInstalled("fern.vim")
     nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
     function! s:fernSettings()
@@ -573,17 +573,17 @@ let g:quickrun_config = {
             \ }
 
 "auto-pairs
-if s:plug.isInstalled("auto-pairs")
+if s:plugIsInstalled("auto-pairs")
     nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 endif
 
 "vim-operator-replace
-if s:plug.isInstalled("vim-operator-replace")
+if s:plugIsInstalled("vim-operator-replace")
     map _ <Plug>(operator-replace)
 endif
 
 "Colorscheme
-if s:plug.isInstalled("iceberg.vim")
+if s:plugIsInstalled("iceberg.vim")
     colorscheme iceberg
 else
     colorscheme ron
