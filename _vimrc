@@ -33,8 +33,8 @@ set number
 set background=dark
 set hlsearch
 set termguicolors
-set cursorline
 set t_Co=256
+set cursorline
 "6 multiple windows
 set laststatus=2
 set statusline=%<%t%m%r%h%w%=
@@ -71,6 +71,8 @@ set wildmode=longest,full
 set wildmenu
 "25 various
 set viminfo='50,<500,s100,h
+
+colorscheme desert
 
 "Key-mappings
 let g:mapleader = "\<Space>"
@@ -303,65 +305,52 @@ if (executable('rg'))
 endif
 
 "Plugin
+"vim-plug
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    "function! s:plugIsInstalled(name) abort
-    "    return globpath(&runtimepath, 'pack/*/*/' . a:plugin, 1) != ''
-    "endfunction
-
     filetype plugin indent on
     syntax enable
-
-    function! s:configHtml() abort
-        packadd emmet-vim
-        packadd vim-closetag
-    endfunction
-
-    augroup pluginDelay
-        autocmd!
-        autocmd Filetype html call s:configHtml()
-    augroup END
-else
-    "vim-plug
-    let s:plug_dir = s:vimfiles_dir . '/plugged'
-    call plug#begin(s:plug_dir)
-        "Manual
-        Plug 'junegunn/vim-plug'
-        Plug 'vim-jp/vimdoc-ja'
-        "vim-lsp, auto complete, snippet
-        Plug 'prabirshrestha/asyncomplete.vim'
-        Plug 'prabirshrestha/asyncomplete-lsp.vim'
-        Plug 'prabirshrestha/vim-lsp'
-        Plug 'mattn/vim-lsp-settings'
-        Plug 'hrsh7th/vim-vsnip'
-        Plug 'hrsh7th/vim-vsnip-integ'
-        "Language
-        "html
-        Plug 'mattn/emmet-vim', { 'for': 'html' }
-        Plug 'alvan/closetag.vim', { 'for': 'html' }
-        "fuzzy finder
-        Plug 'ctrlpvim/ctrlp.vim'
-        "Git
-        Plug 'tpope/vim-fugitive'
-        "Filer
-        Plug 'mattn/vim-molder'
-        Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-        "Theme
-        Plug 'itchyny/lightline.vim'
-        Plug 'cocopon/iceberg.vim'
-        "Others
-        Plug 'tpope/vim-surround'
-        Plug 'tpope/vim-repeat'
-        Plug 'thinca/vim-quickrun'
-        Plug 'jiangmiao/auto-pairs'
-        Plug 'kana/vim-operator-user'
-        Plug 'kana/vim-operator-replace'
-    call plug#end()
-
-    "let s:plug = { 'plugs': get(g:, 'plugs', {}) }
-    "function! s:plug.isInstalled(name) abort
-    "    return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
-    "endfunction
+    finish
 endif
+
+let s:plug_dir = s:vimfiles_dir . '/plugged'
+call plug#begin(s:plug_dir)
+"Manual
+Plug 'junegunn/vim-plug'
+Plug 'vim-jp/vimdoc-ja'
+"vim-lsp, auto complete, snippet
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+"Language
+"html
+Plug 'mattn/emmet-vim', { 'for': 'html' }
+Plug 'alvan/closetag.vim', { 'for': 'html' }
+"fuzzy finder
+Plug 'ctrlpvim/ctrlp.vim'
+"Git
+Plug 'tpope/vim-fugitive'
+"Filer
+Plug 'mattn/vim-molder'
+Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
+"Theme
+Plug 'itchyny/lightline.vim'
+Plug 'cocopon/iceberg.vim'
+"Others
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'thinca/vim-quickrun'
+Plug 'jiangmiao/auto-pairs'
+Plug 'kana/vim-operator-user'
+Plug 'kana/vim-operator-replace'
+call plug#end()
+
+let s:plug = { 'plugs': get(g:, 'plugs', {}) }
+function! s:plug.isInstalled(name) abort
+    return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
+endfunction
 
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
@@ -412,17 +401,19 @@ augroup vimmolderAutocmd
 augroup END
 
 "fern
-nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+if s:plug.isInstalled("fern.vim")
+    nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
-function! s:fernSettings()
-    setlocal nonumber
-    nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
-endfunction
+    function! s:fernSettings()
+        setlocal nonumber
+        nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
+    endfunction
 
-augroup fernAutocmd
-    autocmd!
-    autocmd FileType fern call s:fernSettings()
-augroup END
+    augroup fernAutocmd
+        autocmd!
+        autocmd FileType fern call s:fernSettings()
+    augroup END
+endif
 
 "lightline.vim
 set noshowmode
@@ -571,13 +562,19 @@ let g:quickrun_config = {
             \ }
 
 "auto-pairs
-nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
+if s:plug.isInstalled("auto-pairs")
+    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
+endif
 
 "vim-operator-replace
-map _ <Plug>(operator-replace)
+if s:plug.isInstalled("vim-operator-replace")
+    map _ <Plug>(operator-replace)
+endif
 
 "Colorscheme
-colorscheme iceberg
+if s:plug.isInstalled("iceberg.vim")
+    colorscheme iceberg
+endif
 
 augroup delayAutocmd
     autocmd!
