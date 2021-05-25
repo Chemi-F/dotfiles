@@ -220,8 +220,9 @@ augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
-    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-      \ | exe "normal! g`\"" | endif
+    autocmd BufReadPost * if line("'\"") >= 1 &&
+                \line("'\"") <= line("$") && &ft !~# 'commit'
+                \| exe "normal! g`\"" | endif
 
     "Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
@@ -234,7 +235,9 @@ augroup myAutocmd
     "Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
 
-    autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) | q! | endif
+    autocmd BufEnter * if (winnr('$') == 1 && 
+                \(&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)'))
+                \| q! | endif
 augroup END
 
 "Version settings
@@ -290,7 +293,7 @@ if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
 end
 
 "Package
-if has('eval') && v:version >= 800
+if has('eval')
     packadd! matchit
 endif
 if v:version >= 801
