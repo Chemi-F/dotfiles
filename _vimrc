@@ -54,7 +54,6 @@ set helplang=en,ja
 " set clipboard+=unnamed
 "13 editing text
 set backspace=indent,eol,start
-set formatoptions-=ro
 set pumheight=10
 set showmatch
 set matchtime=1
@@ -238,6 +237,8 @@ augroup myAutocmd
     autocmd BufEnter * if (winnr('$') == 1 && 
                 \(&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)'))
                 \| q! | endif
+    autocmd TerminalOpen * if &buftype ==# 'terminal'
+                \| call s:terminalmodeSettings() | endif
 augroup END
 
 "Version settings
@@ -261,12 +262,7 @@ else
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
 
-augroup vimSettings
-    autocmd!
-    autocmd TerminalOpen * if &buftype ==# 'terminal'
-                \| call s:terminalmodeSettings() | endif
-augroup END
-
+"let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
@@ -278,6 +274,7 @@ function! s:makeDir(dir) abort
 endfunction
 
 call s:makeDir(s:swap_dir)
+"execute 'set viminfo+=n' . s:viminfo_path
 execute 'set directory=' . s:swap_dir
 set swapfile
 
@@ -302,7 +299,7 @@ if v:version >= 801
 endif
 
 "Use Ripgrep in Quickfix
-if (executable('rg'))
+if executable('rg')
     let &grepprg = 'rg --vimgrep --hidden'
     set grepformat=%f:%l:%c:%m
 endif
@@ -423,36 +420,36 @@ set noshowmode
 let g:lightline = {
             \ 'colorscheme': 'iceberg',
             \ 'active': {
-            \   'left' : [ ['mode', 'paste'],
-            \              ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
-            \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
-            \              ['filetype'],
-            \              ['fileencoding_and_fileformat'] ],
-            \   },
-            \ 'inactive': {
-            \   'right': [ ['lineinfo'] ],
-            \   },
-            \ 'component': {
-            \   'lineinfo': '%2l/%L,%-2c%<',
-            \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
-            \   },
-            \ 'component_function': {
-            \   'mode': 'LightlineMode',
-            \   'fugitive': 'LightlineFugitive',
-            \   'readonly': 'LightlineReadonly',
-            \   'filename': 'LightlineFilename',
-            \   'fileencoding_and_fileformat': 'LightlineEncandFt',
-            \   'ctrlpmark': 'CtrlPMark',
-            \   },
-            \ 'component_expand': {
-            \   'lsp_errors': 'LightlineLSPErrors',
-            \   'lsp_warnings': 'LightlineLSPWarnings',
-            \   },
-            \ 'component_type': {
-            \   'lsp_errors': 'error',
-            \   'lsp_warnings': 'warning',
-            \   },
-            \ }
+                \   'left' : [ ['mode', 'paste'],
+                \              ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
+                \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
+                \              ['filetype'],
+                \              ['fileencoding_and_fileformat'] ],
+                \   },
+                \ 'inactive': {
+                    \   'right': [ ['lineinfo'] ],
+                    \   },
+                    \ 'component': {
+                        \   'lineinfo': '%2l/%L,%-2c%<',
+                        \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
+                        \   },
+                        \ 'component_function': {
+                            \   'mode': 'LightlineMode',
+                            \   'fugitive': 'LightlineFugitive',
+                            \   'readonly': 'LightlineReadonly',
+                            \   'filename': 'LightlineFilename',
+                            \   'fileencoding_and_fileformat': 'LightlineEncandFt',
+                            \   'ctrlpmark': 'CtrlPMark',
+                            \   },
+                            \ 'component_expand': {
+                                \   'lsp_errors': 'LightlineLSPErrors',
+                                \   'lsp_warnings': 'LightlineLSPWarnings',
+                                \   },
+                                \ 'component_type': {
+                                    \   'lsp_errors': 'error',
+                                    \   'lsp_warnings': 'warning',
+                                    \   },
+                                    \ }
 
 function! LightlineMode() abort
     return &filetype ==# "help" ? "HELP" :
@@ -533,15 +530,15 @@ let g:ctrlp_status_func = {
             \ }
 
 function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-  let g:lightline.ctrlp_regex = a:regex
-  let g:lightline.ctrlp_prev = a:prev
-  let g:lightline.ctrlp_item = a:item
-  let g:lightline.ctrlp_next = a:next
-  return lightline#statusline(0)
+    let g:lightline.ctrlp_regex = a:regex
+    let g:lightline.ctrlp_prev = a:prev
+    let g:lightline.ctrlp_item = a:item
+    let g:lightline.ctrlp_next = a:next
+    return lightline#statusline(0)
 endfunction
 
 function! CtrlPStatusFunc_2(str)
-  return lightline#statusline(0)
+    return lightline#statusline(0)
 endfunction
 
 augroup lightlineAutocmd
@@ -552,17 +549,17 @@ augroup END
 "quickrun
 let g:quickrun_config = {
             \ '_': {
-            \   'outputter': 'buffer',
-            \   'outputter/buffer/name': "[Quickrun Output]",
-            \   'outputter/buffer/split': ":botright 8",
-            \   'outputter/buffer/running_mark': "[Runninng...]",
-            \   'runner': 'job',
-            \   },
-            \ 'tex' : {
-            \   'command': 'lualatex',
-            \   'exec': ['%c -interaction=nonstopmode -file-line-error %s']
-            \   }
-            \ }
+                \   'outputter': 'buffer',
+                \   'outputter/buffer/name': "[Quickrun Output]",
+                \   'outputter/buffer/split': ":botright 8",
+                \   'outputter/buffer/running_mark': "[Runninng...]",
+                \   'runner': 'job',
+                \   },
+                \ 'tex' : {
+                    \   'command': 'lualatex',
+                    \   'exec': ['%c -interaction=nonstopmode -file-line-error %s']
+                    \   }
+                    \ }
 
 "auto-pairs
 if s:plug.isInstalled("auto-pairs")
