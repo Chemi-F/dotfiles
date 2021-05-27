@@ -284,6 +284,12 @@ if has('persistent_undo')
     set undofile
 endif
 
+let g:loaded_getscript = 1
+let g:loaded_getscriptPlugin = 1
+let g:loaded_vimball = 1
+let g:loaded_vimballPlugin = 1
+let g:skip_loading_mswin = 1
+
 "Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
     finish
@@ -387,6 +393,11 @@ let g:ctrlp_custom_ignore = {
             \ }
 
 "vim-molder
+let g:loaded_netrw       = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_netrwSettings = 1
+let g:loaded_netrwFileHandlers = 1
+
 function! s:vimmolderSettings() abort
     nmap <buffer> l <Plug>(molder-open)
     nmap <buffer> h <Plug>(molder-up)
