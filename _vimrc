@@ -284,10 +284,16 @@ if has('persistent_undo')
     set undofile
 endif
 
+let g:loaded_zip = 1
+let g:loaded_zipPlugin = 1
+let g:loaded_tar = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_gzip = 1
 let g:loaded_getscript = 1
 let g:loaded_getscriptPlugin = 1
 let g:loaded_vimball = 1
 let g:loaded_vimballPlugin = 1
+let g:loaded_2html_plugin = 1
 let g:skip_loading_mswin = 1
 
 "Finish when using git commit
@@ -296,9 +302,7 @@ if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
 end
 
 "Package
-if has('eval')
-    packadd! matchit
-endif
+packadd! matchit
 if v:version >= 801
     packadd! termdebug
     let g:termdebug_wide = 163
