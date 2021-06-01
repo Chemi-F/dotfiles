@@ -20,9 +20,7 @@ set smartcase
 set tags=./tags;
 "4 displaying text
 set scrolloff=5
-if v:version >= 800
-    set breakindent
-endif
+set breakindent
 set showbreak=>\
 set display=lastline
 set cmdheight=2
@@ -248,7 +246,6 @@ if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
     set viminfo+=n~/vimfiles/.viminfo
     set noshellslash
-    "set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*
 
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
     nnoremap <silent><Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
@@ -257,7 +254,6 @@ else
     let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
     execute 'set viminfo+=n' . s:viminfo_path
     set shell=/bin/bash
-    "set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
@@ -284,6 +280,7 @@ if has('persistent_undo')
     set undofile
 endif
 
+"Default plugin disable
 let g:loaded_zip = 1
 let g:loaded_zipPlugin = 1
 let g:loaded_tar = 1
@@ -378,7 +375,8 @@ function! s:vimlspSettings() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> <silent> gd <plug>(lsp-definition)
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> <f2> <plug>(lsp-rename)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
 endfunction
