@@ -79,7 +79,7 @@ nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
 nnoremap <Leader>q :<C-u>quit<CR>
 nnoremap <Leader>m :<C-u>marks<CR>
-nnoremap <Leader>r :<C-u>registers<CR>
+nnoremap <Leader>rg :<C-u>registers<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
@@ -376,9 +376,11 @@ function! s:vimlspSettings() abort
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> <f2> <plug>(lsp-rename)
+    nmap <buffer> <Leader>rn <plug>(lsp-rename)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
+    inoremap <buffer> <expr><C-f> lsp#scroll(+4)
+    inoremap <buffer> <expr><C-d> lsp#scroll(-4)
 endfunction
 
 augroup vimlspAutocmd
