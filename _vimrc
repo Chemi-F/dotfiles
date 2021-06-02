@@ -362,11 +362,14 @@ endfunction
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
 let g:asyncomplete_auto_completeopt = 0
+
 set completeopt=menuone,noinsert,noselect,preview
 
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
-inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
+inoremap <expr> <C-n> pumvisible() ? "\<Down>" : "\<C-n>"
+inoremap <expr> <C-p> pumvisible() ? "\<Up>" : "\<C-p>"
+inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
+inoremap <expr> <CR> pumvisible() ? "\<C-y>\<CR>" : "\<CR>"
 
 "vim-lsp
 let g:lsp_diagnostics_enabled = 1
@@ -380,9 +383,8 @@ function! s:vimlspSettings() abort
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
-    inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
-    inoremap <buffer> <expr><C-f> lsp#scroll(+4)
-    inoremap <buffer> <expr><C-d> lsp#scroll(-4)
+    inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
+    inoremap <buffer> <expr> <C-d> lsp#scroll(-4)
 endfunction
 
 augroup vimlspAutocmd
