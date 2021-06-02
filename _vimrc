@@ -595,11 +595,7 @@ if s:plug.isInstalled("iceberg.vim")
     colorscheme iceberg
 endif
 
-function! s:delayOptions() abort
-    set formatoptions-=ro
-endfunction
-
 augroup delayAutocmd
     autocmd!
-    autocmd Filetype * call s:delayOptions()
+    autocmd Filetype * set formatoptions-=ro
 augroup END
