@@ -361,6 +361,8 @@ endfunction
 
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
+let g:asyncomplete_auto_completeopt = 0
+set completeopt=menuone,noinsert,noselect,preview
 
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
@@ -591,7 +593,11 @@ if s:plug.isInstalled("iceberg.vim")
     colorscheme iceberg
 endif
 
+function! s:delayOptions() abort
+    set formatoptions-=ro
+endfunction
+
 augroup delayAutocmd
     autocmd!
-    autocmd Filetype * set formatoptions-=ro
+    autocmd Filetype * call s:delayOptions()
 augroup END
