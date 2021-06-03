@@ -175,13 +175,23 @@ function! s:helplang2Japanese() abort
     endif
 endfunction
 
-"Quickfix window open
+"Location List / Quickfix window open
 function! s:toggleQuickfix() abort
     let l:nr = winnr('$')
-    cwindow
+    let l:loc = 0
+    if !empty(getloclist(0))
+        let l:loc = 1
+        lwindow
+    else
+        cwindow
+    endif
     let l:nr2 = winnr('$')
     if l:nr == l:nr2
-        cclose
+        if l:loc == 1
+            lclose
+        else
+            cclose
+        endif
     endif
 endfunction
 
@@ -365,11 +375,11 @@ let g:asyncomplete_auto_completeopt = 0
 
 set completeopt=menuone,noinsert,noselect,preview
 
-inoremap <expr> <C-n> pumvisible() ? "\<Down>" : "\<C-n>"
-inoremap <expr> <C-p> pumvisible() ? "\<Up>" : "\<C-p>"
+"inoremap <expr> <C-n> pumvisible() ? "\<Down>" : "\<C-n>"
+"inoremap <expr> <C-p> pumvisible() ? "\<Up>" : "\<C-p>"
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
-inoremap <expr> <CR> pumvisible() ? "\<C-y>\<CR>" : "\<CR>"
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 "vim-lsp
 let g:lsp_diagnostics_enabled = 1
@@ -384,7 +394,7 @@ function! s:vimlspSettings() abort
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
-    inoremap <buffer> <expr> <C-d> lsp#scroll(-4)
+    inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
 endfunction
 
 augroup vimlspAutocmd
@@ -491,7 +501,13 @@ function! LightlineFugitive() abort
 endfunction
 
 function! LightlineFilename() abort
-    if &filetype ==# "qf"
+    if getwininfo(win_getid())[0].loclist
+        if exists("w:quickfix_title")
+            return "[Location List]" . " | " . w:quickfix_title
+        else
+            return "[Location List]"
+        endif
+    elseif &filetype ==# "qf"
         if exists("w:quickfix_title")
             return "[Quickfix List]" . " | " . w:quickfix_title
         else
