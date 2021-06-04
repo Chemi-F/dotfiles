@@ -49,7 +49,7 @@ set visualbell t_vb=
 set belloff=all
 set helplang=en,ja
 "12 selecting text
-" set clipboard+=unnamed
+set clipboard+=unnamed
 "13 editing text
 set backspace=indent,eol,start
 set pumheight=10
@@ -337,6 +337,7 @@ Plug 'vim-jp/vimdoc-ja'
 "vim-lsp, auto complete, snippet
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'hrsh7th/vim-vsnip'
@@ -371,15 +372,29 @@ endfunction
 
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
-let g:asyncomplete_auto_completeopt = 0
 
-set completeopt=menuone,noinsert,noselect,preview
+" doesn't work. ???
+"let g:asyncomplete_auto_completeopt = 0
+
+"set completeopt=menuone,noinsert,noselect,popup
+"set completepopup=height:10,width:60,highlight:InfoPopup,border:off
 
 "inoremap <expr> <C-n> pumvisible() ? "\<Down>" : "\<C-n>"
 "inoremap <expr> <C-p> pumvisible() ? "\<Up>" : "\<C-p>"
+
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+augroup asyncompleteAutocmd
+    autocmd!
+    autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
+    autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#emmet#get_source_options({
+                \ 'name': 'emmet',
+                \ 'whitelist': ['html'],
+                \ 'completor': function('asyncomplete#sources#emmet#completor'),
+            \ }))
+augroup END
 
 "vim-lsp
 let g:lsp_diagnostics_enabled = 1
