@@ -89,7 +89,7 @@ nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
 nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <Leader>tm <C-w>T
-nnoremap <silent><Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
+nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 "Insert line break
 "http://deris.hatenablog.jp/entry/20130404/1365086716
@@ -106,6 +106,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 nnoremap <C-]> g<C-]>
+nnoremap <expr> [c empty(getloclist(0)) ? ":<C-u>cprevious<CR>" : ":<C-u>lprevious<CR>"
+nnoremap <expr> ]c empty(getloclist(0)) ? ":<C-u>cnext<CR>" : ":<C-u>lnext<CR>"
 "Normal, visual mode
 noremap <Leader>h ^
 noremap <Leader>l $
@@ -134,12 +136,9 @@ cnoremap <C-d> <Del>
 "Terimnal mode
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
-"Quickfix 
-nnoremap cn :<C-u>cnext<CR>
-nnoremap cp :<C-u>cprevious<CR>
-nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
 "Function mappings
 nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang2Japanese()<CR>
+nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
 
 "Function
 function! ShowModified() abort
@@ -178,16 +177,15 @@ endfunction
 "Location List / Quickfix window open
 function! s:toggleQuickfix() abort
     let l:nr = winnr('$')
-    let l:loc = 0
-    if !empty(getloclist(0))
-        let l:loc = 1
+    let l:loc = !empty(getloclist(0))
+    if l:loc
         lwindow
     else
         cwindow
     endif
     let l:nr2 = winnr('$')
     if l:nr == l:nr2
-        if l:loc == 1
+        if l:loc
             lclose
         else
             cclose
@@ -228,8 +226,8 @@ augroup myAutocmd
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
     autocmd BufReadPost * if line("'\"") >= 1 &&
-                \line("'\"") <= line("$") && &ft !~# 'commit'
-                \| exe "normal! g`\"" | endif
+                \ line("'\"") <= line("$") && &ft !~# 'commit' |
+                \ exe "normal! g`\"" | endif
 
     "Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
@@ -243,10 +241,10 @@ augroup myAutocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
 
     autocmd BufEnter * if (winnr('$') == 1 && 
-                \(&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)'))
-                \| q! | endif
-    autocmd TerminalOpen * if &buftype ==# 'terminal'
-                \| call s:terminalmodeSettings() | endif
+                \ (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) |
+                \ q! | endif
+    autocmd TerminalOpen * if &buftype ==# 'terminal' |
+                \ call s:terminalmodeSettings() | endif
 augroup END
 
 "Version settings
@@ -372,15 +370,6 @@ endfunction
 
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
-
-" doesn't work. ???
-"let g:asyncomplete_auto_completeopt = 0
-
-"set completeopt=menuone,noinsert,noselect,popup
-"set completepopup=height:10,width:60,highlight:InfoPopup,border:off
-
-"inoremap <expr> <C-n> pumvisible() ? "\<Down>" : "\<C-n>"
-"inoremap <expr> <C-p> pumvisible() ? "\<Up>" : "\<C-p>"
 
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
