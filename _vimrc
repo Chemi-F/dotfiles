@@ -378,7 +378,8 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 augroup asyncompleteAutocmd
     autocmd!
     autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
-    autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#emmet#get_source_options({
+    autocmd User asyncomplete_setup call asyncomplete#register_source(
+                \ asyncomplete#sources#emmet#get_source_options({
                 \ 'name': 'emmet',
                 \ 'whitelist': ['html'],
                 \ 'completor': function('asyncomplete#sources#emmet#completor'),
@@ -405,6 +406,10 @@ augroup vimlspAutocmd
     autocmd!
     autocmd User lsp_buffer_enabled call s:vimlspSettings()
 augroup END
+
+"vim-vsnip
+imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 
 "ctrlP
 let g:ctrlp_match_window = 'min:8,max:8'
