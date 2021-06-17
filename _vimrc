@@ -340,12 +340,9 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
-"Language
-"html
-Plug 'mattn/emmet-vim', { 'for': 'html' }
-Plug 'alvan/closetag.vim', { 'for': 'html' }
 "fuzzy finder
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'mattn/ctrlp-matchfuzzy'
 "Git
 Plug 'tpope/vim-fugitive'
 "Filer
@@ -354,6 +351,12 @@ Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
 "Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
+"Language
+"html
+Plug 'mattn/emmet-vim', { 'for': 'html' }
+Plug 'alvan/closetag.vim', { 'for': 'html' }
+"Markdown
+Plug 'previm/previm'
 "Others
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -361,6 +364,7 @@ Plug 'thinca/vim-quickrun'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
+Plug 'junegunn/vim-easy-align'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -418,6 +422,7 @@ let g:ctrlp_custom_ignore = {
             \ 'dir':  '\v[\/]\.(git|hg|svn)$',
             \ 'file': '\v\.(exe|so|dll)$',
             \ }
+let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 
 "vim-molder
 let g:loaded_netrw       = 1
@@ -590,6 +595,11 @@ augroup lightlineAutocmd
     autocmd User lsp_diagnostics_updated call lightline#update()
 augroup END
 
+"previm
+if s:is_windows
+    let g:previm_open_cmd = 'MicrosoftEdge.exe'
+endif
+
 "quickrun
 let g:quickrun_config = {
             \ '_': {
@@ -613,6 +623,12 @@ endif
 "vim-operator-replace
 if s:plug.isInstalled("vim-operator-replace")
     map _ <Plug>(operator-replace)
+endif
+
+"vim-easy-align
+if s:plug.isInstalled("vim-easy-align")
+    xmap ga <Plug>(EasyAlign)
+    nmap ga <Plug>(EasyAlign)
 endif
 
 "Colorscheme
