@@ -256,7 +256,7 @@ if s:is_windows
     set noshellslash
 
     nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
-    nnoremap <silent><Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
+    nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
@@ -423,6 +423,7 @@ let g:ctrlp_custom_ignore = {
             \ 'file': '\v\.(exe|so|dll)$',
             \ }
 let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
+nnoremap <silent> m<C-p> :<C-u>CtrlPMRUFiles<CR>
 
 "vim-molder
 let g:loaded_netrw       = 1
