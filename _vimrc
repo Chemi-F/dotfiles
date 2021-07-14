@@ -336,6 +336,7 @@ Plug 'vim-jp/vimdoc-ja'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
+Plug 'yami-beta/asyncomplete-omni.vim', { 'for': 'pug' }
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'hrsh7th/vim-vsnip'
@@ -355,6 +356,8 @@ Plug 'cocopon/iceberg.vim'
 "html
 Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
+Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
+Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
 "Markdown
 Plug 'previm/previm'
 "Others
@@ -365,6 +368,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
+Plug 'gko/vim-coloresque'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -384,10 +388,19 @@ augroup asyncompleteAutocmd
     autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
     autocmd User asyncomplete_setup call asyncomplete#register_source(
                 \ asyncomplete#sources#emmet#get_source_options({
-                \ 'name': 'emmet',
-                \ 'whitelist': ['html'],
-                \ 'completor': function('asyncomplete#sources#emmet#completor'),
-            \ }))
+                    \ 'name': 'emmet',
+                    \ 'whitelist': ['html'],
+                    \ 'completor': function('asyncomplete#sources#emmet#completor'),
+                \ }))
+    autocmd User asyncomplete_setup call asyncomplete#register_source(
+                \ asyncomplete#sources#emmet#get_source_options({
+                    \ 'name': 'omni',
+                    \ 'whitelist': ['pug'],
+                    \ 'completor': function('asyncomplete#sources#omni#completor'),
+                    \ 'config': {
+                        \ 'show_source_kind': 1,
+                    \ },
+                \ }))
 augroup END
 
 "vim-lsp
@@ -619,6 +632,10 @@ let g:quickrun_config = {
 "auto-pairs
 if s:plug.isInstalled("auto-pairs")
     nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
+    augroup autoPairsAutocmd
+        autocmd!
+        autocmd Filetype pug let b:autopairs_enabled = 0
+    augroup END
 endif
 
 "vim-operator-replace
