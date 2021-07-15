@@ -349,6 +349,10 @@ Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
 Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/fern-renderer-nerdfont.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/nerdfont.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/glyph-palette.vim', { 'on': 'Fern' }
 "Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
@@ -424,6 +428,22 @@ augroup vimlspAutocmd
     autocmd User lsp_buffer_enabled call s:vimlspSettings()
 augroup END
 
+if executable('efm-langserver')
+    augroup vimlspEfmAutocmd
+        autocmd!
+        autocmd User lsp_setup call lsp#register_server({
+                    \ 'name': 'efm-langserver',
+                    \ 'cmd': {server_info->[ 'efm-langserver' ]},
+                    \ 'whitelist': [ 'pug' ],
+                    \ })
+    augroup END
+endif
+
+"vim-lsp-settings
+let g:lsp_settings =  {
+            \ 'efm-langserver': { 'whitelist': [ 'pug' ] }
+            \ }
+
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
 imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
@@ -458,156 +478,157 @@ augroup vimmolderAutocmd
 augroup END
 
 "fern
-if s:plug.isInstalled("fern.vim")
-    nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+let g:fern#renderer = "nerdfont"
+nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
-    function! s:fernSettings()
-        setlocal nonumber
-        nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
-    endfunction
+function! s:fernSettings()
+    setlocal nonumber
+    nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
+endfunction
 
-    augroup fernAutocmd
-        autocmd!
-        autocmd FileType fern call s:fernSettings()
-    augroup END
-endif
+augroup fernAutocmd
+    autocmd!
+    autocmd FileType fern call s:fernSettings()
+augroup END
 
 "lightline.vim
-set noshowmode
-let g:lightline = {
-            \ 'colorscheme': 'iceberg',
-            \ 'active': {
-                \   'left' : [ ['mode', 'paste'],
-                \              ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
-                \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
-                \              ['filetype'],
-                \              ['fileencoding_and_fileformat'] ],
-                \   },
-                \ 'inactive': {
-                    \   'right': [ ['lineinfo'] ],
+if s:plug.isInstalled("lightline.vim")
+    set noshowmode
+    function! LightlineMode() abort
+        return &filetype ==# "help" ? "HELP" :
+                    \ &filetype ==# "qf" ? "" :
+                    \ &filetype ==# 'ctrlp' ? 'CtrlP' :
+                    \ &filetype ==# "molder" ? "MOLDER" :
+                    \ &filetype ==# "fern" ? "FERN" :
+                    \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
+                    \ lightline#mode()
+    endfunction
+
+    function! LightlineFugitive() abort
+        if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)'
+            if exists('*FugitiveHead')
+                let l:branch = FugitiveHead()
+                return branch !=# "" ? " ". l:branch : ""
+            endif
+        endif
+        return ""
+    endfunction
+
+    function! LightlineFilename() abort
+        if getwininfo(win_getid())[0].loclist
+            if exists("w:quickfix_title")
+                return "[Location List]" . " | " . w:quickfix_title
+            else
+                return "[Location List]"
+            endif
+        elseif &filetype ==# "qf"
+            if exists("w:quickfix_title")
+                return "[Quickfix List]" . " | " . w:quickfix_title
+            else
+                return "[Quickfix List]"
+            endif
+        elseif &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item') 
+            return g:lightline.ctrlp_item
+        elseif &filetype ==# "molder"
+            return expand('%')
+        elseif &filetype ==# "fern"
+            return b:fern.root._path
+        else
+            let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
+            return l:filename . ShowModified()
+        endif
+    endfunction
+
+    function! LightlineReadonly() abort
+        return &readonly && &filetype !~# '\v(help|molder)' ? "RO" : ""
+    endfunction
+
+    function! LightlineEncandFt() abort
+        if winwidth(0) > 70
+            let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
+            let l:format = &fileformat
+            return l:encoding . "," . l:format
+        endif
+        return ""
+    endfunction
+
+    function! LightlineLSPWarnings() abort
+        let l:counts = lsp#get_buffer_diagnostics_counts()
+        return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
+    endfunction
+
+    function! LightlineLSPErrors() abort
+        let l:counts = lsp#get_buffer_diagnostics_counts()
+        return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
+    endfunction
+
+    function! CtrlPMark()
+        if &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item')
+            call lightline#link('iR'[g:lightline.ctrlp_regex])
+            return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+                        \ , g:lightline.ctrlp_next], 0)
+        else
+            return ''
+        endif
+    endfunction
+
+    "lightline in CtrlP
+    function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+        let g:lightline.ctrlp_regex = a:regex
+        let g:lightline.ctrlp_prev = a:prev
+        let g:lightline.ctrlp_item = a:item
+        let g:lightline.ctrlp_next = a:next
+        return lightline#statusline(0)
+    endfunction
+
+    function! CtrlPStatusFunc_2(str)
+        return lightline#statusline(0)
+    endfunction
+
+    let g:ctrlp_status_func = {
+                \ 'main': 'CtrlPStatusFunc_1',
+                \ 'prog': 'CtrlPStatusFunc_2',
+                \ }
+
+    let g:lightline = {
+                \ 'colorscheme': 'iceberg',
+                \ 'active': {
+                    \   'left' : [ ['mode', 'paste'],
+                    \              ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
+                    \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
+                    \              ['filetype'],
+                    \              ['fileencoding_and_fileformat'] ],
                     \   },
-                    \ 'component': {
-                        \   'lineinfo': '%2l/%L,%-2c%<',
-                        \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
+                    \ 'inactive': {
+                        \   'right': [ ['lineinfo'] ],
                         \   },
-                        \ 'component_function': {
-                            \   'mode': 'LightlineMode',
-                            \   'fugitive': 'LightlineFugitive',
-                            \   'readonly': 'LightlineReadonly',
-                            \   'filename': 'LightlineFilename',
-                            \   'fileencoding_and_fileformat': 'LightlineEncandFt',
-                            \   'ctrlpmark': 'CtrlPMark',
+                        \ 'component': {
+                            \   'lineinfo': '%2l/%L,%-2c%<',
+                            \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
                             \   },
-                            \ 'component_expand': {
-                                \   'lsp_errors': 'LightlineLSPErrors',
-                                \   'lsp_warnings': 'LightlineLSPWarnings',
+                            \ 'component_function': {
+                                \   'mode': 'LightlineMode',
+                                \   'fugitive': 'LightlineFugitive',
+                                \   'readonly': 'LightlineReadonly',
+                                \   'filename': 'LightlineFilename',
+                                \   'fileencoding_and_fileformat': 'LightlineEncandFt',
+                                \   'ctrlpmark': 'CtrlPMark',
                                 \   },
-                                \ 'component_type': {
-                                    \   'lsp_errors': 'error',
-                                    \   'lsp_warnings': 'warning',
+                                \ 'component_expand': {
+                                    \   'lsp_errors': 'LightlineLSPErrors',
+                                    \   'lsp_warnings': 'LightlineLSPWarnings',
                                     \   },
-                                    \ }
+                                    \ 'component_type': {
+                                        \   'lsp_errors': 'error',
+                                        \   'lsp_warnings': 'warning',
+                                        \   },
+                                        \ }
 
-function! LightlineMode() abort
-    return &filetype ==# "help" ? "HELP" :
-                \ &filetype ==# "qf" ? "" :
-                \ &filetype ==# 'ctrlp' ? 'CtrlP' :
-                \ &filetype ==# "molder" ? "MOLDER" :
-                \ &filetype ==# "fern" ? "FERN" :
-                \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
-                \ lightline#mode()
-endfunction
-
-function! LightlineFugitive() abort
-    if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)'
-        if exists('*FugitiveHead')
-            let l:branch = FugitiveHead()
-            return branch !=# "" ? " ". l:branch : ""
-        endif
-    endif
-    return ""
-endfunction
-
-function! LightlineFilename() abort
-    if getwininfo(win_getid())[0].loclist
-        if exists("w:quickfix_title")
-            return "[Location List]" . " | " . w:quickfix_title
-        else
-            return "[Location List]"
-        endif
-    elseif &filetype ==# "qf"
-        if exists("w:quickfix_title")
-            return "[Quickfix List]" . " | " . w:quickfix_title
-        else
-            return "[Quickfix List]"
-        endif
-    elseif &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item') 
-        return g:lightline.ctrlp_item
-    elseif &filetype ==# "molder"
-        return expand('%')
-    elseif &filetype ==# "fern"
-        return b:fern.root._path
-    else
-        let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
-        return l:filename . ShowModified()
-    endif
-endfunction
-
-function! LightlineReadonly() abort
-    return &readonly && &filetype !~# '\v(help|molder)' ? "RO" : ""
-endfunction
-
-function! LightlineEncandFt() abort
-    if winwidth(0) > 70
-        let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
-        let l:format = &fileformat
-        return l:encoding . "," . l:format
-    endif
-    return ""
-endfunction
-
-function! LightlineLSPWarnings() abort
-    let l:counts = lsp#get_buffer_diagnostics_counts()
-    return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
-endfunction
-
-function! LightlineLSPErrors() abort
-    let l:counts = lsp#get_buffer_diagnostics_counts()
-    return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
-endfunction
-
-function! CtrlPMark()
-    if &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item')
-        call lightline#link('iR'[g:lightline.ctrlp_regex])
-        return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
-                    \ , g:lightline.ctrlp_next], 0)
-    else
-        return ''
-    endif
-endfunction
-
-"lightline in CtrlP
-let g:ctrlp_status_func = {
-            \ 'main': 'CtrlPStatusFunc_1',
-            \ 'prog': 'CtrlPStatusFunc_2',
-            \ }
-
-function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-    let g:lightline.ctrlp_regex = a:regex
-    let g:lightline.ctrlp_prev = a:prev
-    let g:lightline.ctrlp_item = a:item
-    let g:lightline.ctrlp_next = a:next
-    return lightline#statusline(0)
-endfunction
-
-function! CtrlPStatusFunc_2(str)
-    return lightline#statusline(0)
-endfunction
-
-augroup lightlineAutocmd
-    autocmd!
-    autocmd User lsp_diagnostics_updated call lightline#update()
-augroup END
+    augroup lightlineAutocmd
+        autocmd!
+        autocmd User lsp_diagnostics_updated call lightline#update()
+    augroup END
+endif
 
 "previm
 if s:is_windows
@@ -615,39 +636,38 @@ if s:is_windows
 endif
 
 "quickrun
+nmap qr <Plug>(quickrun)
 let g:quickrun_config = {
             \ '_': {
-                \   'outputter': 'buffer',
-                \   'outputter/buffer/name': "[Quickrun Output]",
-                \   'outputter/buffer/split': ":botright 8",
-                \   'outputter/buffer/running_mark': "[Runninng...]",
-                \   'runner': 'job',
-                \   },
+                \ 'outputter': 'buffer',
+                \ 'outputter/buffer/name': "[Quickrun Output]",
+                \ 'outputter/buffer/split': ":botright 8",
+                \ 'outputter/buffer/running_mark': "[Runninng...]",
+                \ 'runner': 'job',
+                \ },
                 \ 'tex' : {
-                    \   'command': 'lualatex',
-                    \   'exec': ['%c -interaction=nonstopmode -file-line-error %s']
-                    \   }
+                    \ 'command': 'lualatex',
+                    \ 'exec': ['%c -interaction=nonstopmode -file-line-error %s']
+                    \ },
+                \ 'scss' : {
+                    \ 'command': 'sass',
+                    \ 'exec': ['%c %s:%s.css']
                     \ }
+                \ }
 
 "auto-pairs
-if s:plug.isInstalled("auto-pairs")
-    nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
-    augroup autoPairsAutocmd
-        autocmd!
-        autocmd Filetype pug let b:autopairs_enabled = 0
-    augroup END
-endif
+nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
+augroup autoPairsAutocmd
+    autocmd!
+    autocmd Filetype pug let b:autopairs_enabled = 0
+augroup END
 
 "vim-operator-replace
-if s:plug.isInstalled("vim-operator-replace")
-    map _ <Plug>(operator-replace)
-endif
+map _ <Plug>(operator-replace)
 
 "vim-easy-align
-if s:plug.isInstalled("vim-easy-align")
-    xmap ga <Plug>(EasyAlign)
-    nmap ga <Plug>(EasyAlign)
-endif
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
