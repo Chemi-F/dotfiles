@@ -1,3 +1,3 @@
 set guioptions=!c
 
-set guifont=HackGen\ Console:h14:cSHIFTJIS
+set guifont=HackGenNerd\ Console:h14,HackGen\ Console:h14
