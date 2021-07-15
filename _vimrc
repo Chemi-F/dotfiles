@@ -349,10 +349,6 @@ Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
 Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-Plug 'lambdalisue/fern-renderer-nerdfont.vim', { 'on': 'Fern' }
-Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
-Plug 'lambdalisue/nerdfont.vim', { 'on': 'Fern' }
-Plug 'lambdalisue/glyph-palette.vim', { 'on': 'Fern' }
 "Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
@@ -373,6 +369,7 @@ Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'gko/vim-coloresque'
+Plug 'nathanaelkane/vim-indent-guides'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -489,6 +486,7 @@ endfunction
 augroup fernAutocmd
     autocmd!
     autocmd FileType fern call s:fernSettings()
+    autocmd FileType fern call glyph_palette#apply()
 augroup END
 
 "lightline.vim
@@ -668,6 +666,11 @@ map _ <Plug>(operator-replace)
 "vim-easy-align
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
+
+" vim-indent-guides
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
