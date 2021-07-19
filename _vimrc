@@ -108,6 +108,7 @@ nnoremap Y y$
 nnoremap <C-]> g<C-]>
 nnoremap <expr> [c empty(getloclist(0)) ? ":<C-u>cprevious<CR>" : ":<C-u>lprevious<CR>"
 nnoremap <expr> ]c empty(getloclist(0)) ? ":<C-u>cnext<CR>" : ":<C-u>lnext<CR>"
+nnoremap Q @q
 "Normal, visual mode
 noremap <Leader>h ^
 noremap <Leader>l $
@@ -313,7 +314,7 @@ if v:version >= 801
     let g:termdebug_wide = 163
 endif
 
-"Use Ripgrep in Quickfix
+"Use Ripgrep in grep
 if executable('rg')
     let &grepprg = 'rg --vimgrep --hidden'
     set grepformat=%f:%l:%c:%m
@@ -456,7 +457,7 @@ let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 nnoremap <silent> m<C-p> :<C-u>CtrlPMRUFiles<CR>
 
 "vim-molder
-let g:loaded_netrw       = 1
+let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
 let g:loaded_netrwSettings = 1
 let g:loaded_netrwFileHandlers = 1
@@ -475,7 +476,6 @@ augroup vimmolderAutocmd
 augroup END
 
 "fern
-let g:fern#renderer = "nerdfont"
 nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
 function! s:fernSettings()
@@ -486,7 +486,6 @@ endfunction
 augroup fernAutocmd
     autocmd!
     autocmd FileType fern call s:fernSettings()
-    autocmd FileType fern call glyph_palette#apply()
 augroup END
 
 "lightline.vim
@@ -634,7 +633,7 @@ if s:is_windows
 endif
 
 "quickrun
-nmap qr <Plug>(quickrun)
+nmap <Leader>rq <Plug>(quickrun)
 let g:quickrun_config = {
             \ '_': {
                 \ 'outputter': 'buffer',
