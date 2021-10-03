@@ -39,6 +39,7 @@ set statusline=%<%t%m%r%h%w%=
 set statusline+=\|\ %{&fileencoding},%{&fileformat}\ \|
 set statusline+=\ %Y\ \|\ %l/%L,%c\ \|
 set hidden
+set termwinsize=8x0
 "8 terminal
 set title
 set titlestring=Vim:\ %f%{ShowModified()}
@@ -89,8 +90,9 @@ nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
 nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <Leader>tm <C-w>T
-nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
+nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
+nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
 "Insert line break
 "http://deris.hatenablog.jp/entry/20130404/1365086716
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
@@ -218,7 +220,7 @@ endfunction
 "Command
 command! -nargs=1 VimGrepF execute 'vimgrep <args> %'
 command! -nargs=1 VimGrepD execute 'vimgrep <args> **'
-command! -nargs=* TermOpen execute 'botright terminal ++rows=8 <args>'
+command! -nargs=* TermOpen execute 'botright terminal <args>'
 command! Cd execute 'lcd %:h'
 
 "Autocmd
@@ -241,7 +243,7 @@ augroup myAutocmd
     "Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
 
-    autocmd BufEnter * if (winnr('$') == 1 && 
+    autocmd BufEnter * if (winnr('$') == 1 &&
                 \ (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) |
                 \ q! | endif
     autocmd TerminalOpen * if &buftype ==# 'terminal' |
@@ -253,21 +255,13 @@ let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
-    set viminfo+=n~/vimfiles/.viminfo
-    set noshellslash
-
-    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8 powershell<CR>
+    nnoremap <silent> <Leader>to :<C-u>botright terminal powershell<CR>
     nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
-    let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
-    execute 'set viminfo+=n' . s:viminfo_path
     set shell=/bin/bash
-
-    nnoremap <silent> <Leader>to :<C-u>botright terminal ++rows=8<CR>
 endif
 
-"let s:viminfo_path = s:vimfiles_dir . '/.viminfo'
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
@@ -279,7 +273,6 @@ function! s:makeDir(dir) abort
 endfunction
 
 call s:makeDir(s:swap_dir)
-"execute 'set viminfo+=n' . s:viminfo_path
 execute 'set directory=' . s:swap_dir
 set swapfile
 
@@ -288,6 +281,8 @@ if has('persistent_undo')
     execute 'set undodir=' . s:undo_dir
     set undofile
 endif
+
+execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 
 "Default plugin disable
 let g:loaded_zip = 1
