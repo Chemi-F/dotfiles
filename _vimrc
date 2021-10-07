@@ -57,8 +57,8 @@ set pumheight=10
 set showmatch
 set matchtime=1
 "14 tabs and indenting
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
 set autoindent
 set smartindent
@@ -349,11 +349,11 @@ Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
 "Language
-"html
 Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
 Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
 Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
+Plug 'posva/vim-vue', { 'for': 'vue' }
 "Markdown
 Plug 'previm/previm'
 "Others
