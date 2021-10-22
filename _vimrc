@@ -57,8 +57,8 @@ set pumheight=10
 set showmatch
 set matchtime=1
 "14 tabs and indenting
-set tabstop=2
-set shiftwidth=2
+set tabstop=4
+set shiftwidth=4
 set expandtab
 set autoindent
 set smartindent
