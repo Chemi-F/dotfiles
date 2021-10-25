@@ -217,6 +217,12 @@ function! s:terminalmodeSettings() abort
     nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
 endfunction
 
+"Filetype autocmd
+function! s:webAppsSettings() abort
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+endfunction
+
 "Command
 command! -nargs=1 VimGrepF execute 'vimgrep <args> %'
 command! -nargs=1 VimGrepD execute 'vimgrep <args> **'
@@ -236,13 +242,14 @@ augroup myAutocmd
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
     autocmd FileType qf call s:quickfixSettings()
+    autocmd FileType vue,html,css,pug,scss,javascript,typescript
+                \ call s:webAppsSettings()
 
     "Quickfix autocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
     "Terminal mode autocmd
     autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
-
     autocmd BufEnter * if (winnr('$') == 1 &&
                 \ (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) |
                 \ q! | endif
@@ -332,7 +339,7 @@ Plug 'vim-jp/vimdoc-ja'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
-Plug 'yami-beta/asyncomplete-omni.vim', { 'for': 'pug' }
+Plug 'yami-beta/asyncomplete-omni.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'hrsh7th/vim-vsnip'
@@ -366,6 +373,8 @@ Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'gko/vim-coloresque'
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'Shougo/context_filetype.vim'
+Plug 'osyo-manga/vim-precious'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
