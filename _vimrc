@@ -373,8 +373,6 @@ Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'gko/vim-coloresque'
 Plug 'nathanaelkane/vim-indent-guides'
-Plug 'Shougo/context_filetype.vim'
-Plug 'osyo-manga/vim-precious'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
