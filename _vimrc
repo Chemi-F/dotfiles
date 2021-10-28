@@ -434,15 +434,10 @@ if executable('efm-langserver')
         autocmd User lsp_setup call lsp#register_server({
                     \ 'name': 'efm-langserver',
                     \ 'cmd': {server_info->[ 'efm-langserver' ]},
-                    \ 'whitelist': [ 'pug' ],
+                    \ 'allowlist': [ 'vue', 'javascript', 'typescript', 'pug' ],
                     \ })
     augroup END
 endif
-
-"vim-lsp-settings
-let g:lsp_settings =  {
-            \ 'efm-langserver': { 'whitelist': [ 'pug' ] }
-            \ }
 
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'

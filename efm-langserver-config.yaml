@@ -1,0 +1,32 @@
+version: 2
+root-markers:
+  - .git/
+lint-debounce: 1s
+
+tools:
+  eslint: &eslint
+    lint-command: 'eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
+    lint-ignore-exit-code: true
+    lint-stdin: true
+    lint-formats:
+      - "%f(%l,%c): %tarning %m"
+      - "%f(%l,%c): %trror %m"
+
+  pug-lint: &pug-lint
+    lint-command: 'pug-lint -r inline'
+    lint-stdin: false
+    lint-formats:
+      - "%f:%l:%c %m"
+
+languages:
+  javascript:
+    - <<: *eslint
+
+  typescript:
+    - <<: *eslint
+
+  vue:
+    - <<: *eslint
+  
+  pug:
+    - <<: *pug-lint
