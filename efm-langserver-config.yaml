@@ -4,6 +4,14 @@ root-markers:
 lint-debounce: 1s
 
 tools:
+  node_module-eslint: &node_module-eslint
+    lint-command: '.\node_modules\.bin\eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
+    lint-ignore-exit-code: true
+    lint-stdin: true
+    lint-formats:
+      - "%f(%l,%c): %tarning %m"
+      - "%f(%l,%c): %trror %m"
+
   eslint: &eslint
     lint-command: 'eslint -f visualstudio --stdin --stdin-filename ${INPUT}'
     lint-ignore-exit-code: true
@@ -20,12 +28,15 @@ tools:
 
 languages:
   javascript:
+    - <<: *node_module-eslint
     - <<: *eslint
 
   typescript:
+    - <<: *node_module-eslint
     - <<: *eslint
 
   vue:
+    - <<: *node_module-eslint
     - <<: *eslint
   
   pug:
