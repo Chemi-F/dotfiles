@@ -348,6 +348,7 @@ Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mattn/ctrlp-matchfuzzy'
 "Git
+Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
@@ -356,12 +357,16 @@ Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
 "Language
+"Language-html
 Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
+"Language-pug
 Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
 Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
+"Language-vue
 Plug 'posva/vim-vue', { 'for': 'vue' }
-"Markdown
+Plug 'Yggdroot/indentLine', { 'for': 'vue' }
+"Language-markdown
 Plug 'previm/previm'
 "Others
 Plug 'tpope/vim-surround'
@@ -372,7 +377,6 @@ Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'gko/vim-coloresque'
-Plug 'nathanaelkane/vim-indent-guides'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -428,16 +432,25 @@ augroup vimlspAutocmd
     autocmd User lsp_buffer_enabled call s:vimlspSettings()
 augroup END
 
-if executable('efm-langserver')
-    augroup vimlspEfmAutocmd
-        autocmd!
-        autocmd User lsp_setup call lsp#register_server({
-                    \ 'name': 'efm-langserver',
-                    \ 'cmd': {server_info->[ 'efm-langserver' ]},
-                    \ 'allowlist': [ 'vue', 'javascript', 'typescript', 'pug' ],
-                    \ })
-    augroup END
-endif
+"if executable('efm-langserver')
+"    augroup vimlspEfmAutocmd
+"        autocmd!
+"        autocmd User lsp_setup call lsp#register_server({
+"                    \ 'name': 'efm-langserver',
+"                    \ 'cmd': {server_info->[ 'efm-langserver' ]},
+"                    \ 'allowlist': [ 'pug', 'vue' ],
+"                    \ })
+"    augroup END
+"endif
+
+"vim-lsp-settings
+let g:lsp_settings =  {
+            \ 'efm-langserver': {
+                \ 'disabled': v:false,
+                \ 'allowlist': [ 'javascript', 'typescript', 'vue', 'pug' ]
+                \ }
+            \ }
+let g:lsp_settings_filetype_vue = ['vls', 'efm-langserver']
 
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -447,7 +460,7 @@ imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 let g:ctrlp_match_window = 'min:8,max:8'
 let g:ctrlp_cache_dir = s:vimfiles_dir . '/.cache/ctrlp'
 let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+            \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules|DS_Store$',
             \ 'file': '\v\.(exe|so|dll)$',
             \ }
 let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
@@ -662,11 +675,6 @@ map _ <Plug>(operator-replace)
 "vim-easy-align
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-
-" vim-indent-guides
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
