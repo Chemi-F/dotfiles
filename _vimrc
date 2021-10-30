@@ -432,17 +432,6 @@ augroup vimlspAutocmd
     autocmd User lsp_buffer_enabled call s:vimlspSettings()
 augroup END
 
-"if executable('efm-langserver')
-"    augroup vimlspEfmAutocmd
-"        autocmd!
-"        autocmd User lsp_setup call lsp#register_server({
-"                    \ 'name': 'efm-langserver',
-"                    \ 'cmd': {server_info->[ 'efm-langserver' ]},
-"                    \ 'allowlist': [ 'pug', 'vue' ],
-"                    \ })
-"    augroup END
-"endif
-
 "vim-lsp-settings
 let g:lsp_settings =  {
             \ 'efm-langserver': {
