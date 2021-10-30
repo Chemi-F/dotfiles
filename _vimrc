@@ -422,6 +422,8 @@ function! s:vimlspSettings() abort
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagostics)
+    nmap <buffer> ]g <plug>(lsp-next-diagostics)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
     inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
@@ -454,6 +456,9 @@ let g:ctrlp_custom_ignore = {
             \ }
 let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 nnoremap <silent> m<C-p> :<C-u>CtrlPMRUFiles<CR>
+
+"vim-gitgutter
+let g:gitgutter_map_keys = 0
 
 "vim-molder
 let g:loaded_netrw = 1
