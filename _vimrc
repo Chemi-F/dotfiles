@@ -365,7 +365,7 @@ Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
 Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
 "Language-vue
 Plug 'posva/vim-vue', { 'for': 'vue' }
-Plug 'Yggdroot/indentLine', { 'for': 'vue' }
+Plug 'nathanaelkane/vim-indent-guides', { 'for': 'vue' }
 "Language-markdown
 Plug 'previm/previm'
 "Others
@@ -414,7 +414,8 @@ augroup END
 "vim-lsp
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
-let g:lsp_settings_enable_suggestions = 0
+let g:lsp_diagnostics_signs_enabled = 1
+let g:lsp_diagnostics_signs_priority = 11
 
 function! s:vimlspSettings() abort
     setlocal omnifunc=lsp#complete
@@ -442,6 +443,7 @@ let g:lsp_settings =  {
                 \ }
             \ }
 let g:lsp_settings_filetype_vue = ['vls', 'efm-langserver']
+let g:lsp_settings_enable_suggestions = 0
 
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -630,6 +632,11 @@ if s:plug.isInstalled("lightline.vim")
         autocmd User lsp_diagnostics_updated call lightline#update()
     augroup END
 endif
+
+"vim-indent-guides
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
 
 "previm
 if s:is_windows
