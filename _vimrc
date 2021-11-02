@@ -212,6 +212,11 @@ function! s:quickfixSettings() abort
     call s:adjustWindowHeight(3,8)
 endfunction
 
+function! s:grepIgnoreSettings() abort
+    setlocal wildignore+=*/node_modules/*
+    setlocal wildignore+=*/.git/*
+endfunction
+
 function! s:terminalmodeSettings() abort
     setlocal bufhidden=wipe
     nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
@@ -246,6 +251,8 @@ augroup myAutocmd
                 \ call s:webAppsSettings()
 
     "Quickfix autocmd
+    autocmd QuickFixCmdPre *grep* call s:grepIgnoreSettings()
+    autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
     "Terminal mode autocmd
@@ -449,7 +456,7 @@ let g:lsp_settings_enable_suggestions = 0
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
 imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 
-"ctrlP
+"CtrlP
 let g:ctrlp_match_window = 'min:8,max:8'
 let g:ctrlp_cache_dir = s:vimfiles_dir . '/.cache/ctrlp'
 let g:ctrlp_custom_ignore = {
@@ -463,10 +470,7 @@ nnoremap <silent> m<C-p> :<C-u>CtrlPMRUFiles<CR>
 let g:gitgutter_map_keys = 0
 
 "vim-molder
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-let g:loaded_netrwSettings = 1
-let g:loaded_netrwFileHandlers = 1
+let g:molder_show_hidden = 1
 
 function! s:vimmolderSettings() abort
     nmap <buffer> l <Plug>(molder-open)
