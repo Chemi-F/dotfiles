@@ -325,7 +325,7 @@ endif
 
 "Use Ripgrep in grep
 if executable('rg')
-    let &grepprg = 'rg --vimgrep --hidden'
+    set grepprg=rg\ --vimgrep\ --hidden
     set grepformat=%f:%l:%c:%m
 endif
 
@@ -372,7 +372,6 @@ Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
 Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
 "Language-vue
 Plug 'posva/vim-vue', { 'for': 'vue' }
-Plug 'nathanaelkane/vim-indent-guides', { 'for': 'vue' }
 "Language-markdown
 Plug 'previm/previm'
 "Others
@@ -384,6 +383,8 @@ Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'gko/vim-coloresque'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'tyru/open-browser.vim'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -460,7 +461,7 @@ imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 let g:ctrlp_match_window = 'min:8,max:8'
 let g:ctrlp_cache_dir = s:vimfiles_dir . '/.cache/ctrlp'
 let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules|DS_Store$',
+            \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
             \ 'file': '\v\.(exe|so|dll)$',
             \ }
 let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
@@ -470,6 +471,10 @@ nnoremap <silent> m<C-p> :<C-u>CtrlPMRUFiles<CR>
 let g:gitgutter_map_keys = 0
 
 "vim-molder
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_netrwSettings = 1
+let g:loaded_netrwFileHandlers = 1
 let g:molder_show_hidden = 1
 
 function! s:vimmolderSettings() abort
@@ -550,7 +555,7 @@ if s:plug.isInstalled("lightline.vim")
         return &readonly && &filetype !~# '\v(help|molder)' ? "RO" : ""
     endfunction
 
-    function! LightlineEncandFt() abort
+    function! LightlineEncAndFt() abort
         if winwidth(0) > 70
             let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
             let l:format = &fileformat
@@ -580,7 +585,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     "lightline in CtrlP
-    function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+    function! CtrlPStatusFunc1(focus, byfname, regex, prev, item, next, marked)
         let g:lightline.ctrlp_regex = a:regex
         let g:lightline.ctrlp_prev = a:prev
         let g:lightline.ctrlp_item = a:item
@@ -588,13 +593,13 @@ if s:plug.isInstalled("lightline.vim")
         return lightline#statusline(0)
     endfunction
 
-    function! CtrlPStatusFunc_2(str)
+    function! CtrlPStatusFunc2(str)
         return lightline#statusline(0)
     endfunction
 
     let g:ctrlp_status_func = {
-                \ 'main': 'CtrlPStatusFunc_1',
-                \ 'prog': 'CtrlPStatusFunc_2',
+                \ 'main': 'CtrlPStatusFunc1',
+                \ 'prog': 'CtrlPStatusFunc2',
                 \ }
 
     let g:lightline = {
@@ -618,7 +623,7 @@ if s:plug.isInstalled("lightline.vim")
                                 \   'fugitive': 'LightlineFugitive',
                                 \   'readonly': 'LightlineReadonly',
                                 \   'filename': 'LightlineFilename',
-                                \   'fileencoding_and_fileformat': 'LightlineEncandFt',
+                                \   'fileencoding_and_fileformat': 'LightlineEncAndFt',
                                 \   'ctrlpmark': 'CtrlPMark',
                                 \   },
                                 \ 'component_expand': {
@@ -636,11 +641,6 @@ if s:plug.isInstalled("lightline.vim")
         autocmd User lsp_diagnostics_updated call lightline#update()
     augroup END
 endif
-
-"vim-indent-guides
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
 
 "previm
 if s:is_windows
@@ -680,6 +680,15 @@ map _ <Plug>(operator-replace)
 "vim-easy-align
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
+
+"vim-indent-guides
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+
+"open-browser
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
