@@ -517,7 +517,7 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineFugitive() abort
-        if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)'
+        if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
             if exists('*FugitiveHead')
                 let l:branch = FugitiveHead()
                 return branch !=# "" ? " ". l:branch : ""
@@ -556,10 +556,10 @@ if s:plug.isInstalled("lightline.vim")
     endfunction
 
     function! LightlineEncAndFt() abort
-        if winwidth(0) > 70
-            let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
-            let l:format = &fileformat
-            return l:encoding . "," . l:format
+        if winwidth(0) > 70 && &buftype !=# "terminal"
+            let l:encoding = toupper(&fileencoding !=# "" ? &fileencoding : &encoding)
+            let l:format = &fileformat ==# "dos" ? "CRLF" : "LF"
+            return l:encoding . " " . l:format
         endif
         return ""
     endfunction
