@@ -140,7 +140,7 @@ cnoremap <C-d> <Del>
 tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
 "Function mappings
-nnoremap <silent> <Leader>jh :<C-u>call <SID>helplang2Japanese()<CR>
+nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
 nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
 
 "Function
@@ -165,7 +165,7 @@ endfunction
 "Map functions
 "For displaying help in Japanese
 let s:helplang_is_ja = 0
-function! s:helplang2Japanese() abort
+function! s:helplangToggle() abort
     if s:helplang_is_ja
         set helplang=en,ja
         let s:helplang_is_ja = 0
@@ -218,14 +218,16 @@ function! s:grepIgnoreSettings() abort
 endfunction
 
 function! s:terminalmodeSettings() abort
-    setlocal bufhidden=wipe
+    setlocal nonumber
     nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
+    nnoremap <silent> <buffer> <Leader>to :<C-u>vertical terminal<CR>
 endfunction
 
 "Filetype autocmd
 function! s:webAppsSettings() abort
     setlocal tabstop=2
     setlocal shiftwidth=2
+    setlocal iskeyword+=-
 endfunction
 
 "Command
@@ -242,6 +244,9 @@ augroup myAutocmd
     autocmd BufReadPost * if line("'\"") >= 1 &&
                 \ line("'\"") <= line("$") && &ft !~# 'commit' |
                 \ exe "normal! g`\"" | endif
+    autocmd BufEnter * if (winnr('$') == 1 &&
+                \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) |
+                \ q! | endif
 
     "Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
@@ -256,10 +261,6 @@ augroup myAutocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
     "Terminal mode autocmd
-    autocmd BufEnter * if &buftype ==# 'terminal' | setlocal nonumber | endif
-    autocmd BufEnter * if (winnr('$') == 1 &&
-                \ (&buftype ==# 'terminal' || &filetype =~# '\v(qf|quickrun)')) |
-                \ q! | endif
     autocmd TerminalOpen * if &buftype ==# 'terminal' |
                 \ call s:terminalmodeSettings() | endif
 augroup END
@@ -269,7 +270,6 @@ let s:is_windows = has('win32') || has('win64')
 
 if s:is_windows
     let s:vimfiles_dir = expand('~/vimfiles')
-    nnoremap <silent> <Leader>to :<C-u>botright terminal powershell<CR>
     nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
@@ -666,6 +666,11 @@ let g:quickrun_config = {
                     \ 'exec': ['%c %s:%s.css']
                     \ }
                 \ }
+augroup quickrunAutocmd
+    autocmd!
+    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'quickrun') |
+                \ q! | endif
+augroup END
 
 "auto-pairs
 nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
