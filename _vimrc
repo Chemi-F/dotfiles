@@ -219,6 +219,7 @@ endfunction
 
 function! s:terminalmodeSettings() abort
     setlocal nonumber
+    setlocal winfixheight
     nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
     nnoremap <silent> <buffer> <Leader>to :<C-u>vertical terminal<CR>
 endfunction
