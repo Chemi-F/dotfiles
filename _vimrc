@@ -42,7 +42,7 @@ set hidden
 set termwinsize=8x0
 "8 terminal
 set title
-set titlestring=Vim:\ %f%{ShowModified()}
+set titlestring=%f%{ShowModified()}
 "11 messages and info
 set showcmd
 set noerrorbells
@@ -72,77 +72,6 @@ set viminfo='50,<500,s100,h
 
 colorscheme desert
 
-"Key-mappings
-let g:mapleader = "\<Space>"
-nnoremap <Space> <Nop>
-"Normal mode
-"Leader mappings
-nnoremap <Leader>w :<C-u>write<CR>
-nnoremap <Leader>q :<C-u>quit<CR>
-nnoremap <Leader>m :<C-u>marks<CR>
-nnoremap <Leader>rg :<C-u>registers<CR>
-nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
-nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
-nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
-"erace space
-nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
-nnoremap <Leader>tj :<C-u>tag<CR>
-nnoremap <Leader>tk :<C-u>pop<CR>
-nnoremap <Leader>tl :<C-u>tags<CR>
-nnoremap <Leader>tm <C-w>T
-nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
-nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
-nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
-"Insert line break
-"http://deris.hatenablog.jp/entry/20130404/1365086716
-nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
-nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
-"Others
-nnoremap <silent> <Down> <C-w>-
-nnoremap <silent> <Up> <C-w>+
-nnoremap <silent> <Left> <C-w><
-nnoremap <silent> <Right> <C-w>>
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-nnoremap Y y$
-nnoremap <C-]> g<C-]>
-nnoremap <expr> [c empty(getloclist(0)) ? ":<C-u>cprevious<CR>" : ":<C-u>lprevious<CR>"
-nnoremap <expr> ]c empty(getloclist(0)) ? ":<C-u>cnext<CR>" : ":<C-u>lnext<CR>"
-nnoremap Q @q
-"Normal, visual mode
-noremap <Leader>h ^
-noremap <Leader>l $
-noremap j gj
-noremap k gk
-noremap gj j
-noremap gk k
-noremap : ;
-noremap ; :
-noremap x "_x
-noremap X "_X
-noremap * *N
-"Insert mode
-inoremap jj <Esc>
-inoremap <C-c> <Esc>
-inoremap <S-Tab> <C-d>
-inoremap <C-@> <C-[>
-inoremap <C-U> <C-G>u<C-U>
-"Command mode
-cnoremap <C-q> <C-f>
-cnoremap <C-b> <Left>
-cnoremap <C-f> <Right>
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-d> <Del>
-"Terimnal mode
-tnoremap <A-w> <C-\><C-n><C-w>w
-tnoremap jj <C-\><C-n>
-"Function mappings
-nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
-nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
-
 "Function
 function! ShowModified() abort
     if &buftype ==# "terminal"
@@ -162,8 +91,6 @@ function! ShowModified() abort
     return ""
 endfunction
 
-"Map functions
-"For displaying help in Japanese
 let s:helplang_is_ja = 0
 function! s:helplangToggle() abort
     if s:helplang_is_ja
@@ -177,7 +104,6 @@ function! s:helplangToggle() abort
     endif
 endfunction
 
-"Location List / Quickfix window open
 function! s:toggleQuickfix() abort
     let l:nr = winnr('$')
     let l:loc = !empty(getloclist(0))
@@ -196,13 +122,17 @@ function! s:toggleQuickfix() abort
     endif
 endfunction
 
-"For editing symbolic link file
 function! s:editActualFile(filename) abort
     let l:actualFilename = resolve(expand(a:filename))
     execute "e " . l:actualFilename
 endfunction
 
-"Autocmd functions
+function! s:makeDir(dir) abort
+    if !isdirectory(a:dir)
+        call mkdir(a:dir, 'p')
+    endif
+endfunction
+
 function! s:adjustWindowHeight(minHeight, maxHeight) abort
     execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
 endfunction
@@ -212,7 +142,7 @@ function! s:quickfixSettings() abort
     call s:adjustWindowHeight(3,8)
 endfunction
 
-function! s:grepIgnoreSettings() abort
+function! s:grepSettings() abort
     setlocal wildignore+=*/node_modules/*
     setlocal wildignore+=*/.git/*
 endfunction
@@ -224,7 +154,6 @@ function! s:terminalmodeSettings() abort
     nnoremap <silent> <buffer> <Leader>to :<C-u>vertical terminal<CR>
 endfunction
 
-"Filetype autocmd
 function! s:webAppsSettings() abort
     setlocal tabstop=2
     setlocal shiftwidth=2
@@ -234,8 +163,93 @@ endfunction
 "Command
 command! -nargs=1 VimGrepF execute 'vimgrep <args> %'
 command! -nargs=1 VimGrepD execute 'vimgrep <args> **'
-command! -nargs=* TermOpen execute 'botright terminal <args>'
 command! Cd execute 'lcd %:h'
+
+"Mapping
+let g:mapleader = "\<Space>"
+nnoremap <Space> <Nop>
+nnoremap <Leader>w :<C-u>write<CR>
+nnoremap <Leader>q :<C-u>quit<CR>
+nnoremap <Leader>m :<C-u>marks<CR>
+nnoremap <Leader>rg :<C-u>registers<CR>
+nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
+nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
+nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
+"erace space
+nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
+nnoremap <Leader>tj :<C-u>tag<CR>
+nnoremap <Leader>tk :<C-u>pop<CR>
+nnoremap <Leader>tl :<C-u>tags<CR>
+nnoremap <Leader>tm <C-w>T
+nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
+nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
+nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
+nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
+"Insert line break
+"http://deris.hatenablog.jp/entry/20130404/1365086716
+nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
+nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
+nnoremap <silent> <Down> <C-w>-
+nnoremap <silent> <Up> <C-w>+
+nnoremap <silent> <Left> <C-w><
+nnoremap <silent> <Right> <C-w>>
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap Y y$
+nnoremap <C-]> g<C-]>
+nnoremap Q @q
+nnoremap <expr> [c empty(getloclist(0)) ? ":<C-u>lprevious<CR>" : ":<C-u>cprevious<CR>"
+nnoremap <expr> ]c empty(getloclist(0)) ? ":<C-u>lnext<CR>" : ":<C-u>cnext<CR>"
+nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
+noremap <Leader>h ^
+noremap <Leader>l $
+noremap j gj
+noremap k gk
+noremap gj j
+noremap gk k
+noremap : ;
+noremap ; :
+noremap x "_x
+noremap X "_X
+noremap * *N
+inoremap jj <Esc>
+inoremap <C-c> <Esc>
+inoremap <S-Tab> <C-d>
+inoremap <C-@> <C-[>
+inoremap <C-U> <C-G>u<C-U>
+cnoremap <C-q> <C-f>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-d> <Del>
+tnoremap <A-w> <C-\><C-n><C-w>w
+tnoremap jj <C-\><C-n>
+
+"Version settings
+let s:is_windows = has('win32') || has('win64')
+if s:is_windows
+    let s:vimfiles_dir = expand('~/vimfiles')
+    nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
+else
+    let s:vimfiles_dir = expand('~/.vim')
+    set shell=/bin/bash
+endif
+
+let s:swap_dir = s:vimfiles_dir . '/swap'
+let s:undo_dir = s:vimfiles_dir . '/undo'
+call s:makeDir(s:swap_dir)
+execute 'set directory=' . s:swap_dir
+
+set swapfile
+if has('persistent_undo')
+    call s:makeDir(s:undo_dir)
+    execute 'set undodir=' . s:undo_dir
+    set undofile
+endif
+execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 
 "Autocmd
 augroup myAutocmd
@@ -257,7 +271,7 @@ augroup myAutocmd
                 \ call s:webAppsSettings()
 
     "Quickfix autocmd
-    autocmd QuickFixCmdPre *grep* call s:grepIgnoreSettings()
+    autocmd QuickFixCmdPre *grep* call s:grepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
@@ -265,39 +279,6 @@ augroup myAutocmd
     autocmd TerminalOpen * if &buftype ==# 'terminal' |
                 \ call s:terminalmodeSettings() | endif
 augroup END
-
-"Version settings
-let s:is_windows = has('win32') || has('win64')
-
-if s:is_windows
-    let s:vimfiles_dir = expand('~/vimfiles')
-    nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
-else
-    let s:vimfiles_dir = expand('~/.vim')
-    set shell=/bin/bash
-endif
-
-let s:swap_dir = s:vimfiles_dir . '/swap'
-let s:undo_dir = s:vimfiles_dir . '/undo'
-
-"Make directory
-function! s:makeDir(dir) abort
-    if !isdirectory(a:dir)
-        call mkdir(a:dir, 'p')
-    endif
-endfunction
-
-call s:makeDir(s:swap_dir)
-execute 'set directory=' . s:swap_dir
-set swapfile
-
-if has('persistent_undo')
-    call s:makeDir(s:undo_dir)
-    execute 'set undodir=' . s:undo_dir
-    set undofile
-endif
-
-execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 
 "Default plugin disable
 let g:loaded_zip = 1
@@ -319,10 +300,6 @@ end
 
 "Package
 packadd! matchit
-if v:version >= 801
-    packadd! termdebug
-    let g:termdebug_wide = 163
-endif
 
 "Use Ripgrep in grep
 if executable('rg')
@@ -360,20 +337,18 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
+Plug 'mattn/vim-molder-operations'
 Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
 "Theme
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
 "Language
-"Language-html
 Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
-"Language-pug
 Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
 Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
-"Language-vue
 Plug 'posva/vim-vue', { 'for': 'vue' }
-"Language-markdown
 Plug 'previm/previm'
 "Others
 Plug 'tpope/vim-surround'
@@ -432,8 +407,8 @@ function! s:vimlspSettings() abort
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
-    nmap <buffer> [g <plug>(lsp-previous-diagostics)
-    nmap <buffer> ]g <plug>(lsp-next-diagostics)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostics)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostics)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
     inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
@@ -558,8 +533,8 @@ if s:plug.isInstalled("lightline.vim")
 
     function! LightlineEncAndFt() abort
         if winwidth(0) > 70 && &buftype !=# "terminal"
-            let l:encoding = toupper(&fileencoding !=# "" ? &fileencoding : &encoding)
-            let l:format = &fileformat ==# "dos" ? "CRLF" : "LF"
+            let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
+            let l:format = &fileformat
             return l:encoding . " " . l:format
         endif
         return ""
@@ -641,11 +616,6 @@ if s:plug.isInstalled("lightline.vim")
         autocmd!
         autocmd User lsp_diagnostics_updated call lightline#update()
     augroup END
-endif
-
-"previm
-if s:is_windows
-    let g:previm_open_cmd = 'MicrosoftEdge.exe'
 endif
 
 "quickrun
