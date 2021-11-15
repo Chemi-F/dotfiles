@@ -396,6 +396,7 @@ augroup asyncompleteAutocmd
 augroup END
 
 "vim-lsp
+let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_diagnostics_signs_enabled = 1
