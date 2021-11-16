@@ -340,9 +340,11 @@ Plug 'mattn/vim-molder'
 Plug 'mattn/vim-molder-operations'
 Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
 Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
-"Theme
+"Theme, highlight
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'gko/vim-coloresque'
 "Language
 Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
@@ -358,8 +360,6 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
-Plug 'nathanaelkane/vim-indent-guides'
-Plug 'gko/vim-coloresque'
 Plug 'tyru/open-browser.vim'
 call plug#end()
 
