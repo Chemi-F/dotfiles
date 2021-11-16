@@ -263,19 +263,16 @@ augroup myAutocmd
                 \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) |
                 \ q! | endif
 
-    "Filetype autocmd
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
     autocmd FileType qf call s:quickfixSettings()
     autocmd FileType vue,html,css,pug,scss,javascript,typescript
                 \ call s:webAppsSettings()
 
-    "Quickfix autocmd
     autocmd QuickFixCmdPre *grep* call s:grepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-    "Terminal mode autocmd
     autocmd TerminalOpen * if &buftype ==# 'terminal' |
                 \ call s:terminalmodeSettings() | endif
 augroup END
@@ -338,8 +335,8 @@ Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
 Plug 'mattn/vim-molder-operations'
-Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-git-status.vim'
 "Theme, highlight
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
@@ -398,9 +395,11 @@ augroup END
 "vim-lsp
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
 let g:lsp_diagnostics_enabled = 1
-let g:lsp_diagnostics_echo_cursor = 1
+"let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
+let g:lsp_format_sync_timeout = 1000
 
 function! s:vimlspSettings() abort
     setlocal omnifunc=lsp#complete
@@ -618,6 +617,9 @@ if s:plug.isInstalled("lightline.vim")
         autocmd User lsp_diagnostics_updated call lightline#update()
     augroup END
 endif
+
+"vim-vue
+let g:vue_pre_processors = ['pug', 'scss']
 
 "quickrun
 nmap <Leader>rq <Plug>(quickrun)
