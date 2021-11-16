@@ -358,8 +358,8 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
-Plug 'gko/vim-coloresque'
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'gko/vim-coloresque'
 Plug 'tyru/open-browser.vim'
 call plug#end()
 
