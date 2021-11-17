@@ -358,6 +358,7 @@ Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'tyru/open-browser.vim'
+Plug 'mattn/vim-findroot'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -667,6 +668,13 @@ let g:indent_guides_guide_size = 1
 "open-browser
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
+
+"vim-findroot
+let g:findroot_patterns = [
+\  '.gitignore',
+\  '.git/',
+\]
+
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
