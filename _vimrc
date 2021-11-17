@@ -620,7 +620,7 @@ if s:plug.isInstalled("lightline.vim")
 endif
 
 "vim-vue
-let g:vue_pre_processors = ['pug', 'scss']
+let g:vue_pre_processors = ['pug', 'typescript', 'scss']
 
 "quickrun
 nmap <Leader>rq <Plug>(quickrun)
