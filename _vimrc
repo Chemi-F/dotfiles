@@ -200,8 +200,8 @@ nnoremap <C-l> <C-w>l
 nnoremap Y y$
 nnoremap <C-]> g<C-]>
 nnoremap Q @q
-nnoremap <expr> [c empty(getloclist(0)) ? ":<C-u>lprevious<CR>" : ":<C-u>cprevious<CR>"
-nnoremap <expr> ]c empty(getloclist(0)) ? ":<C-u>lnext<CR>" : ":<C-u>cnext<CR>"
+nnoremap <expr> [c !empty(getloclist(0)) ? ":<C-u>lprevious<CR>" : ":<C-u>cprevious<CR>"
+nnoremap <expr> ]c !empty(getloclist(0)) ? ":<C-u>lnext<CR>" : ":<C-u>cnext<CR>"
 nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
