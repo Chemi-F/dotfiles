@@ -161,9 +161,9 @@ function! s:webAppsSettings() abort
 endfunction
 
 "Command
-command! -nargs=1 VimGrepF execute 'vimgrep <args> %'
-command! -nargs=1 VimGrepD execute 'vimgrep <args> **'
-command! Cd execute 'lcd %:h'
+command -nargs=1 VimGrepF execute 'vimgrep <args> %'
+command -nargs=1 VimGrepD execute 'vimgrep <args> **'
+command Cd execute 'lcd %:h'
 
 "Mapping
 let g:mapleader = "\<Space>"
@@ -183,12 +183,12 @@ nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <Leader>tm <C-w>T
 nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
-nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
-nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
-"Insert line break
 "http://deris.hatenablog.jp/entry/20130404/1365086716
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
+nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
+nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
+nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
 nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
@@ -229,10 +229,9 @@ tnoremap <A-w> <C-\><C-n><C-w>w
 tnoremap jj <C-\><C-n>
 
 "Version settings
-let s:is_windows = has('win32') || has('win64')
-if s:is_windows
+if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
-    nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
+    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
 else
     let s:vimfiles_dir = expand('~/.vim')
     set shell=/bin/bash
@@ -273,7 +272,7 @@ augroup myAutocmd
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-    autocmd TerminalOpen * if &buftype ==# 'terminal' |
+    autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
                 \ call s:terminalmodeSettings() | endif
 augroup END
 
@@ -396,7 +395,6 @@ augroup END
 "vim-lsp
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
 let g:lsp_diagnostics_enabled = 1
-"let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
@@ -668,13 +666,6 @@ let g:indent_guides_guide_size = 1
 "open-browser
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
-
-"vim-findroot
-let g:findroot_patterns = [
-\  '.gitignore',
-\  '.git/',
-\]
-
 
 "Colorscheme
 if s:plug.isInstalled("iceberg.vim")
