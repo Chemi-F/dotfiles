@@ -406,8 +406,8 @@ function! s:vimlspSettings() abort
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
-    nmap <buffer> [g <plug>(lsp-previous-diagnostics)
-    nmap <buffer> ]g <plug>(lsp-next-diagnostics)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
     if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
     inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
