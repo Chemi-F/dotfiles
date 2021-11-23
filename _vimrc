@@ -16,8 +16,6 @@ set wrapscan
 set incsearch
 set ignorecase
 set smartcase
-"3 tags
-set tags=./tags;
 "4 displaying text
 set scrolloff=5
 set breakindent
