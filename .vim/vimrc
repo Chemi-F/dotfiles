@@ -23,9 +23,12 @@ let g:loaded_vimballPlugin = 1
 let g:loaded_2html_plugin = 1
 let g:skip_loading_mswin = 1
 
-if has('nvim')
-    let s:vimfiles_dir = stdpath("config")
-    let s:vimdata_dir = stdpath("data")
+"if has('nvim')
+"    let s:vimfiles_dir = stdpath("config")
+"    let s:vimdata_dir = stdpath("data")
+if has('win32')
+    let s:vimfiles_dir = expand('~/vimfiles')
+    let s:vimdata_dir = expand('~/vimfiles')
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
@@ -245,55 +248,34 @@ if executable('rg')
     set grepformat=%f:%l:%c:%m
 endif
 
-if has('nvim')
+"if has('nvim')
+"else
+if has('win32')
+    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
 else
-    if has('win32')
-        let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    else
-        set shell=/bin/bash
-    endif
-
-    function! ShowModified() abort
-        if &buftype ==# "terminal"
-            if mode() ==# "t"
-                return " [Running]"
-            elseif &modified
-                return " [Runnning]"
-            elseif !&modifiable
-                return " [Finished]"
-            endif
-        endif
-        if &filetype !=# "help"
-            if &modified
-                return " [+]"
-            elseif !&modifiable
-                return " [-]"
-            endif
-        endif
-        return ""
-    endfunction
-
-    function! s:terminalmodeSettings() abort
-        setlocal nonumber
-        setlocal winfixheight
-        nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
-        nnoremap <silent> <buffer> <Leader>to :<C-u>vertical terminal<CR>
-    endfunction
-
-    set termwinsize=8x0
-
-    nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
-
-    augroup vimAutocmd
-        autocmd BufEnter * if (winnr('$') == 1 &&
-                    \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) |
-                    \ q! | endif
-        autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
-                    \ call s:terminalmodeSettings() | endif
-    augroup END
-
-    packadd! matchit
+    set shell=/bin/bash
 endif
+
+function! s:terminalmodeSettings() abort
+    setlocal nonumber
+    setlocal winfixheight
+    nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
+    nnoremap <silent> <buffer> <Leader>to :<C-u>vertical terminal<CR>
+endfunction
+
+set termwinsize=8x0
+
+nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
+
+augroup vimAutocmd
+    autocmd BufEnter * if (winnr('$') == 1 &&
+                \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) |
+                \ q! | endif
+    autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
+                \ call s:terminalmodeSettings() | endif
+augroup END
+
+packadd! matchit
 
 "Plugin
 "vim-plug
@@ -518,6 +500,7 @@ if s:plug.isInstalled("lightline.vim")
                 \   'mode': 'LightlineMode',
                 \   'fugitive': 'LightlineFugitive',
                 \   'readonly': 'LightlineReadonly',
+                \   'filename': 'LightlineFilename',
                 \   'fileencoding_and_fileformat': 'LightlineEncAndFt',
                 \   'ctrlpmark': 'CtrlPMark',
                 \   },
@@ -574,6 +557,26 @@ if s:plug.isInstalled("lightline.vim")
             let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
             return l:filename . ShowModified()
         endif
+    endfunction
+
+    function! ShowModified() abort
+        if &buftype ==# "terminal"
+            if mode() ==# "t"
+                return " [Running]"
+            elseif &modified
+                return " [Terminal]"
+            elseif !&modifiable
+                return " [Finished]"
+            endif
+        endif
+        if &filetype !=# "help"
+            if &modified
+                return " [+]"
+            elseif !&modifiable
+                return " [-]"
+            endif
+        endif
+        return ""
     endfunction
 
     function! LightlineReadonly() abort
