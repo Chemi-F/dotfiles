@@ -40,7 +40,7 @@ set hidden
 set termwinsize=8x0
 "8 terminal
 set title
-set titlestring=%f%{ShowModified()}
+set titlestring=%t%m%r%h%w
 "11 messages and info
 set showcmd
 set noerrorbells
@@ -71,24 +71,6 @@ set viminfo='50,<500,s100,h
 colorscheme desert
 
 "Function
-function! ShowModified() abort
-    if &buftype ==# "terminal"
-        if &modified
-            return " [Runnning]"
-        elseif !&modifiable
-            return " [Finished]"
-        endif
-    endif
-    if &filetype !=# "help"
-        if &modified
-            return " [+]"
-        elseif !&modifiable
-            return " [-]"
-        endif
-    endif
-    return ""
-endfunction
-
 let s:helplang_is_ja = 0
 function! s:helplangToggle() abort
     if s:helplang_is_ja
@@ -106,9 +88,9 @@ function! s:toggleQuickfix() abort
     let l:nr = winnr('$')
     let l:loc = !empty(getloclist(0))
     if l:loc
-        lwindow
+        topleft lwindow
     else
-        cwindow
+        topleft cwindow
     endif
     let l:nr2 = winnr('$')
     if l:nr == l:nr2
@@ -268,7 +250,7 @@ augroup myAutocmd
 
     autocmd QuickFixCmdPre *grep* call s:grepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
-    autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
+    autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | topleft cwindow | endif
 
     autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
                 \ call s:terminalmodeSettings() | endif
@@ -317,7 +299,6 @@ Plug 'vim-jp/vimdoc-ja'
 "vim-lsp, auto complete, snippet
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
 Plug 'yami-beta/asyncomplete-omni.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
@@ -334,12 +315,8 @@ Plug 'mattn/vim-molder'
 Plug 'mattn/vim-molder-operations'
 Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-git-status.vim'
-"Theme, highlight
-Plug 'itchyny/lightline.vim'
-Plug 'cocopon/iceberg.vim'
-Plug 'nathanaelkane/vim-indent-guides'
-Plug 'gko/vim-coloresque'
 "Language
+Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
 Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
@@ -356,6 +333,11 @@ Plug 'kana/vim-operator-replace'
 Plug 'junegunn/vim-easy-align'
 Plug 'tyru/open-browser.vim'
 Plug 'mattn/vim-findroot'
+"Theme, highlight
+Plug 'itchyny/lightline.vim'
+Plug 'cocopon/iceberg.vim'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'gko/vim-coloresque'
 call plug#end()
 
 let s:plug = { 'plugs': get(g:, 'plugs', {}) }
@@ -393,8 +375,8 @@ augroup END
 "vim-lsp
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
 let g:lsp_diagnostics_enabled = 1
-let g:lsp_diagnostics_echo_cursor = 1
-let g:lsp_diagnostics_echo_delay = 200
+let g:lsp_diagnostics_float_cursor = 1
+let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
 let g:lsp_format_sync_timeout = 1000
@@ -479,6 +461,7 @@ augroup END
 
 "lightline.vim
 if s:plug.isInstalled("lightline.vim")
+    set titlestring=%{LightlineFilename()}
     set noshowmode
     function! LightlineMode() abort
         return &filetype ==# "help" ? "HELP" :
@@ -525,6 +508,26 @@ if s:plug.isInstalled("lightline.vim")
         endif
     endfunction
 
+    function! ShowModified() abort
+        if &buftype ==# "terminal"
+            if mode() ==# "t"
+                return " [Running]"
+            elseif &modified
+                return " [Terminal]"
+            elseif !&modifiable
+                return " [Finished]"
+            endif
+        endif
+        if &filetype !=# "help"
+            if &modified
+                return " [+]"
+            elseif !&modifiable
+                return " [-]"
+            endif
+        endif
+        return ""
+    endfunction
+
     function! LightlineReadonly() abort
         return &readonly && &filetype !~# '\v(help|molder)' ? "RO" : ""
     endfunction
@@ -548,6 +551,7 @@ if s:plug.isInstalled("lightline.vim")
         return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
     endfunction
 
+    "lightline in CtrlP
     function! CtrlPMark()
         if &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item')
             call lightline#link('iR'[g:lightline.ctrlp_regex])
@@ -558,7 +562,6 @@ if s:plug.isInstalled("lightline.vim")
         endif
     endfunction
 
-    "lightline in CtrlP
     function! CtrlPStatusFunc1(focus, byfname, regex, prev, item, next, marked)
         let g:lightline.ctrlp_regex = a:regex
         let g:lightline.ctrlp_prev = a:prev
