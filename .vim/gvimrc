@@ -1,0 +1,5 @@
+set guioptions=!c
+set columns=120
+set lines=30
+
+set guifont=HackGen\ Console:h13
