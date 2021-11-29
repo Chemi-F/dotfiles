@@ -330,7 +330,7 @@ Plug 'mattn/vim-findroot'
 "Theme, highlight
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
-Plug 'nathanaelkane/vim-indent-guides'
+"Plug 'nathanaelkane/vim-indent-guides'
 Plug 'gko/vim-coloresque'
 call plug#end()
 
