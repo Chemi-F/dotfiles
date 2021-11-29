@@ -237,17 +237,6 @@ augroup myAutocmd
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | topleft cwindow | endif
 augroup END
 
-"Finish when using git commit
-if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
-    finish
-end
-
-"Use Ripgrep in grep
-if executable('rg')
-    set grepprg=rg\ --vimgrep\ --hidden
-    set grepformat=%f:%l:%c:%m
-endif
-
 "if has('nvim')
 "else
 if has('win32')
@@ -276,6 +265,17 @@ augroup vimAutocmd
 augroup END
 
 packadd! matchit
+
+"Finish when using git commit
+if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    finish
+end
+
+"Use Ripgrep in grep
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --hidden
+    set grepformat=%f:%l:%c:%m
+endif
 
 "Plugin
 "vim-plug
