@@ -108,6 +108,7 @@ set cmdheight=2
 set list
 set listchars=tab:^-
 set number
+set relativenumber
 "5 syntax, highlighting and spelling
 set background=dark
 set hlsearch
@@ -241,20 +242,22 @@ augroup END
 "else
 if has('win32')
     let $PATH = s:vimfiles_dir . '\tool;' . $PATH
+    nnoremap <silent> <Leader>to :<C-u>botright terminal powershell<CR>
+    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal powershell<CR>
 else
     set shell=/bin/bash
+    nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
+    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
 endif
 
 function! s:terminalmodeSettings() abort
     setlocal nonumber
     setlocal winfixheight
-    nnoremap <silent> <buffer> <Leader>q :<C-u>quit!<CR>
-    nnoremap <silent> <buffer> <Leader>to :<C-u>vertical terminal<CR>
+    nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
+    tnoremap <silent> <buffer> <C-w>q <C-w>:<C-u>bdelete!<CR>
 endfunction
 
 set termwinsize=8x0
-
-nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
 
 augroup vimAutocmd
     autocmd BufEnter * if (winnr('$') == 1 &&
@@ -291,11 +294,10 @@ call plug#begin(s:plug_dir)
 Plug 'junegunn/vim-plug'
 Plug 'vim-jp/vimdoc-ja'
 "vim-lsp, auto complete, snippet
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'yami-beta/asyncomplete-omni.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 "fuzzy finder
@@ -315,8 +317,8 @@ Plug 'mattn/emmet-vim', { 'for': 'html' }
 Plug 'alvan/closetag.vim', { 'for': 'html' }
 Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
 Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
+Plug 'yami-beta/asyncomplete-omni.vim', { 'for': 'pug' }
 Plug 'posva/vim-vue', { 'for': 'vue' }
-Plug 'previm/previm'
 "Others
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -324,13 +326,11 @@ Plug 'thinca/vim-quickrun'
 Plug 'jiangmiao/auto-pairs'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
-Plug 'junegunn/vim-easy-align'
+Plug 'previm/previm'
 Plug 'tyru/open-browser.vim'
-Plug 'mattn/vim-findroot'
 "Theme, highlight
 Plug 'itchyny/lightline.vim'
 Plug 'cocopon/iceberg.vim'
-"Plug 'nathanaelkane/vim-indent-guides'
 Plug 'gko/vim-coloresque'
 call plug#end()
 
@@ -359,8 +359,6 @@ endfunction
 nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
 
 "asyncomplete.vim
-let g:asyncomplete_popup_delay = 200
-
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
@@ -428,14 +426,12 @@ imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 
 "CtrlP
 let g:ctrlp_match_window = 'min:8,max:8'
-let g:ctrlp_cache_dir = s:vimfiles_dir . '/.cache/ctrlp'
+let g:ctrlp_cache_dir = s:vimfiles_dir . '/cache/ctrlp'
 let g:ctrlp_custom_ignore = {
             \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
             \ 'file': '\v\.(exe|so|dll)$',
             \ }
 let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
-
-nnoremap <silent> m<C-p> :<C-u>CtrlPMRUFiles<CR>
 
 "vim-gitgutter
 let g:gitgutter_map_keys = 0
@@ -672,14 +668,6 @@ augroup END
 
 "vim-operator-replace
 map _ <Plug>(operator-replace)
-
-"vim-easy-align
-xmap ga <Plug>(EasyAlign)
-nmap ga <Plug>(EasyAlign)
-
-"vim-indent-guides
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
 
 "open-browser
 nmap gx <Plug>(openbrowser-smart-search)
