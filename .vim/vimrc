@@ -23,6 +23,8 @@ let g:loaded_vimballPlugin = 1
 let g:loaded_2html_plugin = 1
 let g:skip_loading_mswin = 1
 
+let g:mapleader = "\<Space>"
+
 "if has('nvim')
 "    let s:vimfiles_dir = stdpath("config")
 "    let s:vimdata_dir = stdpath("data")
@@ -36,9 +38,16 @@ endif
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
-
 "Function
-function! s:toggleQuickfix() abort
+function! ShowModified() abort
+    if &modified && &filetype !=# "help" && &buftype !=# "terminal"
+        return " %m" 
+    else
+        return ""
+    endif
+endfunction
+
+function! s:ToggleQuickfix() abort
     let l:nr = winnr('$')
     let l:loc = !empty(getloclist(0))
     if l:loc
@@ -56,39 +65,39 @@ function! s:toggleQuickfix() abort
     endif
 endfunction
 
-function! s:editActualFile(filename) abort
+function! s:EditActualFile(filename) abort
     let l:actualFilename = resolve(expand(a:filename))
     execute "e " . l:actualFilename
 endfunction
 
-function! s:makeDir(dir) abort
+function! s:MakeDir(dir) abort
     if !isdirectory(a:dir)
         call mkdir(a:dir, 'p')
     endif
 endfunction
 
-function! s:adjustWindowHeight(minHeight, maxHeight) abort
+function! s:AdjustWindowHeight(minHeight, maxHeight) abort
     execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
 endfunction
 
-function! s:quickfixSettings() abort
+function! s:QuickfixSettings() abort
     setlocal nowrap
-    call s:adjustWindowHeight(3,8)
+    call s:AdjustWindowHeight(3,8)
 endfunction
 
-function! s:grepSettings() abort
+function! s:GrepSettings() abort
     setlocal wildignore+=*/node_modules/*
     setlocal wildignore+=*/.git/*
 endfunction
 
-function! s:webAppsSettings() abort
+function! s:WebAppsSettings() abort
     setlocal tabstop=2
     setlocal shiftwidth=2
     setlocal iskeyword+=-
 endfunction
 
-call s:makeDir(s:undo_dir)
-call s:makeDir(s:swap_dir)
+call s:MakeDir(s:undo_dir)
+call s:MakeDir(s:swap_dir)
 
 "Command
 command Cd execute 'lcd %:h'
@@ -108,22 +117,20 @@ set cmdheight=2
 set list
 set listchars=tab:^-
 set number
-set relativenumber
 "5 syntax, highlighting and spelling
 set background=dark
 set hlsearch
 set termguicolors
-set t_Co=256
 set cursorline
 "6 multiple windows
 set laststatus=2
-set statusline=%<%t%m%r%h%w%=
+set statusline=%<%f%m%r%h%w%=
 set statusline+=\|\ %{&fileencoding},%{&fileformat}\ \|
-set statusline+=\ %Y\ \|\ %l/%L,%c\ \|
+set statusline+=\ %Y\ \|\ %2l/%L,%-2c\ \|
 set hidden
 "8 terminal
 set title
-set titlestring=%t%m%r%h%w
+set titlestring=%F
 "12 messages and info
 set showcmd
 set noerrorbells
@@ -135,7 +142,7 @@ set clipboard+=unnamed
 set undofile
 execute 'set undodir=' . s:undo_dir
 set backspace=indent,eol,start
-set pumheight=10
+set pumheight=5
 set showmatch
 set matchtime=1
 "15 tabs and indenting
@@ -159,7 +166,6 @@ execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 colorscheme desert
 
 "Mapping
-let g:mapleader = "\<Space>"
 nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
 nnoremap <Leader>q :<C-u>quit<CR>
@@ -168,7 +174,6 @@ nnoremap <Leader>rg :<C-u>registers<CR>
 nnoremap <Leader>gs :<C-u>s///g<Left><Left><Left>
 nnoremap <Leader>gps :<C-u>%s///g<Left><Left><Left>
 nnoremap <Leader>s. :<C-u>source $MYVIMRC<CR>
-"erace space
 nnoremap <Leader>d :<C-u>%s/\s\+$//e<CR>
 nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
@@ -178,8 +183,8 @@ nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 "http://deris.hatenablog.jp/entry/20130404/1365086716
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
-nnoremap <silent> <Leader>. :<C-u>call <SID>editActualFile($MYVIMRC)<CR>
-nnoremap <silent> <Leader>g. :<C-u>call <SID>editActualFile($MYGVIMRC)<CR>
+nnoremap <silent> <Leader>. :<C-u>call <SID>EditActualFile($MYVIMRC)<CR>
+nnoremap <silent> <Leader>g. :<C-u>call <SID>EditActualFile($MYGVIMRC)<CR>
 nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
 nnoremap <silent> <Left> <C-w><
@@ -193,7 +198,7 @@ nnoremap <C-]> g<C-]>
 nnoremap Q @q
 nnoremap <expr> [c !empty(getloclist(0)) ? ":<C-u>lprevious<CR>" : ":<C-u>cprevious<CR>"
 nnoremap <expr> ]c !empty(getloclist(0)) ? ":<C-u>lnext<CR>" : ":<C-u>cnext<CR>"
-nnoremap co :<C-u>call <SID>toggleQuickfix()<CR>
+nnoremap co :<C-u>call <SID>ToggleQuickfix()<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -229,11 +234,11 @@ augroup myAutocmd
 
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
-    autocmd FileType qf call s:quickfixSettings()
-    autocmd FileType vue,html,css,pug,scss,javascript,typescript
-                \ call s:webAppsSettings()
+    autocmd FileType qf call s:QuickfixSettings()
+    autocmd FileType html,pug,css,scss,javascript,typescript,vue
+                \ call s:WebAppsSettings()
 
-    autocmd QuickFixCmdPre *grep* call s:grepSettings()
+    autocmd QuickFixCmdPre *grep* call s:GrepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | topleft cwindow | endif
 augroup END
@@ -250,35 +255,35 @@ else
     tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
 endif
 
-function! s:terminalmodeSettings() abort
+function! s:TerminalmodeSettings() abort
     setlocal nonumber
     setlocal winfixheight
     nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
     tnoremap <silent> <buffer> <C-w>q <C-w>:<C-u>bdelete!<CR>
+    tnoremap <silent> <buffer> <C-w>; <C-w>:
 endfunction
 
 set termwinsize=8x0
 
 augroup vimAutocmd
     autocmd BufEnter * if (winnr('$') == 1 &&
-                \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) |
-                \ q! | endif
+                \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
     autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
-                \ call s:terminalmodeSettings() | endif
+                \ call s:TerminalmodeSettings() | endif
 augroup END
 
-packadd! matchit
-
-"Finish when using git commit
-if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
-    finish
-end
-
-"Use Ripgrep in grep
 if executable('rg')
     set grepprg=rg\ --vimgrep\ --hidden
     set grepformat=%f:%l:%c:%m
 endif
+
+"Finish when using git commit
+if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    syntax enable
+    finish
+end
+
+packadd! matchit
 
 "Plugin
 "vim-plug
@@ -309,8 +314,8 @@ Plug 'tpope/vim-fugitive'
 "Filer
 Plug 'mattn/vim-molder'
 Plug 'mattn/vim-molder-operations'
-Plug 'lambdalisue/fern.vim'
-Plug 'lambdalisue/fern-git-status.vim'
+Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
+Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
 "Language
 Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
 Plug 'mattn/emmet-vim', { 'for': 'html' }
@@ -344,7 +349,7 @@ let s:is_helplang_ja = 0
 
 set helplang=en,ja
 
-function! s:helplangToggle() abort
+function! s:HelplangToggle() abort
     if s:is_helplang_ja
         set helplang=en,ja
         let s:is_helplang_ja = 0
@@ -356,7 +361,7 @@ function! s:helplangToggle() abort
     endif
 endfunction
 
-nnoremap <silent> <Leader>jh :<C-u>call <SID>helplangToggle()<CR>
+nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToggle()<CR>
 
 "asyncomplete.vim
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
@@ -383,7 +388,7 @@ augroup asyncompleteAutocmd
                 \ }))
 augroup END
 
-"vim-lsp
+"vim-lsp, vim-lsp-settings
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_float_cursor = 1
@@ -391,8 +396,16 @@ let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
 let g:lsp_format_sync_timeout = 1000
+let g:lsp_settings =  {
+            \ 'efm-langserver': {
+                \ 'disabled': v:false,
+                \ 'allowlist': [  'pug', 'javascript', 'typescript', 'vue' ]
+                \ }
+            \ }
+let g:lsp_settings_filetype_vue = ['vls', 'efm-langserver']
+let g:lsp_settings_enable_suggestions = 0
 
-function! s:vimlspSettings() abort
+function! s:VimlspSettings() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
@@ -407,18 +420,8 @@ endfunction
 
 augroup vimlspAutocmd
     autocmd!
-    autocmd User lsp_buffer_enabled call s:vimlspSettings()
+    autocmd User lsp_buffer_enabled call s:VimlspSettings()
 augroup END
-
-"vim-lsp-settings
-let g:lsp_settings =  {
-            \ 'efm-langserver': {
-                \ 'disabled': v:false,
-                \ 'allowlist': [ 'javascript', 'typescript', 'vue', 'pug' ]
-                \ }
-            \ }
-let g:lsp_settings_filetype_vue = ['vls', 'efm-langserver']
-let g:lsp_settings_enable_suggestions = 0
 
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -443,7 +446,7 @@ let g:loaded_netrwSettings = 1
 let g:loaded_netrwFileHandlers = 1
 let g:molder_show_hidden = 1
 
-function! s:vimmolderSettings() abort
+function! s:VimmolderSettings() abort
     nmap <buffer> l <Plug>(molder-open)
     nmap <buffer> h <Plug>(molder-up)
     nmap <buffer> . <Plug>(molder-toggle-hidden)
@@ -453,11 +456,11 @@ endfunction
 
 augroup vimmolderAutocmd
     autocmd!
-    autocmd FileType molder call s:vimmolderSettings()
+    autocmd FileType molder call s:VimmolderSettings()
 augroup END
 
 "fern
-function! s:fernSettings()
+function! s:FernSettings()
     setlocal nonumber
     nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
 endfunction
@@ -466,168 +469,111 @@ nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
 
 augroup fernAutocmd
     autocmd!
-    autocmd FileType fern call s:fernSettings()
+    autocmd FileType fern call s:FernSettings()
 augroup END
 
 "lightline.vim
-if s:plug.isInstalled("lightline.vim")
-    let g:ctrlp_status_func = {
-                \ 'main': 'CtrlPStatusFunc1',
-                \ 'prog': 'CtrlPStatusFunc2',
-                \ }
+let g:ctrlp_status_func = {
+            \ 'main': 'CtrlPStatusFunc1',
+            \ 'prog': 'CtrlPStatusFunc2',
+            \ }
 
-    let g:lightline = {
-                \ 'colorscheme': 'iceberg',
-                \ 'active': {
-                \   'left' : [ ['mode', 'paste'],
-                \              ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
-                \   'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
-                \              ['filetype'],
-                \              ['fileencoding_and_fileformat'] ],
-                \   },
-                \ 'inactive': {
-                \   'right': [ ['lineinfo'] ],
-                \   },
-                \ 'component': {
-                \   'lineinfo': '%2l/%L,%-2c%<',
-                \   'filetype': '%{&filetype !=# "" ? &filetype : ""}',
-                \   },
-                \ 'component_function': {
-                \   'mode': 'LightlineMode',
-                \   'fugitive': 'LightlineFugitive',
-                \   'readonly': 'LightlineReadonly',
-                \   'filename': 'LightlineFilename',
-                \   'fileencoding_and_fileformat': 'LightlineEncAndFt',
-                \   'ctrlpmark': 'CtrlPMark',
-                \   },
-                \ 'component_expand': {
-                \   'lsp_errors': 'LightlineLSPErrors',
-                \   'lsp_warnings': 'LightlineLSPWarnings',
-                \   },
-                \ 'component_type': {
-                \   'lsp_errors': 'error',
-                \   'lsp_warnings': 'warning',
-                \   },
-                \ }
+let g:lightline = {
+            \ 'colorscheme': 'iceberg',
+            \ 'active': {
+                \ 'left' : [ ['mode', 'paste'],
+                \            ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
+                \ 'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
+                \            ['filetype'],
+                \            ['fileencoding_and_fileformat'] ],
+                \ },
+            \ 'inactive': {
+                \ 'right': [ ['lineinfo'] ],
+                \ },
+            \ 'component': {
+                \ 'filename': '%f%{%ShowModified()%}',
+                \ 'lineinfo': '%2l/%L,%-2c%<',
+                \ 'filetype': '%{&filetype !=# "" ? &filetype : ""}',
+                \ },
+            \ 'component_function': {
+                \ 'mode': 'LightlineMode',
+                \ 'fugitive': 'LightlineFugitive',
+                \ 'fileencoding_and_fileformat': 'LightlineEncAndFt',
+                \ 'ctrlpmark': 'CtrlPMark',
+                \ },
+            \ 'component_expand': {
+                \ 'lsp_errors': 'LightlineLSPErrors',
+                \ 'lsp_warnings': 'LightlineLSPWarnings',
+                \ },
+            \ 'component_type': {
+                \ 'lsp_errors': 'error',
+                \ 'lsp_warnings': 'warning',
+                \ },
+            \ }
 
-    function! LightlineMode() abort
-        return &filetype ==# "help" ? "HELP" :
-                    \ &filetype ==# "qf" ? "" :
-                    \ &filetype ==# 'ctrlp' ? 'CtrlP' :
-                    \ &filetype ==# "molder" ? "MOLDER" :
-                    \ &filetype ==# "fern" ? "FERN" :
-                    \ winwidth(0) <= 70 && &filetype ==# "fern" ? "" :
-                    \ lightline#mode()
-    endfunction
+function! LightlineMode() abort
+    return &filetype ==# "help" ? "HELP" :
+                \ &filetype ==# "qf" ? "" :
+                \ &filetype ==# "ctrlp" ? "" :
+                \ &filetype ==# "molder" ? "MOLDER" :
+                \ winwidth(0) <= 70 ? "" :
+                \ lightline#mode()
+endfunction
 
-    function! LightlineFugitive() abort
-        if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
-            if exists('*FugitiveHead')
-                let l:branch = FugitiveHead()
-                return branch !=# "" ? " ". l:branch : ""
-            endif
+function! LightlineFugitive() abort
+    if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
+        if exists('*FugitiveHead')
+            let l:branch = FugitiveHead()
+            return branch !=# "" ? " ". l:branch : ""
         endif
-        return ""
-    endfunction
+    endif
+    return ""
+endfunction
 
-    function! LightlineFilename() abort
-        if getwininfo(win_getid())[0].loclist
-            if exists("w:quickfix_title")
-                return "[Location List]" . " | " . w:quickfix_title
-            else
-                return "[Location List]"
-            endif
-        elseif &filetype ==# "qf"
-            if exists("w:quickfix_title")
-                return "[Quickfix List]" . " | " . w:quickfix_title
-            else
-                return "[Quickfix List]"
-            endif
-        elseif &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item') 
-            return g:lightline.ctrlp_item
-        elseif &filetype ==# "molder"
-            return expand('%')
-        elseif &filetype ==# "fern"
-            return b:fern.root._path
-        else
-            let l:filename = expand('%:t') !=# "" ? expand('%:t') : "[No Name]"
-            return l:filename . ShowModified()
-        endif
-    endfunction
+function! LightlineEncAndFt() abort
+    if winwidth(0) > 70 && &buftype !=# "terminal"
+        let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
+        let l:format = &fileformat
+        return l:encoding . " " . l:format
+    endif
+    return ""
+endfunction
 
-    function! ShowModified() abort
-        if &buftype ==# "terminal"
-            if mode() ==# "t"
-                return " [Running]"
-            elseif &modified
-                return " [Terminal]"
-            elseif !&modifiable
-                return " [Finished]"
-            endif
-        endif
-        if &filetype !=# "help"
-            if &modified
-                return " [+]"
-            elseif !&modifiable
-                return " [-]"
-            endif
-        endif
-        return ""
-    endfunction
+function! LightlineLSPWarnings() abort
+    let l:counts = lsp#get_buffer_diagnostics_counts()
+    return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
+endfunction
 
-    function! LightlineReadonly() abort
-        return &readonly && &filetype !~# '\v(help|molder)' ? "RO" : ""
-    endfunction
+function! LightlineLSPErrors() abort
+    let l:counts = lsp#get_buffer_diagnostics_counts()
+    return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
+endfunction
 
-    function! LightlineEncAndFt() abort
-        if winwidth(0) > 70 && &buftype !=# "terminal"
-            let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
-            let l:format = &fileformat
-            return l:encoding . " " . l:format
-        endif
-        return ""
-    endfunction
+function! CtrlPMark()
+    if &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item')
+        call lightline#link('cR'[g:lightline.ctrlp_regex])
+        return g:lightline.ctrlp_item
+    else
+        return ''
+    endif
+endfunction
 
-    function! LightlineLSPWarnings() abort
-        let l:counts = lsp#get_buffer_diagnostics_counts()
-        return l:counts.warning == 0 ? '' : printf('W:%d', l:counts.warning)
-    endfunction
+function! CtrlPStatusFunc1(focus, byfname, regex, prev, item, next, marked)
+    let g:lightline.ctrlp_regex = a:regex
+    let g:lightline.ctrlp_item = a:item
+    return lightline#statusline(0)
+endfunction
 
-    function! LightlineLSPErrors() abort
-        let l:counts = lsp#get_buffer_diagnostics_counts()
-        return l:counts.error == 0 ? '' : printf('E:%d', l:counts.error)
-    endfunction
+function! CtrlPStatusFunc2(str)
+    return lightline#statusline(0)
+endfunction
 
-    function! CtrlPMark()
-        if &filetype ==# 'ctrlp' && has_key(g:lightline, 'ctrlp_item')
-            call lightline#link('iR'[g:lightline.ctrlp_regex])
-            return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
-                        \ , g:lightline.ctrlp_next], 0)
-        else
-            return ''
-        endif
-    endfunction
+set noshowmode
 
-    function! CtrlPStatusFunc1(focus, byfname, regex, prev, item, next, marked)
-        let g:lightline.ctrlp_regex = a:regex
-        let g:lightline.ctrlp_prev = a:prev
-        let g:lightline.ctrlp_item = a:item
-        let g:lightline.ctrlp_next = a:next
-        return lightline#statusline(0)
-    endfunction
-
-    function! CtrlPStatusFunc2(str)
-        return lightline#statusline(0)
-    endfunction
-
-    set titlestring=%{LightlineFilename()}
-    set noshowmode
-
-    augroup lightlineAutocmd
-        autocmd!
-        autocmd User lsp_diagnostics_updated call lightline#update()
-    augroup END
-endif
+augroup lightlineAutocmd
+    autocmd!
+    autocmd User lsp_diagnostics_updated call lightline#update()
+augroup END
 
 "vim-vue
 let g:vue_pre_processors = ['pug', 'typescript', 'scss']
@@ -655,8 +601,7 @@ nmap <Leader>rq <Plug>(quickrun)
 
 augroup quickrunAutocmd
     autocmd!
-    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'quickrun') |
-                \ q! | endif
+    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'quickrun') | q! | endif
 augroup END
 
 "auto-pairs
