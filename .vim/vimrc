@@ -20,8 +20,11 @@ let g:loaded_getscript = 1
 let g:loaded_getscriptPlugin = 1
 let g:loaded_vimball = 1
 let g:loaded_vimballPlugin = 1
+let g:loaded_rrhelper = 1
 let g:loaded_2html_plugin = 1
 let g:skip_loading_mswin = 1
+let g:did_install_default_menus = 1
+let g:did_install_syntax_menu = 1
 
 let g:mapleader = "\<Space>"
 
@@ -223,6 +226,11 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 tnoremap jj <C-\><C-n>
 
+"Finish when using git commit
+if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    finish
+end
+
 "Autocmd
 augroup myAutocmd
     autocmd!
@@ -277,19 +285,13 @@ if executable('rg')
     set grepformat=%f:%l:%c:%m
 endif
 
-"Finish when using git commit
-if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
-    syntax enable
-    finish
-end
-
 packadd! matchit
 
 "Plugin
 "vim-plug
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    filetype plugin indent on
     syntax enable
+    filetype plugin indent on
     finish
 endif
 
@@ -339,10 +341,61 @@ Plug 'cocopon/iceberg.vim'
 Plug 'gko/vim-coloresque'
 call plug#end()
 
-let s:plug = { 'plugs': get(g:, 'plugs', {}) }
-function! s:plug.isInstalled(name) abort
-    return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
+"minpack
+"if !exists('g:loaded_minpac')
+"endif
+
+function! s:PackInit() abort
+    packadd minpac
+
+    call minpac#init()
+    call minpac#add('k-takata/minpac', {'type': 'opt'})
+
+    call minpac#add ('vim-jp/vimdoc-ja')
+    "vim-lsp, auto complete, snippet
+    call minpac#add ('prabirshrestha/vim-lsp')
+    call minpac#add ('mattn/vim-lsp-settings')
+    call minpac#add ('prabirshrestha/asyncomplete.vim')
+    call minpac#add ('prabirshrestha/asyncomplete-lsp.vim')
+    call minpac#add ('hrsh7th/vim-vsnip')
+    call minpac#add ('hrsh7th/vim-vsnip-integ')
+    "fuzzy finder
+    call minpac#add ('ctrlpvim/ctrlp.vim')
+    call minpac#add ('mattn/ctrlp-matchfuzzy')
+    "Git
+    call minpac#add ('airblade/vim-gitgutter')
+    call minpac#add ('tpope/vim-fugitive')
+    "Filer
+    call minpac#add ('mattn/vim-molder')
+    call minpac#add ('mattn/vim-molder-operations')
+    call minpac#add ('lambdalisue/fern.vim', {'type': 'opt'})
+    call minpac#add ('lambdalisue/fern-git-status.vim', {'type': 'opt'})
+    "Language
+    call minpac#add ('prabirshrestha/asyncomplete-emmet.vim', {'type': 'opt'})
+    call minpac#add ('mattn/emmet-vim', {'type': 'opt'})
+    call minpac#add ('alvan/closetag.vim', {'type': 'opt'})
+    call minpac#add ('digitaltoad/vim-pug', {'type': 'opt'})
+    call minpac#add ('dNitro/vim-pug-complete', {'type': 'opt'})
+    call minpac#add ('yami-beta/asyncomplete-omni.vim', {'type': 'opt'})
+    call minpac#add ('posva/vim-vue', {'type': 'opt'})
+    "Others
+    call minpac#add ('tpope/vim-surround')
+    call minpac#add ('tpope/vim-repeat')
+    call minpac#add ('thinca/vim-quickrun')
+    call minpac#add ('jiangmiao/auto-pairs')
+    call minpac#add ('kana/vim-operator-user')
+    call minpac#add ('kana/vim-operator-replace')
+    call minpac#add ('previm/previm')
+    call minpac#add ('tyru/open-browser.vim')
+    "Theme, highlight
+    call minpac#add ('itchyny/lightline.vim')
+    call minpac#add ('cocopon/iceberg.vim')
+    call minpac#add ('gko/vim-coloresque')
 endfunction
+
+command! PackUpdate call PackInit() | call minpac#update()
+command! PackClean  call PackInit() | call minpac#clean()
+command! PackStatus packadd minpac | call minpac#status()
 
 "vimdoc-ja
 let s:is_helplang_ja = 0
@@ -615,13 +668,12 @@ augroup END
 map _ <Plug>(operator-replace)
 
 "open-browser
+let g:openbrowser_no_default_menus = 1
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 "Colorscheme
-if s:plug.isInstalled("iceberg.vim")
-    colorscheme iceberg
-endif
+colorscheme iceberg
 
 augroup delayAutocmd
     autocmd!
