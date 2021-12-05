@@ -1,4 +1,5 @@
-set guioptions=!c
+set guioptions-=egmrLtT
+set guioptions+=!
 set columns=120
 set lines=30
 
