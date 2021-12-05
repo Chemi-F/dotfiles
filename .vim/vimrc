@@ -28,15 +28,18 @@ let g:did_install_syntax_menu = 1
 
 let g:mapleader = "\<Space>"
 
-"if has('nvim')
-"    let s:vimfiles_dir = stdpath("config")
-"    let s:vimdata_dir = stdpath("data")
 if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
     let s:vimdata_dir = expand('~/vimfiles')
+    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
+    nnoremap <silent> <Leader>to :<C-u>terminal powershell<CR>
+    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal powershell<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
+    set shell=/bin/bash
+    nnoremap <silent> <Leader>to :<C-u>terminal<CR>
+    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
 endif
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
@@ -54,9 +57,9 @@ function! s:ToggleQuickfix() abort
     let l:nr = winnr('$')
     let l:loc = !empty(getloclist(0))
     if l:loc
-        topleft lwindow
+        lwindow
     else
-        topleft cwindow
+        cwindow
     endif
     let l:nr2 = winnr('$')
     if l:nr == l:nr2
@@ -99,6 +102,12 @@ function! s:WebAppsSettings() abort
     setlocal iskeyword+=-
 endfunction
 
+function! s:TerminalModeSettings() abort
+    setlocal nonumber
+    setlocal winfixheight
+    nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
+endfunction
+
 call s:MakeDir(s:undo_dir)
 call s:MakeDir(s:swap_dir)
 
@@ -131,6 +140,7 @@ set statusline=%<%f%m%r%h%w%=
 set statusline+=\|\ %{&fileencoding},%{&fileformat}\ \|
 set statusline+=\ %Y\ \|\ %2l/%L,%-2c\ \|
 set hidden
+set termwinsize=6x0
 "8 terminal
 set title
 set titlestring=%F
@@ -166,8 +176,6 @@ set wildmenu
 set viminfo='50,<500,s100,h
 execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 
-colorscheme desert
-
 "Mapping
 nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
@@ -182,6 +190,7 @@ nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
 nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <Leader>tm <C-w>T
+nnoremap <silent> <Leader>to :<C-u>terminal<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 "http://deris.hatenablog.jp/entry/20130404/1365086716
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
@@ -224,10 +233,14 @@ cnoremap <C-f> <Right>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
-tnoremap jj <C-\><C-n>
+tnoremap <silent> jj <C-\><C-n>
+tnoremap <silent> <C-w>q <C-w>:<C-u>bdelete!<CR>
+tnoremap <silent> <C-w>; <C-w>:
+tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
 
 "Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    colorscheme desert
     finish
 end
 
@@ -248,36 +261,12 @@ augroup myAutocmd
 
     autocmd QuickFixCmdPre *grep* call s:GrepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
-    autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | topleft cwindow | endif
-augroup END
+    autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-"if has('nvim')
-"else
-if has('win32')
-    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    nnoremap <silent> <Leader>to :<C-u>botright terminal powershell<CR>
-    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal powershell<CR>
-else
-    set shell=/bin/bash
-    nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
-    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
-endif
-
-function! s:TerminalmodeSettings() abort
-    setlocal nonumber
-    setlocal winfixheight
-    nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
-    tnoremap <silent> <buffer> <C-w>q <C-w>:<C-u>bdelete!<CR>
-    tnoremap <silent> <buffer> <C-w>; <C-w>:
-endfunction
-
-set termwinsize=8x0
-
-augroup vimAutocmd
     autocmd BufEnter * if (winnr('$') == 1 &&
                 \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
     autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
-                \ call s:TerminalmodeSettings() | endif
+                \ call s:TerminalModeSettings() | endif
 augroup END
 
 if executable('rg')
@@ -285,117 +274,75 @@ if executable('rg')
     set grepformat=%f:%l:%c:%m
 endif
 
-packadd! matchit
-
 "Plugin
-"vim-plug
-if empty(globpath(&rtp, 'autoload/plug.vim'))
-    syntax enable
-    filetype plugin indent on
-    finish
-endif
-
-let s:plug_dir = s:vimdata_dir . '/plugged'
-call plug#begin(s:plug_dir)
-"Manual
-Plug 'junegunn/vim-plug'
-Plug 'vim-jp/vimdoc-ja'
-"vim-lsp, auto complete, snippet
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-"fuzzy finder
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'mattn/ctrlp-matchfuzzy'
-"Git
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
-"Filer
-Plug 'mattn/vim-molder'
-Plug 'mattn/vim-molder-operations'
-Plug 'lambdalisue/fern.vim', { 'on': 'Fern' }
-Plug 'lambdalisue/fern-git-status.vim', { 'on': 'Fern' }
-"Language
-Plug 'prabirshrestha/asyncomplete-emmet.vim', { 'for': 'html' }
-Plug 'mattn/emmet-vim', { 'for': 'html' }
-Plug 'alvan/closetag.vim', { 'for': 'html' }
-Plug 'digitaltoad/vim-pug', { 'for': 'pug' }
-Plug 'dNitro/vim-pug-complete', { 'for': 'pug' }
-Plug 'yami-beta/asyncomplete-omni.vim', { 'for': 'pug' }
-Plug 'posva/vim-vue', { 'for': 'vue' }
-"Others
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'thinca/vim-quickrun'
-Plug 'jiangmiao/auto-pairs'
-Plug 'kana/vim-operator-user'
-Plug 'kana/vim-operator-replace'
-Plug 'previm/previm'
-Plug 'tyru/open-browser.vim'
-"Theme, highlight
-Plug 'itchyny/lightline.vim'
-Plug 'cocopon/iceberg.vim'
-Plug 'gko/vim-coloresque'
-call plug#end()
-
+packadd! matchit
 "minpack
-"if !exists('g:loaded_minpac')
-"endif
-
 function! s:PackInit() abort
     packadd minpac
 
     call minpac#init()
     call minpac#add('k-takata/minpac', {'type': 'opt'})
-
-    call minpac#add ('vim-jp/vimdoc-ja')
-    "vim-lsp, auto complete, snippet
-    call minpac#add ('prabirshrestha/vim-lsp')
-    call minpac#add ('mattn/vim-lsp-settings')
-    call minpac#add ('prabirshrestha/asyncomplete.vim')
-    call minpac#add ('prabirshrestha/asyncomplete-lsp.vim')
-    call minpac#add ('hrsh7th/vim-vsnip')
-    call minpac#add ('hrsh7th/vim-vsnip-integ')
-    "fuzzy finder
-    call minpac#add ('ctrlpvim/ctrlp.vim')
-    call minpac#add ('mattn/ctrlp-matchfuzzy')
-    "Git
-    call minpac#add ('airblade/vim-gitgutter')
-    call minpac#add ('tpope/vim-fugitive')
-    "Filer
-    call minpac#add ('mattn/vim-molder')
-    call minpac#add ('mattn/vim-molder-operations')
-    call minpac#add ('lambdalisue/fern.vim', {'type': 'opt'})
-    call minpac#add ('lambdalisue/fern-git-status.vim', {'type': 'opt'})
-    "Language
-    call minpac#add ('prabirshrestha/asyncomplete-emmet.vim', {'type': 'opt'})
-    call minpac#add ('mattn/emmet-vim', {'type': 'opt'})
-    call minpac#add ('alvan/closetag.vim', {'type': 'opt'})
-    call minpac#add ('digitaltoad/vim-pug', {'type': 'opt'})
-    call minpac#add ('dNitro/vim-pug-complete', {'type': 'opt'})
-    call minpac#add ('yami-beta/asyncomplete-omni.vim', {'type': 'opt'})
-    call minpac#add ('posva/vim-vue', {'type': 'opt'})
-    "Others
-    call minpac#add ('tpope/vim-surround')
-    call minpac#add ('tpope/vim-repeat')
-    call minpac#add ('thinca/vim-quickrun')
-    call minpac#add ('jiangmiao/auto-pairs')
-    call minpac#add ('kana/vim-operator-user')
-    call minpac#add ('kana/vim-operator-replace')
-    call minpac#add ('previm/previm')
-    call minpac#add ('tyru/open-browser.vim')
+    call minpac#add('vim-jp/vimdoc-ja')
     "Theme, highlight
-    call minpac#add ('itchyny/lightline.vim')
-    call minpac#add ('cocopon/iceberg.vim')
-    call minpac#add ('gko/vim-coloresque')
+    call minpac#add('cocopon/iceberg.vim')
+    call minpac#add('itchyny/lightline.vim')
+    call minpac#add('gko/vim-coloresque')
+    "Filer
+    call minpac#add('mattn/vim-molder')
+    call minpac#add('mattn/vim-molder-operations')
+    call minpac#add('lambdalisue/fern.vim', {'type': 'opt'})
+    "Fuzzy finder
+    call minpac#add('ctrlpvim/ctrlp.vim')
+    call minpac#add('mattn/ctrlp-matchfuzzy')
+    "Lsp, auto complete, snippet
+    call minpac#add('prabirshrestha/vim-lsp')
+    call minpac#add('mattn/vim-lsp-settings')
+    call minpac#add('prabirshrestha/asyncomplete.vim')
+    call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
+    call minpac#add('jsit/asyncomplete-user.vim')
+    call minpac#add('hrsh7th/vim-vsnip')
+    call minpac#add('hrsh7th/vim-vsnip-integ')
+    "Language
+    call minpac#add('mattn/emmet-vim', {'type': 'opt'})
+    call minpac#add('alvan/closetag.vim', {'type': 'opt'})
+    call minpac#add('digitaltoad/vim-pug')
+    call minpac#add('dNitro/vim-pug-complete', {'type': 'opt'})
+    call minpac#add('posva/vim-vue')
+    "Git
+    call minpac#add('airblade/vim-gitgutter')
+    call minpac#add('tpope/vim-fugitive')
+    "Others
+    call minpac#add('tpope/vim-surround')
+    call minpac#add('tpope/vim-repeat')
+    call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
+    call minpac#add('jiangmiao/auto-pairs')
+    call minpac#add('kana/vim-operator-user')
+    call minpac#add('kana/vim-operator-replace')
+    call minpac#add('previm/previm')
+    call minpac#add('tyru/open-browser.vim')
 endfunction
 
-command! PackUpdate call PackInit() | call minpac#update()
-command! PackClean  call PackInit() | call minpac#clean()
+function! s:optPluginHtml() abort
+    packadd emmet-vim
+    packadd closetag.vim
+endfunction
+
+function! s:optPluginPug() abort
+    packadd vim-pug-complete
+    setlocal completefunc=pugcomplete#CompletePug
+endfunction
+
+command! PackUpdate call <SID>PackInit() | call minpac#update()
+command! PackClean  call <SID>PackInit() | call minpac#clean()
 command! PackStatus packadd minpac | call minpac#status()
+
+augroup optPlugin
+    autocmd!
+    autocmd FileType html call s:optPluginHtml()
+    autocmd FileType pug call s:optPluginPug()
+    autocmd CmdUndefined Fern packadd fern.vim
+    autocmd CmdUndefined QuickRun packadd vim-quickrun
+augroup END
 
 "vimdoc-ja
 let s:is_helplang_ja = 0
@@ -416,115 +363,6 @@ endfunction
 
 nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToggle()<CR>
 
-"asyncomplete.vim
-inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-
-augroup asyncompleteAutocmd
-    autocmd!
-    autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
-    autocmd User asyncomplete_setup call asyncomplete#register_source(
-                \ asyncomplete#sources#emmet#get_source_options({
-                    \ 'name': 'emmet',
-                    \ 'whitelist': ['html'],
-                    \ 'completor': function('asyncomplete#sources#emmet#completor'),
-                \ }))
-    autocmd User asyncomplete_setup call asyncomplete#register_source(
-                \ asyncomplete#sources#emmet#get_source_options({
-                    \ 'name': 'omni',
-                    \ 'whitelist': ['pug'],
-                    \ 'completor': function('asyncomplete#sources#omni#completor'),
-                    \ 'config': {
-                        \ 'show_source_kind': 1,
-                    \ },
-                \ }))
-augroup END
-
-"vim-lsp, vim-lsp-settings
-let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
-let g:lsp_diagnostics_enabled = 1
-let g:lsp_diagnostics_float_cursor = 1
-let g:lsp_diagnostics_float_delay = 200
-let g:lsp_diagnostics_signs_enabled = 1
-let g:lsp_diagnostics_signs_priority = 11
-let g:lsp_format_sync_timeout = 1000
-let g:lsp_settings =  {
-            \ 'efm-langserver': {
-                \ 'disabled': v:false,
-                \ 'allowlist': [  'pug', 'javascript', 'typescript', 'vue' ]
-                \ }
-            \ }
-let g:lsp_settings_filetype_vue = ['vls', 'efm-langserver']
-let g:lsp_settings_enable_suggestions = 0
-
-function! s:VimlspSettings() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> <Leader>rn <plug>(lsp-rename)
-    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
-    inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
-    inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
-endfunction
-
-augroup vimlspAutocmd
-    autocmd!
-    autocmd User lsp_buffer_enabled call s:VimlspSettings()
-augroup END
-
-"vim-vsnip
-imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
-imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-"CtrlP
-let g:ctrlp_match_window = 'min:8,max:8'
-let g:ctrlp_cache_dir = s:vimfiles_dir . '/cache/ctrlp'
-let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
-            \ 'file': '\v\.(exe|so|dll)$',
-            \ }
-let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
-
-"vim-gitgutter
-let g:gitgutter_map_keys = 0
-
-"vim-molder
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-let g:loaded_netrwSettings = 1
-let g:loaded_netrwFileHandlers = 1
-let g:molder_show_hidden = 1
-
-function! s:VimmolderSettings() abort
-    nmap <buffer> l <Plug>(molder-open)
-    nmap <buffer> h <Plug>(molder-up)
-    nmap <buffer> . <Plug>(molder-toggle-hidden)
-    nnoremap <buffer> e :<C-u>lcd %<CR>:e<Space>
-    nnoremap <buffer> cd :<C-u>lcd %<CR>
-endfunction
-
-augroup vimmolderAutocmd
-    autocmd!
-    autocmd FileType molder call s:VimmolderSettings()
-augroup END
-
-"fern
-function! s:FernSettings()
-    setlocal nonumber
-    nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
-endfunction
-
-nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
-
-augroup fernAutocmd
-    autocmd!
-    autocmd FileType fern call s:FernSettings()
-augroup END
-
 "lightline.vim
 let g:ctrlp_status_func = {
             \ 'main': 'CtrlPStatusFunc1',
@@ -532,7 +370,6 @@ let g:ctrlp_status_func = {
             \ }
 
 let g:lightline = {
-            \ 'colorscheme': 'iceberg',
             \ 'active': {
                 \ 'left' : [ ['mode', 'paste'],
                 \            ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
@@ -628,8 +465,113 @@ augroup lightlineAutocmd
     autocmd User lsp_diagnostics_updated call lightline#update()
 augroup END
 
+"vim-molder
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_netrwSettings = 1
+let g:loaded_netrwFileHandlers = 1
+let g:molder_show_hidden = 1
+
+function! s:VimMolderSettings() abort
+    nmap <buffer> l <Plug>(molder-open)
+    nmap <buffer> h <Plug>(molder-up)
+    nmap <buffer> . <Plug>(molder-toggle-hidden)
+    nnoremap <buffer> e :<C-u>lcd %<CR>:e<Space>
+    nnoremap <buffer> cd :<C-u>lcd %<CR>
+endfunction
+
+augroup vimMolderAutocmd
+    autocmd!
+    autocmd FileType molder call s:VimMolderSettings()
+augroup END
+
+"fern
+function! s:FernSettings()
+    setlocal nonumber
+    nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
+endfunction
+
+nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
+
+augroup fernAutocmd
+    autocmd!
+    autocmd FileType fern call s:FernSettings()
+augroup END
+
+"CtrlP
+let g:ctrlp_match_window = 'min:8,max:8'
+let g:ctrlp_cache_dir = s:vimfiles_dir . '/cache/ctrlp'
+let g:ctrlp_custom_ignore = {
+            \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
+            \ 'file': '\v\.(exe|so|dll)$',
+            \ }
+let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
+
+"vim-lsp, vim-lsp-settings
+let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
+let g:lsp_diagnostics_enabled = 1
+let g:lsp_diagnostics_float_cursor = 1
+let g:lsp_diagnostics_float_delay = 200
+let g:lsp_diagnostics_signs_enabled = 1
+let g:lsp_diagnostics_signs_priority = 11
+let g:lsp_format_sync_timeout = 1000
+let g:lsp_settings =  {
+            \ 'eslint-language-server': {
+                \ 'allowlist': [ 'vue' ]
+                \ },
+            \ 'efm-langserver': {
+                \ 'disabled': v:false,
+                \ 'allowlist': [ 'pug' ]
+                \ }
+            \ }
+let g:lsp_settings_filetype_vue = ['vls', 'eslint-language-server']
+let g:lsp_settings_enable_suggestions = 0
+
+function! s:VimlspSettings() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> <Leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
+    inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
+    inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
+endfunction
+
+augroup vimlspAutocmd
+    autocmd!
+    autocmd User lsp_buffer_enabled call s:VimlspSettings()
+augroup END
+
+"asyncomplete.vim
+let g:asyncomplete_popup_delay = 200
+
+inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+augroup asyncompleteAutocmd
+    autocmd!
+    autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
+    autocmd User asyncomplete_setup call asyncomplete#register_source(
+                \ asyncomplete#sources#user#get_source_options({
+                    \ 'name': 'user',
+                    \ 'whitelist': ['pug'],
+                    \ 'completor': function('asyncomplete#sources#user#completor'),
+                \ }))
+augroup END
+
+"vim-vsnip
+imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+
 "vim-vue
 let g:vue_pre_processors = ['pug', 'typescript', 'scss']
+
+"vim-gitgutter
+let g:gitgutter_map_keys = 0
 
 "quickrun
 let g:quickrun_config = {
@@ -650,7 +592,7 @@ let g:quickrun_config = {
                     \ }
                 \ }
 
-nmap <Leader>rq <Plug>(quickrun)
+nnoremap <Leader>rq :<C-u>QuickRun<CR>
 
 augroup quickrunAutocmd
     autocmd!
@@ -659,10 +601,6 @@ augroup END
 
 "auto-pairs
 nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
-augroup autoPairsAutocmd
-    autocmd!
-    autocmd Filetype pug let b:autopairs_enabled = 0
-augroup END
 
 "vim-operator-replace
 map _ <Plug>(operator-replace)
@@ -674,6 +612,10 @@ vmap gx <Plug>(openbrowser-smart-search)
 
 "Colorscheme
 colorscheme iceberg
+let g:lightline['colorscheme'] = 'iceberg'
+
+syntax enable
+filetype plugin indent on
 
 augroup delayAutocmd
     autocmd!
