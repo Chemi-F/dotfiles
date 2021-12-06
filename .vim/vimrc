@@ -36,12 +36,14 @@ if has('win32')
     let $PATH = s:vimfiles_dir . '\tool;' . $PATH
     nnoremap <silent> <Leader>to :<C-u>terminal powershell<CR>
     tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal powershell<CR>
+    tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal powershell<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
     set shell=/bin/bash
     nnoremap <silent> <Leader>to :<C-u>terminal<CR>
     tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
+    tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal<CR>
 endif
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
@@ -198,9 +200,9 @@ nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(lin
 nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
 nnoremap <silent> <Leader>. :<C-u>call <SID>EditActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader>g. :<C-u>call <SID>EditActualFile($MYGVIMRC)<CR>
+nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Down> <C-w>-
 nnoremap <silent> <Up> <C-w>+
-nnoremap <silent> <Left> <C-w><
 nnoremap <silent> <Right> <C-w>>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
@@ -230,13 +232,21 @@ inoremap <C-@> <C-[>
 inoremap <C-U> <C-G>u<C-U>
 cnoremap <C-q> <C-f>
 cnoremap <C-b> <Left>
+cnoremap <C-n> <Down>
+cnoremap <C-p> <Up>
 cnoremap <C-f> <Right>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 tnoremap <silent> jj <C-\><C-n>
 tnoremap <silent> <C-w>q <C-w>:<C-u>bdelete!<CR>
+tnoremap <silent> <M-q> <C-w>:<C-u>bdelete!<CR>
 tnoremap <silent> <C-w>; <C-w>:
+tnoremap <silent> <M-;> <C-w>:
+tnoremap <silent> <M-h> <C-w>h
+tnoremap <silent> <M-j> <C-w>j
+tnoremap <silent> <M-k> <C-w>k
+tnoremap <silent> <M-l> <C-w>l
 
 "Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
@@ -249,24 +259,19 @@ augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
-    autocmd BufReadPost * if line("'\"") >= 1 &&
-                \ line("'\"") <= line("$") && &ft !~# 'commit' |
-                \ exe "normal! g`\"" | endif
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif
 
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
     autocmd FileType qf call s:QuickfixSettings()
-    autocmd FileType html,pug,javascript,typescript,css,scss,vue
-                \ call s:WebLangSettings()
+    autocmd FileType html,pug,javascript,typescript,css,scss,vue call s:WebLangSettings()
 
     autocmd QuickFixCmdPre *grep* call s:GrepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-    autocmd BufEnter * if (winnr('$') == 1 &&
-                \ (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
-    autocmd TerminalWinOpen * if &buftype ==# 'terminal' |
-                \ call s:TerminalModeSettings() | endif
+    autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
+    autocmd TerminalWinOpen * if &buftype ==# 'terminal' | call s:TerminalModeSettings() | endif
 augroup END
 
 if executable('rg')
@@ -298,7 +303,6 @@ function! s:PackInit() abort
     call minpac#add('mattn/vim-lsp-settings')
     call minpac#add('prabirshrestha/asyncomplete.vim')
     call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-    "call minpac#add('yami-beta/asyncomplete-omni.vim')
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Language
@@ -310,8 +314,8 @@ function! s:PackInit() abort
     call minpac#add('gko/vim-coloresque', {'type': 'opt'})
     call minpac#add('previm/previm', {'type': 'opt'})
     "Git
-    call minpac#add('airblade/vim-gitgutter')
     call minpac#add('tpope/vim-fugitive')
+    call minpac#add('airblade/vim-gitgutter')
     "Others
     call minpac#add('tpope/vim-surround')
     call minpac#add('tpope/vim-repeat')
@@ -354,7 +358,7 @@ augroup optPlugin
     autocmd FileType pug call s:optPluginPug()
     autocmd FileType css,scss call s:optPluginCss()
     autocmd FileType vue call s:optPluginVue()
-    "autocmd FileType md call s:optPluginMarkdown()
+    autocmd FileType markdown call s:optPluginMarkdown()
     autocmd CmdUndefined Fern packadd fern.vim
     autocmd CmdUndefined QuickRun packadd vim-quickrun
 augroup END
@@ -380,49 +384,49 @@ nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToggle()<CR>
 
 "lightline.vim
 let g:ctrlp_status_func = {
-            \ 'main': 'CtrlPStatusFunc1',
-            \ 'prog': 'CtrlPStatusFunc2',
-            \ }
+\       'main': 'CtrlPStatusFunc1',
+\       'prog': 'CtrlPStatusFunc2',
+\   }
 
 let g:lightline = {
-            \ 'active': {
-                \ 'left' : [ ['mode', 'paste'],
-                \            ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
-                \ 'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
-                \            ['filetype'],
-                \            ['fileencoding_and_fileformat'] ],
-                \ },
-            \ 'inactive': {
-                \ 'right': [ ['lineinfo'] ],
-                \ },
-            \ 'component': {
-                \ 'filename': '%f%{%ShowModified()%}',
-                \ 'lineinfo': '%2l/%L,%-2c%<',
-                \ 'filetype': '%{&filetype !=# "" ? &filetype : ""}',
-                \ },
-            \ 'component_function': {
-                \ 'mode': 'LightlineMode',
-                \ 'fugitive': 'LightlineFugitive',
-                \ 'fileencoding_and_fileformat': 'LightlineEncAndFt',
-                \ 'ctrlpmark': 'CtrlPMark',
-                \ },
-            \ 'component_expand': {
-                \ 'lsp_errors': 'LightlineLSPErrors',
-                \ 'lsp_warnings': 'LightlineLSPWarnings',
-                \ },
-            \ 'component_type': {
-                \ 'lsp_errors': 'error',
-                \ 'lsp_warnings': 'warning',
-                \ },
-            \ }
+\      'active': {
+\           'left' : [ ['mode', 'paste'],
+\                      ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
+\           'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
+\                      ['filetype'],
+\                      ['fileencoding_and_fileformat'] ],
+\       },
+\       'inactive': {
+\           'right': [ ['lineinfo'] ],
+\       },
+\       'component': {
+\           'filename': '%f%{%ShowModified()%}',
+\           'lineinfo': '%2l/%L,%-2c%<',
+\           'filetype': '%{&filetype !=# "" ? &filetype : ""}',
+\       },
+\       'component_function': {
+\           'mode': 'LightlineMode',
+\           'fugitive': 'LightlineFugitive',
+\           'fileencoding_and_fileformat': 'LightlineEncAndFt',
+\           'ctrlpmark': 'CtrlPMark',
+\       },
+\       'component_expand': {
+\           'lsp_errors': 'LightlineLSPErrors',
+\           'lsp_warnings': 'LightlineLSPWarnings',
+\       },
+\       'component_type': {
+\           'lsp_errors': 'error',
+\           'lsp_warnings': 'warning',
+\       },
+\   }
 
 function! LightlineMode() abort
     return &filetype ==# "help" ? "HELP" :
-                \ &filetype ==# "qf" ? "" :
-                \ &filetype ==# "ctrlp" ? "" :
-                \ &filetype ==# "molder" ? "MOLDER" :
-                \ winwidth(0) <= 70 ? "" :
-                \ lightline#mode()
+\          &filetype ==# "qf" ? "" :
+\          &filetype ==# "ctrlp" ? "" :
+\          &filetype ==# "molder" ? "MOLDER" :
+\          winwidth(0) <= 70 ? "" :
+\          lightline#mode()
 endfunction
 
 function! LightlineFugitive() abort
@@ -517,29 +521,29 @@ augroup END
 let g:ctrlp_match_window = 'min:8,max:8'
 let g:ctrlp_cache_dir = s:vimfiles_dir . '/cache/ctrlp'
 let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
-            \ 'file': '\v\.(exe|so|dll)$',
-            \ }
+\       'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
+\       'file': '\v\.(exe|so|dll)$',
+\   }
 let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 
 "vim-lsp, vim-lsp-settings
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
+let g:lsp_format_sync_timeout = 1000
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
-let g:lsp_format_sync_timeout = 1000
 let g:lsp_async_completion = 1
 let g:lsp_settings =  {
-            \ 'eslint-language-server': {
-                \ 'allowlist': [ 'javascript', 'typescript', 'vue' ]
-                \ },
-            \ 'efm-langserver': {
-                \ 'disabled': v:false,
-                \ 'allowlist': [ 'pug' ]
-                \ }
-            \ }
+\       'eslint-language-server': {
+\           'allowlist': [ 'javascript', 'typescript', 'vue' ]
+\       },
+\       'efm-langserver': {
+\           'disabled': v:false,
+\           'allowlist': [ 'pug' ]
+\       }
+\   }
 let g:lsp_settings_filetype_javascript = ['javascript-language-server', 'eslint-language-server']
 let g:lsp_settings_filetype_typescript = ['typescript-language-server', 'eslint-language-server']
 let g:lsp_settings_filetype_vue = ['vls', 'eslint-language-server']
@@ -565,19 +569,11 @@ augroup END
 "asyncomplete.vim
 let g:asyncomplete_popup_delay = 200
 
-inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<C-d>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 augroup asyncompleteAutocmd
     autocmd!
     autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
-    "autocmd User asyncomplete_setup call asyncomplete#register_source(
-    "            \ asyncomplete#sources#omni#get_source_options({
-    "                \ 'name': 'omni',
-    "                \ 'allowlist': ['pug'],
-    "                \ 'completor': function('asyncomplete#sources#omni#completor'),
-    "            \ }))
 augroup END
 
 "vim-vsnip
@@ -592,22 +588,22 @@ let g:gitgutter_map_keys = 0
 
 "quickrun
 let g:quickrun_config = {
-            \ '_': {
-                \ 'outputter': 'buffer',
-                \ 'outputter/buffer/name': "[Quickrun Output]",
-                \ 'outputter/buffer/split': ":botright 8",
-                \ 'outputter/buffer/running_mark': "[Runninng...]",
-                \ 'runner': 'job',
-                \ },
-                \ 'tex' : {
-                    \ 'command': 'lualatex',
-                    \ 'exec': ['%c -interaction=nonstopmode -file-line-error %s']
-                    \ },
-                \ 'scss' : {
-                    \ 'command': 'sass',
-                    \ 'exec': ['%c %s:%s.css']
-                    \ }
-                \ }
+\       '_': {
+\           'outputter': 'buffer',
+\           'outputter/buffer/name': "[Quickrun Output]",
+\           'outputter/buffer/split': ":botright 8",
+\           'outputter/buffer/running_mark': "[Runninng...]",
+\           'runner': 'job',
+\       },
+\       'tex' : {
+\           'command': 'lualatex',
+\           'exec': ['%c -interaction=nonstopmode -file-line-error %s']
+\       },
+\       'scss' : {
+\           'command': 'sass',
+\           'exec': ['%c %s:%s.css']
+\       }
+\   }
 
 nnoremap <Leader>rq :<C-u>QuickRun<CR>
 
@@ -624,6 +620,7 @@ map _ <Plug>(operator-replace)
 
 "open-browser
 let g:openbrowser_no_default_menus = 1
+
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
