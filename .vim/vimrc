@@ -286,7 +286,6 @@ function! s:PackInit() abort
     "Theme, highlight
     call minpac#add('cocopon/iceberg.vim')
     call minpac#add('itchyny/lightline.vim')
-    call minpac#add('gko/vim-coloresque')
     "Filer
     call minpac#add('mattn/vim-molder')
     call minpac#add('mattn/vim-molder-operations')
@@ -299,7 +298,7 @@ function! s:PackInit() abort
     call minpac#add('mattn/vim-lsp-settings')
     call minpac#add('prabirshrestha/asyncomplete.vim')
     call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-    call minpac#add('jsit/asyncomplete-user.vim')
+    "call minpac#add('yami-beta/asyncomplete-omni.vim')
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Language
@@ -308,6 +307,8 @@ function! s:PackInit() abort
     call minpac#add('digitaltoad/vim-pug')
     call minpac#add('dNitro/vim-pug-complete', {'type': 'opt'})
     call minpac#add('posva/vim-vue')
+    call minpac#add('gko/vim-coloresque')
+    call minpac#add('previm/previm', {'type': 'opt'})
     "Git
     call minpac#add('airblade/vim-gitgutter')
     call minpac#add('tpope/vim-fugitive')
@@ -318,7 +319,6 @@ function! s:PackInit() abort
     call minpac#add('jiangmiao/auto-pairs')
     call minpac#add('kana/vim-operator-user')
     call minpac#add('kana/vim-operator-replace')
-    call minpac#add('previm/previm')
     call minpac#add('tyru/open-browser.vim')
 endfunction
 
@@ -329,7 +329,6 @@ endfunction
 
 function! s:optPluginPug() abort
     packadd vim-pug-complete
-    setlocal completefunc=pugcomplete#CompletePug
 endfunction
 
 command! PackUpdate call <SID>PackInit() | call minpac#update()
@@ -515,6 +514,7 @@ let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
 let g:lsp_format_sync_timeout = 1000
+let g:lsp_async_completion = 1
 let g:lsp_settings =  {
             \ 'eslint-language-server': {
                 \ 'allowlist': [ 'vue' ]
@@ -528,7 +528,6 @@ let g:lsp_settings_filetype_vue = ['vls', 'eslint-language-server']
 let g:lsp_settings_enable_suggestions = 0
 
 function! s:VimlspSettings() abort
-    setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
@@ -555,12 +554,12 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 augroup asyncompleteAutocmd
     autocmd!
     autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
-    autocmd User asyncomplete_setup call asyncomplete#register_source(
-                \ asyncomplete#sources#user#get_source_options({
-                    \ 'name': 'user',
-                    \ 'whitelist': ['pug'],
-                    \ 'completor': function('asyncomplete#sources#user#completor'),
-                \ }))
+    "autocmd User asyncomplete_setup call asyncomplete#register_source(
+    "            \ asyncomplete#sources#omni#get_source_options({
+    "                \ 'name': 'omni',
+    "                \ 'allowlist': ['pug'],
+    "                \ 'completor': function('asyncomplete#sources#omni#completor'),
+    "            \ }))
 augroup END
 
 "vim-vsnip
