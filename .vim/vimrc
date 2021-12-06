@@ -10,6 +10,8 @@ if &compatible
     set nocompatible
 endif
 
+let g:vim_indent_cont = 0
+
 "Default plugin disable
 let g:loaded_zip = 1
 let g:loaded_zipPlugin = 1
@@ -96,7 +98,7 @@ function! s:GrepSettings() abort
     setlocal wildignore+=*/.git/*
 endfunction
 
-function! s:WebAppsSettings() abort
+function! s:WebLangSettings() abort
     setlocal tabstop=2
     setlocal shiftwidth=2
     setlocal iskeyword+=-
@@ -190,7 +192,6 @@ nnoremap <Leader>tj :<C-u>tag<CR>
 nnoremap <Leader>tk :<C-u>pop<CR>
 nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <Leader>tm <C-w>T
-nnoremap <silent> <Leader>to :<C-u>terminal<CR>
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 "http://deris.hatenablog.jp/entry/20130404/1365086716
 nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
@@ -236,7 +237,6 @@ cnoremap <C-d> <Del>
 tnoremap <silent> jj <C-\><C-n>
 tnoremap <silent> <C-w>q <C-w>:<C-u>bdelete!<CR>
 tnoremap <silent> <C-w>; <C-w>:
-tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
 
 "Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
@@ -256,8 +256,8 @@ augroup myAutocmd
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
     autocmd FileType qf call s:QuickfixSettings()
-    autocmd FileType html,pug,css,scss,javascript,typescript,vue
-                \ call s:WebAppsSettings()
+    autocmd FileType html,pug,javascript,typescript,css,scss,vue
+                \ call s:WebLangSettings()
 
     autocmd QuickFixCmdPre *grep* call s:GrepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
@@ -302,12 +302,12 @@ function! s:PackInit() abort
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Language
+    call minpac#add('digitaltoad/vim-pug')
+    call minpac#add('posva/vim-vue')
     call minpac#add('mattn/emmet-vim', {'type': 'opt'})
     call minpac#add('alvan/closetag.vim', {'type': 'opt'})
-    call minpac#add('digitaltoad/vim-pug')
     call minpac#add('dNitro/vim-pug-complete', {'type': 'opt'})
-    call minpac#add('posva/vim-vue')
-    call minpac#add('gko/vim-coloresque')
+    call minpac#add('gko/vim-coloresque', {'type': 'opt'})
     call minpac#add('previm/previm', {'type': 'opt'})
     "Git
     call minpac#add('airblade/vim-gitgutter')
@@ -315,11 +315,11 @@ function! s:PackInit() abort
     "Others
     call minpac#add('tpope/vim-surround')
     call minpac#add('tpope/vim-repeat')
-    call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
     call minpac#add('jiangmiao/auto-pairs')
     call minpac#add('kana/vim-operator-user')
     call minpac#add('kana/vim-operator-replace')
     call minpac#add('tyru/open-browser.vim')
+    call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
 function! s:optPluginHtml() abort
@@ -331,6 +331,19 @@ function! s:optPluginPug() abort
     packadd vim-pug-complete
 endfunction
 
+function! s:optPluginCss() abort
+    packadd vim-coloresque
+endfunction
+
+function! s:optPluginVue() abort
+    call s:optPluginPug()
+    call s:optPluginCss()
+endfunction
+
+function! s:optPluginMarkdown() abort
+    packadd previm
+endfunction
+
 command! PackUpdate call <SID>PackInit() | call minpac#update()
 command! PackClean  call <SID>PackInit() | call minpac#clean()
 command! PackStatus packadd minpac | call minpac#status()
@@ -339,6 +352,9 @@ augroup optPlugin
     autocmd!
     autocmd FileType html call s:optPluginHtml()
     autocmd FileType pug call s:optPluginPug()
+    autocmd FileType css,scss call s:optPluginCss()
+    autocmd FileType vue call s:optPluginVue()
+    "autocmd FileType md call s:optPluginMarkdown()
     autocmd CmdUndefined Fern packadd fern.vim
     autocmd CmdUndefined QuickRun packadd vim-quickrun
 augroup END
@@ -517,13 +533,15 @@ let g:lsp_format_sync_timeout = 1000
 let g:lsp_async_completion = 1
 let g:lsp_settings =  {
             \ 'eslint-language-server': {
-                \ 'allowlist': [ 'vue' ]
+                \ 'allowlist': [ 'javascript', 'typescript', 'vue' ]
                 \ },
             \ 'efm-langserver': {
                 \ 'disabled': v:false,
                 \ 'allowlist': [ 'pug' ]
                 \ }
             \ }
+let g:lsp_settings_filetype_javascript = ['javascript-language-server', 'eslint-language-server']
+let g:lsp_settings_filetype_typescript = ['typescript-language-server', 'eslint-language-server']
 let g:lsp_settings_filetype_vue = ['vls', 'eslint-language-server']
 let g:lsp_settings_enable_suggestions = 0
 
