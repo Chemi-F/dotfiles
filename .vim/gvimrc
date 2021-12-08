@@ -7,4 +7,4 @@ set guifont=HackGen\ Console:h13
 set guioptions-=egmrLtT
 set guioptions+=!
 "26 multi-byte characters
-set ambiwidth=double
+"set ambiwidth=double

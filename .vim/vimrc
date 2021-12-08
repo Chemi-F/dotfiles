@@ -10,68 +10,23 @@ if &compatible
     set nocompatible
 endif
 
-let g:vim_indent_cont = 0
-
-"Default plugin disable
-let g:loaded_zip = 1
-let g:loaded_zipPlugin = 1
-let g:loaded_tar = 1
-let g:loaded_tarPlugin = 1
-let g:loaded_gzip = 1
-let g:loaded_getscript = 1
-let g:loaded_getscriptPlugin = 1
-let g:loaded_vimball = 1
-let g:loaded_vimballPlugin = 1
-let g:loaded_rrhelper = 1
-let g:loaded_2html_plugin = 1
-let g:skip_loading_mswin = 1
-let g:did_install_default_menus = 1
-let g:did_install_syntax_menu = 1
-
-let g:mapleader = "\<Space>"
-
-if has('win32')
-    let s:vimfiles_dir = expand('~/vimfiles')
-    let s:vimdata_dir = expand('~/vimfiles')
-    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    nnoremap <silent> <Leader>to :<C-u>botright terminal powershell<CR>
-    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal powershell<CR>
-    tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal powershell<CR>
-else
-    let s:vimfiles_dir = expand('~/.vim')
-    let s:vimdata_dir = expand('~/.vim')
-    set shell=/bin/bash
-    nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
-    tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
-    tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal<CR>
-endif
-let s:swap_dir = s:vimfiles_dir . '/swap'
-let s:undo_dir = s:vimfiles_dir . '/undo'
-
 "Function
-function! ShowModified() abort
-    if &modified && &filetype !=# "help" && &buftype !=# "terminal"
-        return " %m" 
-    else
-        return ""
+function! s:SetTerminalMap(shellname = "") abort
+    let l:shellname = a:shellname
+    if strlen(a:shellname) != 0
+        let l:shellname = " " . l:shellname
     endif
+    execute "nnoremap <silent> <Leader>to :<C-u>botright terminal" . l:shellname . "<CR>"
+    execute "tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal" . l:shellname . "<CR>"
+    execute "tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal" . l:shellname . "<CR>"
 endfunction
 
-function! s:ToggleQuickfix() abort
+function! s:ToggleQuickfix(prefix) abort
     let l:nr = winnr('$')
-    let l:loc = !empty(getloclist(0))
-    if l:loc
-        lwindow
-    else
-        cwindow
-    endif
+    execute a:prefix . "window"
     let l:nr2 = winnr('$')
     if l:nr == l:nr2
-        if l:loc
-            lclose
-        else
-            cclose
-        endif
+        execute a:prefix . "close"
     endif
 endfunction
 
@@ -111,6 +66,62 @@ function! s:TerminalModeSettings() abort
     setlocal winfixheight
     nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
 endfunction
+
+function! TESTTerminal(shellname = &shell) abort
+    if g:cur_terminal_bufnr == 0
+        botright let g:cur_terminal_bufnr = term_start(a:shellname)
+        call add(g:terminal_bufnr_list, g:cur_terminal_bufnr)
+    else
+        call win_execute(bufwinid(g:cur_terminal_bufnr), 'let g:cur_terminal_bufnr = term_start(a:shellname, { "curwin": 1 })')
+        call add(g:terminal_bufnr_list, g:cur_terminal_bufnr)
+    endif
+endfunction
+
+function! TESTTerminal2() abort
+    if g:cur_terminal_bufnr != 0
+        let l:older_terminal_bufnr = g:cur_terminal_bufnr
+        let g:cur_terminal_bufnr = g:terminal_bufnr_list[0]
+        call add(g:terminal_bufnr_list, l:older_terminal_bufnr)
+        call remove(g:terminal_bufnr_list, 0)
+        call win_execute(bufwinid(l:older_terminal_bufnr), 'execute "buffer" . g:cur_terminal_bufnr')
+    endif
+endfunction
+
+let g:cur_terminal_bufnr = 0
+let g:terminal_bufnr_list = []
+
+"Default plugin disable
+let g:loaded_zip = 1
+let g:loaded_zipPlugin = 1
+let g:loaded_tar = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_gzip = 1
+let g:loaded_getscript = 1
+let g:loaded_getscriptPlugin = 1
+let g:loaded_vimball = 1
+let g:loaded_vimballPlugin = 1
+let g:loaded_rrhelper = 1
+let g:loaded_2html_plugin = 1
+let g:skip_loading_mswin = 1
+let g:did_install_default_menus = 1
+let g:did_install_syntax_menu = 1
+
+let g:vim_indent_cont = 0
+let g:mapleader = "\<Space>"
+
+if has('win32')
+    let s:vimfiles_dir = expand('~/vimfiles')
+    let s:vimdata_dir = expand('~/vimfiles')
+    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
+    call s:SetTerminalMap("powershell")
+else
+    let s:vimfiles_dir = expand('~/.vim')
+    let s:vimdata_dir = expand('~/.vim')
+    set shell=/bin/bash
+    call s:SetTerminalMap()
+endif
+let s:swap_dir = s:vimfiles_dir . '/swap'
+let s:undo_dir = s:vimfiles_dir . '/undo'
 
 call s:MakeDir(s:undo_dir)
 call s:MakeDir(s:swap_dir)
@@ -211,9 +222,12 @@ nnoremap <C-l> <C-w>l
 nnoremap Y y$
 nnoremap <C-]> g<C-]>
 nnoremap Q @q
-nnoremap <expr> [c !empty(getloclist(0)) ? ":<C-u>lprevious<CR>" : ":<C-u>cprevious<CR>"
-nnoremap <expr> ]c !empty(getloclist(0)) ? ":<C-u>lnext<CR>" : ":<C-u>cnext<CR>"
-nnoremap co :<C-u>call <SID>ToggleQuickfix()<CR>
+nnoremap [c :<C-u>cprevious<CR>
+nnoremap ]c :<C-u>cnext<CR>"
+nnoremap [l :<C-u>lprevious<CR>
+nnoremap ]l :<C-u>lnext<CR>"
+nnoremap <silent> co :<C-u>call <SID>ToggleQuickfix("c")<CR>
+nnoremap <silent> <Leader>lo :<C-u>call <SID>ToggleQuickfix("l")<CR>
 noremap <Leader>h ^
 noremap <Leader>l $
 noremap j gj
@@ -240,19 +254,13 @@ cnoremap <C-e> <End>
 cnoremap <C-d> <Del>
 tnoremap <silent> jj <C-\><C-n>
 tnoremap <silent> <C-w>q <C-w>:<C-u>bdelete!<CR>
-tnoremap <silent> <M-q> <C-w>:<C-u>bdelete!<CR>
 tnoremap <silent> <C-w>; <C-w>:
 tnoremap <silent> <M-;> <C-w>:
+tnoremap <silent> <M-q> <C-w>:<C-u>bdelete!<CR>
 tnoremap <silent> <M-h> <C-w>h
 tnoremap <silent> <M-j> <C-w>j
 tnoremap <silent> <M-k> <C-w>k
 tnoremap <silent> <M-l> <C-w>l
-
-"Finish when using git commit
-if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
-    colorscheme desert
-    finish
-end
 
 "Autocmd
 augroup myAutocmd
@@ -278,6 +286,12 @@ if executable('rg')
     set grepprg=rg\ --vimgrep\ --hidden
     set grepformat=%f:%l:%c:%m
 endif
+
+"Finish when using git commit
+if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
+    colorscheme desert
+    finish
+end
 
 "Plugin
 packadd! matchit
@@ -419,6 +433,14 @@ let g:lightline = {
 \           'lsp_warnings': 'warning',
 \       },
 \   }
+
+function! ShowModified() abort
+    if &modified && &filetype !=# "help" && &buftype !=# "terminal"
+        return " %m" 
+    else
+        return ""
+    endif
+endfunction
 
 function! LightlineMode() abort
     return &filetype ==# "help" ? "HELP" :
