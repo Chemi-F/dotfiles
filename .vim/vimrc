@@ -34,14 +34,14 @@ if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
     let s:vimdata_dir = expand('~/vimfiles')
     let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    nnoremap <silent> <Leader>to :<C-u>terminal powershell<CR>
+    nnoremap <silent> <Leader>to :<C-u>botright terminal powershell<CR>
     tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal powershell<CR>
     tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal powershell<CR>
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
     set shell=/bin/bash
-    nnoremap <silent> <Leader>to :<C-u>terminal<CR>
+    nnoremap <silent> <Leader>to :<C-u>botright terminal<CR>
     tnoremap <silent> <C-w>t <C-w>:<C-u>vertical terminal<CR>
     tnoremap <silent> <A-t> <C-w>:<C-u>vertical terminal<CR>
 endif
