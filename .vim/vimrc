@@ -67,28 +67,26 @@ function! s:TerminalModeSettings() abort
     nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
 endfunction
 
-function! TESTTerminal(shellname = &shell) abort
-    if g:cur_terminal_bufnr == 0
-        botright let g:cur_terminal_bufnr = term_start(a:shellname)
-        call add(g:terminal_bufnr_list, g:cur_terminal_bufnr)
+function! TerminalOpen(shell_name = "") abort
+    let l:term_list = term_list()
+    let l:shell_name = a:shell_name !=# "" ? " " . a:shell_name : ""
+    if empty(l:term_list)
+        execute('botright terminal' . l:shell_name)
     else
-        call win_execute(bufwinid(g:cur_terminal_bufnr), 'let g:cur_terminal_bufnr = term_start(a:shellname, { "curwin": 1 })')
-        call add(g:terminal_bufnr_list, g:cur_terminal_bufnr)
+        let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winid}), 0)
+        if l:active_terminal_winid != 0
+            call win_execute(l:active_terminal_winid, 'terminal ++curwin' . l:shell_name)
+        endif
     endif
 endfunction
 
-function! TESTTerminal2() abort
-    if g:cur_terminal_bufnr != 0
-        let l:older_terminal_bufnr = g:cur_terminal_bufnr
-        let g:cur_terminal_bufnr = g:terminal_bufnr_list[0]
-        call add(g:terminal_bufnr_list, l:older_terminal_bufnr)
-        call remove(g:terminal_bufnr_list, 0)
-        call win_execute(bufwinid(l:older_terminal_bufnr), 'execute "buffer" . g:cur_terminal_bufnr')
-    endif
+function! TESTTerminalToggle() abort
+    let l:term_list = term_list()
+    let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.bufnr}), 0)
+    let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winid}), 0)
+    let l:term_list_active_index = index(l:term_list, l:active_terminal_bufnr)
+    call win_execute(l:active_terminal_winid, 'terminal ++curwin' . l:shell_name)
 endfunction
-
-let g:cur_terminal_bufnr = 0
-let g:terminal_bufnr_list = []
 
 "Default plugin disable
 let g:loaded_zip = 1
@@ -223,9 +221,9 @@ nnoremap Y y$
 nnoremap <C-]> g<C-]>
 nnoremap Q @q
 nnoremap [c :<C-u>cprevious<CR>
-nnoremap ]c :<C-u>cnext<CR>"
+nnoremap ]c :<C-u>cnext<CR>
 nnoremap [l :<C-u>lprevious<CR>
-nnoremap ]l :<C-u>lnext<CR>"
+nnoremap ]l :<C-u>lnext<CR>
 nnoremap <silent> co :<C-u>call <SID>ToggleQuickfix("c")<CR>
 nnoremap <silent> <Leader>lo :<C-u>call <SID>ToggleQuickfix("l")<CR>
 noremap <Leader>h ^
