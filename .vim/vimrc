@@ -82,6 +82,9 @@ endfunction
 
 function! TESTTerminalToggle() abort
     let l:term_list = term_list()
+    if empty(l:term_list)
+        return
+    endif
     let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.bufnr}), 0)
     let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winid}), 0)
     let l:term_list_active_index = index(l:term_list, l:active_terminal_bufnr)
