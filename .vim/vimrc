@@ -80,12 +80,12 @@ function! TerminalOpen(shell_name = "") abort
     endif
 endfunction
 
-function! TESTTerminalToggle() abort
-    let l:term_list = term_list()
-    let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.bufnr}), 0)
+function! TerminalToggle() abort
     let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winid}), 0)
+    let l:active_terminal_bufnr = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.bufnr}), 0)
     let l:term_list_active_index = index(l:term_list, l:active_terminal_bufnr)
-    call win_execute(l:active_terminal_winid, 'terminal ++curwin' . l:shell_name)
+    let l:term_list = term_list()
+    call win_execute(l:active_terminal_winid, 'buffer ' . l:term_list[l:term_list_active_index - 1])
 endfunction
 
 "Default plugin disable
