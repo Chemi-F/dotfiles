@@ -52,10 +52,11 @@ function! s:WebLangSettings() abort
 endfunction
 
 function! s:TerminalModeSettings() abort
-    setlocal nonumber
     setlocal winfixheight
+    setlocal ambiwidth=single
+    setlocal signcolumn=no
     nnoremap <silent> <buffer> <Leader>w :<C-u>call <SID>TerminalWindowToggle()<CR>
-    nnoremap <silent> <buffer> <Leader>q :<C-u>call <SID>TerminalQuit()<CR>
+    nnoremap <silent> <buffer> q :<C-u>call <SID>TerminalQuit()<CR>
 endfunction
 
 function! s:TerminalOpen(shell_name) abort
@@ -160,7 +161,6 @@ set display=lastline
 set cmdheight=2
 set list
 set listchars=tab:^-
-set number
 "5 syntax, highlighting and spelling
 set background=dark
 set hlsearch
@@ -205,6 +205,7 @@ set swapfile
 set wildmode=longest,full
 set wildmenu
 "27 various
+set signcolumn=yes
 set viminfo='50,<500,s100,h
 execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 
@@ -296,7 +297,7 @@ augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
-    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit' | exe "normal! g`\"" | endif
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit' | execute "normal! g`\"" | endif
 
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
@@ -307,8 +308,7 @@ augroup myAutocmd
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-    autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
-    autocmd TerminalWinOpen * if &buftype ==# 'terminal' | call s:TerminalModeSettings() | endif
+    autocmd TerminalWinOpen * call s:TerminalModeSettings()
 augroup END
 
 "Finish when using git commit
@@ -479,7 +479,7 @@ function! LightlineFugitive() abort
     if winwidth(0) > 119 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
         if exists('*FugitiveHead')
             let l:branch = FugitiveHead()
-            return branch !=# "" ? " ". l:branch : ""
+            return branch !=# "" ? "". l:branch : ""
         endif
     endif
     return ""
@@ -552,7 +552,7 @@ augroup END
 
 "fern
 function! s:FernSettings()
-    setlocal nonumber
+    setlocal signcolumn=no
     nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
 endfunction
 
@@ -596,7 +596,6 @@ let g:lsp_settings_filetype_vue = ['vls', 'eslint-language-server']
 let g:lsp_settings_enable_suggestions = 0
 
 function! s:VimlspSettings() abort
-    setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
