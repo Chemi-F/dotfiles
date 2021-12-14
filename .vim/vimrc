@@ -52,9 +52,11 @@ function! s:WebLangSettings() abort
 endfunction
 
 function! s:TerminalModeSettings() abort
-    setlocal nonumber
+    "setlocal nonumber
     setlocal winfixheight
-    nnoremap <silent> <buffer> <Leader>q :<C-u>bdelete!<CR>
+    nnoremap <silent> <buffer> <Leader>w :<C-u>call <SID>TerminalWindowToggle()<CR>
+    nnoremap <silent> <buffer> <Leader>t :<C-u>call <SID>TerminalActiveBufferToggle()<CR>
+    nnoremap <silent> <buffer> <Leader>q :<C-u>call <SID>TerminalQuit()<CR>
 endfunction
 
 function! s:TerminalOpen(shell_name) abort
@@ -104,7 +106,6 @@ function! s:SetTerminalMap(shell_name = "") abort
     execute "tnoremap <silent> <C-w>to <C-w>:<C-u>call <SID>TerminalOpen('" . a:shell_name . "')<CR>"
     execute "tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen('" . a:shell_name . "')<CR>"
 endfunction
-
 
 "Default plugin disable
 let g:loaded_zip = 1
@@ -160,7 +161,7 @@ set display=lastline
 set cmdheight=2
 set list
 set listchars=tab:^-
-set number
+"set number
 "5 syntax, highlighting and spelling
 set background=dark
 set hlsearch
@@ -208,6 +209,11 @@ set wildmenu
 set viminfo='50,<500,s100,h
 execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
 
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --hidden
+    set grepformat=%f:%l:%c:%m
+endif
+
 "Mapping
 nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
@@ -245,7 +251,7 @@ nnoremap [l :<C-u>lprevious<CR>
 nnoremap ]l :<C-u>lnext<CR>
 nnoremap <silent> co :<C-u>call <SID>ToggleQuickfix("c")<CR>
 nnoremap <silent> <Leader>co :<C-u>call <SID>ToggleQuickfix("l")<CR>
-nnoremap <silent> <Leader>twt :<C-u>call <SID>TerminalWindowToggle()<CR>
+nnoremap <silent> <Leader>tw :<C-u>call <SID>TerminalWindowToggle()<CR>
 nnoremap <silent> <Leader>tt :<C-u>call <SID>TerminalActiveBufferToggle()<CR>
 nnoremap <silent> <Leader>tq :<C-u>call <SID>TerminalQuit()<CR>
 noremap <Leader>h ^
@@ -275,16 +281,15 @@ cnoremap <C-d> <Del>
 tnoremap <silent> <C-w>n <C-\><C-n>
 tnoremap <silent> <C-w><C-n> <C-\><C-n>
 tnoremap <silent> <C-w>; <C-w>:
-tnoremap <silent> <C-w>tt <C-w>:<C-u>call <SID>TerminalActiveBufferToggle()<CR>
+tnoremap <silent> <C-w>t <C-w>:<C-u>call <SID>TerminalActiveBufferToggle()<CR>
 tnoremap <silent> <C-w>q <C-w>:<C-u>call <SID>TerminalQuit()<CR>
-tnoremap <silent> <C-w><C-n> <C-\><C-n>
 tnoremap <silent> <M-n> <C-\><C-n>
 tnoremap <silent> <M-;> <C-w>:
 tnoremap <silent> <M-h> <C-w>h
 tnoremap <silent> <M-j> <C-w>j
 tnoremap <silent> <M-k> <C-w>k
 tnoremap <silent> <M-l> <C-w>l
-tnoremap <silent> <M-t>t <C-w>:<C-u>call <SID>TerminalActiveBufferToggle()<CR>
+tnoremap <silent> <M-t> <C-w>:<C-u>call <SID>TerminalActiveBufferToggle()<CR>
 tnoremap <silent> <M-q> <C-w>:<C-u>call <SID>TerminalQuit()<CR>
 
 "Autocmd
@@ -306,11 +311,6 @@ augroup myAutocmd
     autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
     autocmd TerminalWinOpen * if &buftype ==# 'terminal' | call s:TerminalModeSettings() | endif
 augroup END
-
-if executable('rg')
-    set grepprg=rg\ --vimgrep\ --hidden
-    set grepformat=%f:%l:%c:%m
-endif
 
 "Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
@@ -477,10 +477,10 @@ function! LightlineMode() abort
 endfunction
 
 function! LightlineFugitive() abort
-    if winwidth(0) > 70 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
+    if winwidth(0) > 120 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
         if exists('*FugitiveHead')
             let l:branch = FugitiveHead()
-            return branch !=# "" ? " ". l:branch : ""
+            return branch !=# "" ? "". l:branch : ""
         endif
     endif
     return ""
