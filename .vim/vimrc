@@ -52,10 +52,9 @@ function! s:WebLangSettings() abort
 endfunction
 
 function! s:TerminalModeSettings() abort
-    "setlocal nonumber
+    setlocal nonumber
     setlocal winfixheight
     nnoremap <silent> <buffer> <Leader>w :<C-u>call <SID>TerminalWindowToggle()<CR>
-    nnoremap <silent> <buffer> <Leader>t :<C-u>call <SID>TerminalActiveBufferToggle()<CR>
     nnoremap <silent> <buffer> <Leader>q :<C-u>call <SID>TerminalQuit()<CR>
 endfunction
 
@@ -161,7 +160,7 @@ set display=lastline
 set cmdheight=2
 set list
 set listchars=tab:^-
-"set number
+set number
 "5 syntax, highlighting and spelling
 set background=dark
 set hlsearch
@@ -477,10 +476,10 @@ function! LightlineMode() abort
 endfunction
 
 function! LightlineFugitive() abort
-    if winwidth(0) > 120 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
+    if winwidth(0) > 119 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
         if exists('*FugitiveHead')
             let l:branch = FugitiveHead()
-            return branch !=# "" ? "". l:branch : ""
+            return branch !=# "" ? " ". l:branch : ""
         endif
     endif
     return ""
