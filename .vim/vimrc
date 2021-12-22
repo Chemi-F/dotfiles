@@ -55,6 +55,7 @@ function! s:TerminalModeSettings() abort
     setlocal winfixheight
     setlocal signcolumn=no
     nnoremap <silent> <buffer> <Leader>w :<C-u>call <SID>TerminalWindowToggle()<CR>
+    nnoremap <silent> <buffer> <Leader>q :<C-u>call <SID>TerminalQuit()<CR>
     nnoremap <silent> <buffer> q :<C-u>call <SID>TerminalQuit()<CR>
 endfunction
 
@@ -380,6 +381,7 @@ endfunction
 function! s:optPluginVue() abort
     call s:optPluginPug()
     call s:optPluginCss()
+    setlocal omnifunc=pugcomplete#CompletePug
 endfunction
 
 function! s:optPluginMarkdown() abort
@@ -598,6 +600,8 @@ let g:lsp_settings_enable_suggestions = 0
 function! s:VimlspSettings() abort
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> gr <plug>(lsp-references)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
