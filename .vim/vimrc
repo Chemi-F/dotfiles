@@ -576,13 +576,13 @@ let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 
 "vim-lsp, vim-lsp-settings
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
+let g:lsp_semantic_enabled = 0
 let g:lsp_format_sync_timeout = 1000
 let g:lsp_diagnostics_enabled = 1
 let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
-let g:lsp_async_completion = 1
 let g:lsp_settings =  {
 \       'eslint-language-server': {
 \           'allowlist': [ 'javascript', 'typescript', 'vue' ]
@@ -616,7 +616,7 @@ augroup vimlspAutocmd
 augroup END
 
 "asyncomplete.vim
-let g:asyncomplete_popup_delay = 200
+set shortmess+=c
 
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
