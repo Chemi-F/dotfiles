@@ -361,6 +361,8 @@ function! s:PackInit() abort
     call minpac#add('jiangmiao/auto-pairs')
     call minpac#add('kana/vim-operator-user')
     call minpac#add('kana/vim-operator-replace')
+    call minpac#add('kana/vim-textobj-user')
+    call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
@@ -628,6 +630,12 @@ augroup END
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
 imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+imap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
+smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+smap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
 "vim-vue
 let g:vue_pre_processors = ['pug', 'typescript', 'scss']
@@ -666,6 +674,14 @@ nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 
 "vim-operator-replace
 map _ <Plug>(operator-replace)
+
+"vim-textobj-user
+"call textobj#user#plugin('underscore', {
+"\        '-': {
+"\            'select-a': 'a_', '*select-a-function*': 's:select_a',
+"\            'select-i': 'i_', '*select-i-function*': 's:select_i'
+"\        }
+"\    })
 
 "open-browser
 let g:openbrowser_no_default_menus = 1
