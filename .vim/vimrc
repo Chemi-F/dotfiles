@@ -676,12 +676,56 @@ nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
 map _ <Plug>(operator-replace)
 
 "vim-textobj-user
-"call textobj#user#plugin('underscore', {
-"\        '-': {
-"\            'select-a': 'a_', '*select-a-function*': 's:select_a',
-"\            'select-i': 'i_', '*select-i-function*': 's:select_i'
-"\        }
-"\    })
+"https://github.com/lucapette/vim-textobj-underscore
+function! s:select_a() abort
+  normal! F_
+  let end_pos = getpos('.')
+  normal! f_
+  let start_pos = getpos('.')
+  return ['v', start_pos, end_pos]
+endfunction
+
+function! s:select_i() abort
+  normal! T_
+  let end_pos = getpos('.')
+  normal! t_
+  let start_pos = getpos('.')
+  return ['v', start_pos, end_pos]
+endfunction
+
+function! s:select-a() abort
+  normal! F-
+  let end_pos = getpos('.')
+  normal! f-
+  let start_pos = getpos('.')
+  return ['v', start_pos, end_pos]
+endfunction
+
+function! s:select-i() abort
+  normal! T-
+  let end_pos = getpos('.')
+  normal! t-
+  let start_pos = getpos('.')
+  return ['v', start_pos, end_pos]
+endfunction
+
+call textobj#user#plugin('underscore', {
+\        '-': {
+\            'select-a-function': 's:select_a',
+\            'select-a': 'a_',
+\            'select-i-function': 's:select_i',
+\            'select-i': 'i_'
+\        }
+\    })
+
+call textobj#user#plugin('dash', {
+\        '-': {
+\            'select-a-function': 's:select-a',
+\            'select-a': 'a-',
+\            'select-i-function': 's:select-i',
+\            'select-i': 'i-'
+\        }
+\    })
 
 "open-browser
 let g:openbrowser_no_default_menus = 1
