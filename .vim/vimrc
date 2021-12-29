@@ -677,36 +677,36 @@ map _ <Plug>(operator-replace)
 
 "vim-textobj-user
 "https://github.com/lucapette/vim-textobj-underscore
+function! s:SelectCharacter_a(char) abort
+    execute "normal! F" . a:char
+    let end_pos = getpos('.')
+    execute "normal! f" . a:char
+    let start_pos = getpos('.')
+    return ['v', start_pos, end_pos]
+endfunction
+
+function! s:SelectCharacter_i(char) abort
+    execute "normal! T" . a:char
+    let end_pos = getpos('.')
+    execute "normal! t" . a:char
+    let start_pos = getpos('.')
+    return ['v', start_pos, end_pos]
+endfunction
+
 function! s:SelectUnderscore_a() abort
-  normal! F_
-  let end_pos = getpos('.')
-  normal! f_
-  let start_pos = getpos('.')
-  return ['v', start_pos, end_pos]
+    return s:SelectCharacter_a("_")
 endfunction
 
 function! s:SelectUnderscore_i() abort
-  normal! T_
-  let end_pos = getpos('.')
-  normal! t_
-  let start_pos = getpos('.')
-  return ['v', start_pos, end_pos]
+    return s:SelectCharacter_i("_")
 endfunction
 
 function! s:SelectDash_a() abort
-  normal! F-
-  let end_pos = getpos('.')
-  normal! f-
-  let start_pos = getpos('.')
-  return ['v', start_pos, end_pos]
+    return s:SelectCharacter_a("-")
 endfunction
 
 function! s:SelectDash_i() abort
-  normal! T-
-  let end_pos = getpos('.')
-  normal! t-
-  let start_pos = getpos('.')
-  return ['v', start_pos, end_pos]
+    return s:SelectCharacter_i("-")
 endfunction
 
 function! s:TextobjSettings() abort
@@ -719,7 +719,6 @@ function! s:TextobjSettings() abort
     \            'select-i': 'i_'
     \        }
     \    })
-
     call textobj#user#plugin('dash', {
     \        '-': {
     \            'sfile': $MYVIMRC,
