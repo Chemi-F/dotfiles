@@ -367,26 +367,26 @@ function! s:PackInit() abort
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
-function! s:optPluginHtml() abort
+function! s:OptPluginHtml() abort
     packadd emmet-vim
     packadd closetag.vim
 endfunction
 
-function! s:optPluginPug() abort
+function! s:OptPluginPug() abort
     packadd vim-pug-complete
 endfunction
 
-function! s:optPluginCss() abort
+function! s:OptPluginCss() abort
     packadd vim-coloresque
 endfunction
 
-function! s:optPluginVue() abort
+function! s:OptPluginVue() abort
     call s:optPluginPug()
     call s:optPluginCss()
     setlocal omnifunc=pugcomplete#CompletePug
 endfunction
 
-function! s:optPluginMarkdown() abort
+function! s:OptPluginMarkdown() abort
     packadd previm
 endfunction
 
@@ -677,7 +677,7 @@ map _ <Plug>(operator-replace)
 
 "vim-textobj-user
 "https://github.com/lucapette/vim-textobj-underscore
-function! s:select_a() abort
+function! s:SelectUnderscore_a() abort
   normal! F_
   let end_pos = getpos('.')
   normal! f_
@@ -685,7 +685,7 @@ function! s:select_a() abort
   return ['v', start_pos, end_pos]
 endfunction
 
-function! s:select_i() abort
+function! s:SelectUnderscore_i() abort
   normal! T_
   let end_pos = getpos('.')
   normal! t_
@@ -693,7 +693,7 @@ function! s:select_i() abort
   return ['v', start_pos, end_pos]
 endfunction
 
-function! s:select-a() abort
+function! s:SelectDash_a() abort
   normal! F-
   let end_pos = getpos('.')
   normal! f-
@@ -701,7 +701,7 @@ function! s:select-a() abort
   return ['v', start_pos, end_pos]
 endfunction
 
-function! s:select-i() abort
+function! s:SelectDash_i() abort
   normal! T-
   let end_pos = getpos('.')
   normal! t-
@@ -709,23 +709,32 @@ function! s:select-i() abort
   return ['v', start_pos, end_pos]
 endfunction
 
-call textobj#user#plugin('underscore', {
-\        '-': {
-\            'select-a-function': 's:select_a',
-\            'select-a': 'a_',
-\            'select-i-function': 's:select_i',
-\            'select-i': 'i_'
-\        }
-\    })
+function! s:TextobjSettings() abort
+    call textobj#user#plugin('underscore', {
+    \        '-': {
+    \            'sfile': $MYVIMRC,
+    \            'select-a-function': 's:SelectUnderscore_a',
+    \            'select-a': 'a_',
+    \            'select-i-function': 's:SelectUnderscore_i',
+    \            'select-i': 'i_'
+    \        }
+    \    })
 
-call textobj#user#plugin('dash', {
-\        '-': {
-\            'select-a-function': 's:select-a',
-\            'select-a': 'a-',
-\            'select-i-function': 's:select-i',
-\            'select-i': 'i-'
-\        }
-\    })
+    call textobj#user#plugin('dash', {
+    \        '-': {
+    \            'sfile': $MYVIMRC,
+    \            'select-a-function': 's:SelectDash_a',
+    \            'select-a': 'a-',
+    \            'select-i-function': 's:SelectDash_i',
+    \            'select-i': 'i-'
+    \        }
+    \    })
+endfunction
+
+augroup textobjAutocmd
+    autocmd!
+    autocmd VimEnter * call s:TextobjSettings()
+augroup END
 
 "open-browser
 let g:openbrowser_no_default_menus = 1
