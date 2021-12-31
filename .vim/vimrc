@@ -395,11 +395,11 @@ command! PackStatus packadd minpac | call minpac#status()
 
 augroup optPlugin
     autocmd!
-    autocmd FileType html call s:optPluginHtml()
-    autocmd FileType pug call s:optPluginPug()
-    autocmd FileType css,scss call s:optPluginCss()
-    autocmd FileType vue call s:optPluginVue()
-    autocmd FileType markdown call s:optPluginMarkdown()
+    autocmd FileType html call s:OptPluginHtml()
+    autocmd FileType pug call s:OptPluginPug()
+    autocmd FileType css,scss call s:OptPluginCss()
+    autocmd FileType vue call s:OptPluginVue()
+    autocmd FileType markdown call s:OptPluginMarkdown()
     autocmd CmdUndefined Fern packadd fern.vim
     autocmd CmdUndefined QuickRun packadd vim-quickrun
 augroup END
