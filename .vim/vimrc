@@ -207,7 +207,7 @@ set wildmenu
 "27 various
 set signcolumn=yes
 set viminfo='50,<500,s100,h
-execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/.viminfo'
+execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/viminfo'
 
 if executable('rg')
     set grepprg=rg\ --vimgrep\ --hidden
@@ -441,7 +441,7 @@ let g:lightline = {
 \           'right': [ ['lineinfo'] ],
 \       },
 \       'component': {
-\           'filename': '%f%{%ShowModified()%}',
+\           'filename': '%f%{%ModifiedStr()%}',
 \           'lineinfo': '%2l/%L,%-2c%<',
 \           'filetype': '%{&filetype !=# "" ? &filetype : ""}',
 \       },
@@ -461,7 +461,7 @@ let g:lightline = {
 \       },
 \   }
 
-function! ShowModified() abort
+function! ModifiedStr() abort
     if &modified && &filetype !=# "help" && &buftype !=# "terminal"
         return " %m" 
     else
@@ -471,10 +471,10 @@ endfunction
 
 function! LightlineMode() abort
     return &filetype ==# "help" ? "HELP" :
-\          &filetype ==# "qf" ? "" :
-\          &filetype ==# "ctrlp" ? "" :
-\          &filetype ==# "molder" ? "MOLDER" :
-\          lightline#mode()
+    \      &filetype ==# "qf" ? "" :
+    \      &filetype ==# "ctrlp" ? "" :
+    \      &filetype ==# "molder" ? "MOLDER" :
+    \      lightline#mode()
 endfunction
 
 function! LightlineFugitive() abort
@@ -709,23 +709,23 @@ endfunction
 
 function! s:TextobjSettings() abort
     call textobj#user#plugin('underscore', {
-\            '-': {
-\                'sfile': $MYVIMRC,
-\                'select-a-function': 's:SelectUnderscore_a',
-\                'select-a': 'a_',
-\                'select-i-function': 's:SelectUnderscore_i',
-\                'select-i': 'i_'
-\            }
-\        })
+    \       '-': {
+    \           'sfile': $MYVIMRC,
+    \           'select-a-function': 's:SelectUnderscore_a',
+    \           'select-a': 'a_',
+    \           'select-i-function': 's:SelectUnderscore_i',
+    \           'select-i': 'i_'
+    \       }
+    \   })
     call textobj#user#plugin('dash', {
-\            '-': {
-\                'sfile': $MYVIMRC,
-\                'select-a-function': 's:SelectDash_a',
-\                'select-a': 'a-',
-\                'select-i-function': 's:SelectDash_i',
-\                'select-i': 'i-'
-\            }
-\        })
+    \       '-': {
+    \           'sfile': $MYVIMRC,
+    \           'select-a-function': 's:SelectDash_a',
+    \           'select-a': 'a-',
+    \           'select-i-function': 's:SelectDash_i',
+    \           'select-i': 'i-'
+    \       }
+    \   })
 endfunction
 
 augroup textobjAutocmd
