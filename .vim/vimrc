@@ -381,8 +381,8 @@ function! s:OptPluginCss() abort
 endfunction
 
 function! s:OptPluginVue() abort
-    call s:optPluginPug()
-    call s:optPluginCss()
+    call s:OptPluginPug()
+    call s:OptPluginCss()
 endfunction
 
 function! s:OptPluginMarkdown() abort
