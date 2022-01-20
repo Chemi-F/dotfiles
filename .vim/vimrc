@@ -177,6 +177,7 @@ set termwinsize=6x0
 set title
 set titlestring=%F
 "12 messages and info
+set shortmess-=S
 set showcmd
 set noerrorbells
 set visualbell t_vb=
@@ -618,12 +619,7 @@ augroup END
 "asyncomplete.vim
 set shortmess+=c
 
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-
-augroup asyncompleteAutocmd
-    autocmd!
-    autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
-augroup END
+inoremap <expr> <CR> pumvisible() ? asyncomplete#close_popup() : "\<CR>"
 
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
