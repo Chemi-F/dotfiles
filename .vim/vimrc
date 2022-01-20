@@ -177,7 +177,6 @@ set termwinsize=6x0
 set title
 set titlestring=%F
 "12 messages and info
-set shortmess-=S
 set showcmd
 set noerrorbells
 set visualbell t_vb=
@@ -434,7 +433,7 @@ let g:lightline = {
 \      'active': {
 \           'left' : [ ['mode', 'paste'],
 \                      ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
-\           'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
+\           'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo', 'last_search_count'],
 \                      ['filetype'],
 \                      ['fileencoding_and_fileformat'] ],
 \       },
@@ -449,6 +448,7 @@ let g:lightline = {
 \       'component_function': {
 \           'mode': 'LightlineMode',
 \           'fugitive': 'LightlineFugitive',
+\           'last_search_count': 'LastSearchCount',
 \           'fileencoding_and_fileformat': 'LightlineEncAndFt',
 \           'ctrlpmark': 'CtrlPMark',
 \       },
@@ -468,6 +468,26 @@ function! ModifiedStr() abort
     else
         return ""
     endif
+endfunction
+
+function! LastSearchCount() abort
+    if !v:hlsearch
+        return ''
+    endif
+    let result = searchcount(#{recompute: 0})
+    if empty(result)
+        return ''
+    endif
+    if result.incomplete ==# 1
+        return printf(' /%s [?/??]', @/)
+    elseif result.incomplete ==# 2
+        if result.total > result.maxcount && result.current > result.maxcount
+            return printf(' /%s [>%d/>%d]', @/, result.current, result.total)
+        elseif result.total > result.maxcount
+            return printf(' /%s [%d/>%d]', @/, result.current, result.total)
+        endif
+    endif
+    return printf(' /%s [%d/%d]', @/, result.current, result.total)
 endfunction
 
 function! LightlineMode() abort
