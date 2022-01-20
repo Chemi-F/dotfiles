@@ -431,9 +431,9 @@ let g:ctrlp_status_func = {
 
 let g:lightline = {
 \      'active': {
-\           'left' : [ ['mode', 'paste'],
+\           'left' : [ ['mode', 'paste', 'last_search_count'],
 \                      ['fugitive', 'readonly', 'filename'], ['ctrlpmark'] ],
-\           'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo', 'last_search_count'],
+\           'right': [ ['lsp_errors', 'lsp_warnings', 'lineinfo'],
 \                      ['filetype'],
 \                      ['fileencoding_and_fileformat'] ],
 \       },
@@ -447,8 +447,8 @@ let g:lightline = {
 \       },
 \       'component_function': {
 \           'mode': 'LightlineMode',
-\           'fugitive': 'LightlineFugitive',
 \           'last_search_count': 'LastSearchCount',
+\           'fugitive': 'LightlineFugitive',
 \           'fileencoding_and_fileformat': 'LightlineEncAndFt',
 \           'ctrlpmark': 'CtrlPMark',
 \       },
@@ -470,32 +470,32 @@ function! ModifiedStr() abort
     endif
 endfunction
 
-function! LastSearchCount() abort
-    if !v:hlsearch
-        return ''
-    endif
-    let result = searchcount(#{recompute: 0})
-    if empty(result)
-        return ''
-    endif
-    if result.incomplete ==# 1
-        return printf(' /%s [?/??]', @/)
-    elseif result.incomplete ==# 2
-        if result.total > result.maxcount && result.current > result.maxcount
-            return printf(' /%s [>%d/>%d]', @/, result.current, result.total)
-        elseif result.total > result.maxcount
-            return printf(' /%s [%d/>%d]', @/, result.current, result.total)
-        endif
-    endif
-    return printf(' /%s [%d/%d]', @/, result.current, result.total)
-endfunction
-
 function! LightlineMode() abort
     return &filetype ==# "help" ? "HELP" :
     \      &filetype ==# "qf" ? "" :
     \      &filetype ==# "ctrlp" ? "" :
     \      &filetype ==# "molder" ? "MOLDER" :
     \      lightline#mode()
+endfunction
+
+function! LastSearchCount() abort
+    if !v:hlsearch
+        return ''
+    endif
+    let result = searchcount(#{recompute: v:true})
+    if empty(result)
+        return ''
+    endif
+    if result.incomplete ==# 1
+        return '[?/??]'
+    elseif result.incomplete ==# 2
+        if result.total > result.maxcount && result.current > result.maxcount
+            return printf('[>%d/>%d]', result.current, result.total)
+        elseif result.total > result.maxcount
+            return printf('[%d/>%d]', result.current, result.total)
+        endif
+    endif
+    return printf('[%d/%d]', result.current, result.total)
 endfunction
 
 function! LightlineFugitive() abort
