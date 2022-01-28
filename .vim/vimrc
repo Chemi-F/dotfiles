@@ -621,8 +621,6 @@ let g:lsp_settings_enable_suggestions = 0
 function! s:VimlspSettings() abort
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> gr <plug>(lsp-references)
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
