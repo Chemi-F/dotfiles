@@ -79,6 +79,7 @@ function! s:TerminalWindowToggle() abort
     let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winid}), 0)
     if l:active_terminal_winid == 0
         execute "botright sbuffer " . l:term_list[-1] . "| resize " . &termwinsize[0]
+        setlocal winfixheight
     else
         call win_execute(l:active_terminal_winid,  'q')
     endif
