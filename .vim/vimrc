@@ -366,6 +366,7 @@ function! s:PackInit() abort
     call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
+    call minpac#add('mattn/webapi-vim')
 endfunction
 
 function! s:OptPluginHtml() abort
