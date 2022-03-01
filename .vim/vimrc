@@ -210,11 +210,6 @@ set signcolumn=yes
 set viminfo='50,<500,s100,h
 execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/viminfo'
 
-if executable('rg')
-    set grepprg=rg\ --vimgrep\ --hidden
-    set grepformat=%f:%l:%c:%m
-endif
-
 "Mapping
 nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
@@ -365,6 +360,7 @@ function! s:PackInit() abort
     call minpac#add('kana/vim-textobj-user')
     call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
+    call minpac#add('kyoh86/vim-ripgrep')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
@@ -656,27 +652,6 @@ let g:vue_pre_processors = ['pug', 'typescript', 'scss']
 "vim-gitgutter
 let g:gitgutter_map_keys = 0
 
-"quickrun
-let g:quickrun_config = {
-\       '_': {
-\           'outputter': 'buffer',
-\           'outputter/buffer/name': "[Quickrun Output]",
-\           'outputter/buffer/split': ":botright 8",
-\           'outputter/buffer/running_mark': "[Runninng...]",
-\           'runner': 'job',
-\       },
-\       'tex' : {
-\           'command': 'lualatex',
-\           'exec': ['%c -interaction=nonstopmode -file-line-error %s']
-\       },
-\       'scss' : {
-\           'command': 'sass',
-\           'exec': ['%c %s:%s.css']
-\       }
-\   }
-
-nnoremap <Leader>rq :<C-u>QuickRun<CR>
-
 augroup quickrunAutocmd
     autocmd!
     autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'quickrun') | q! | endif
@@ -753,6 +728,30 @@ let g:openbrowser_no_default_menus = 1
 
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
+
+"vim-ripgrep
+command! -nargs=* -complete=file Ripgrep :call ripgrep#search(<q-args>)
+
+"quickrun
+let g:quickrun_config = {
+\       '_': {
+\           'outputter': 'buffer',
+\           'outputter/buffer/name': "[Quickrun Output]",
+\           'outputter/buffer/split': ":botright 8",
+\           'outputter/buffer/running_mark': "[Runninng...]",
+\           'runner': 'job',
+\       },
+\       'tex' : {
+\           'command': 'lualatex',
+\           'exec': ['%c -interaction=nonstopmode -file-line-error %s']
+\       },
+\       'scss' : {
+\           'command': 'sass',
+\           'exec': ['%c %s:%s.css']
+\       }
+\   }
+
+nnoremap <Leader>rq :<C-u>QuickRun<CR>
 
 "Colorscheme
 colorscheme iceberg
