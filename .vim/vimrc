@@ -341,6 +341,7 @@ function! s:PackInit() abort
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Language
+    call minpac#add('editorconfig/editorconfig-vim')
     call minpac#add('digitaltoad/vim-pug')
     call minpac#add('posva/vim-vue')
     call minpac#add('mattn/emmet-vim', {'type': 'opt'})
@@ -646,16 +647,19 @@ smap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
+"editorconfig-vim
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+
+augroup editorconfigAutocmd
+    autocmd!
+    autocmd FileType gitcommit let b:EditorConfig_disable = 1
+augroup END
+
 "vim-vue
 let g:vue_pre_processors = ['pug', 'typescript', 'scss']
 
 "vim-gitgutter
 let g:gitgutter_map_keys = 0
-
-augroup quickrunAutocmd
-    autocmd!
-    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'quickrun') | q! | endif
-augroup END
 
 "auto-pairs
 nnoremap <Leader>( :<C-u>call AutoPairsToggle()<CR>
@@ -730,7 +734,7 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 "vim-ripgrep
-command! -nargs=* -complete=file Ripgrep :call ripgrep#search(<q-args>)
+command! -nargs=* -complete=file Rg :call ripgrep#search(<q-args>)
 
 "quickrun
 let g:quickrun_config = {
@@ -752,6 +756,11 @@ let g:quickrun_config = {
 \   }
 
 nnoremap <Leader>rq :<C-u>QuickRun<CR>
+
+augroup quickrunAutocmd
+    autocmd!
+    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'quickrun') | q! | endif
+augroup END
 
 "Colorscheme
 colorscheme iceberg
