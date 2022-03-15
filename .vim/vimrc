@@ -31,13 +31,13 @@ function! s:ToggleQuickfix(prefix) abort
     endif
 endfunction
 
-function! s:AdjustWindowHeight(minHeight, maxHeight) abort
-    execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
-endfunction
+"function! s:AdjustWindowHeight(minHeight, maxHeight) abort
+"    execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
+"endfunction
 
 function! s:QuickfixSettings() abort
     setlocal nowrap
-    call s:AdjustWindowHeight(3,8)
+    execute "resize 6"
 endfunction
 
 function! s:GrepSettings() abort
@@ -341,7 +341,6 @@ function! s:PackInit() abort
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Language
-    call minpac#add('editorconfig/editorconfig-vim')
     call minpac#add('digitaltoad/vim-pug')
     call minpac#add('posva/vim-vue')
     call minpac#add('mattn/emmet-vim', {'type': 'opt'})
@@ -646,14 +645,6 @@ smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
 smap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
-
-"editorconfig-vim
-let g:EditorConfig_exclude_patterns = ['fugitive://.*']
-
-augroup editorconfigAutocmd
-    autocmd!
-    autocmd FileType gitcommit let b:EditorConfig_disable = 1
-augroup END
 
 "vim-vue
 let g:vue_pre_processors = ['pug', 'typescript', 'scss']
