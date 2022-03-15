@@ -361,6 +361,7 @@ function! s:PackInit() abort
     call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
     call minpac#add('kyoh86/vim-ripgrep')
+    call minpac#add('thinca/vim-qfhl')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
