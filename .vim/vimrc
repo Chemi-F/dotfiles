@@ -329,7 +329,6 @@ function! s:PackInit() abort
     "Filer
     call minpac#add('mattn/vim-molder')
     call minpac#add('mattn/vim-molder-operations')
-    call minpac#add('lambdalisue/fern.vim', {'type': 'opt'})
     "Fuzzy finder
     call minpac#add('ctrlpvim/ctrlp.vim')
     call minpac#add('mattn/ctrlp-matchfuzzy')
@@ -398,7 +397,6 @@ augroup optPlugin
     autocmd FileType css,scss call s:OptPluginCss()
     autocmd FileType vue call s:OptPluginVue()
     autocmd FileType markdown call s:OptPluginMarkdown()
-    autocmd CmdUndefined Fern packadd fern.vim
     autocmd CmdUndefined QuickRun packadd vim-quickrun
 augroup END
 
@@ -569,19 +567,6 @@ endfunction
 augroup vimMolderAutocmd
     autocmd!
     autocmd FileType molder call s:VimMolderSettings()
-augroup END
-
-"fern
-function! s:FernSettings()
-    setlocal signcolumn=no
-    nmap <buffer> <Leader>. <Plug>(fern-action-hidden)
-endfunction
-
-nnoremap <silent> <Leader>f :<C-u>Fern . -reveal=% -drawer -stay -toggle<CR>
-
-augroup fernAutocmd
-    autocmd!
-    autocmd FileType fern call s:FernSettings()
 augroup END
 
 "CtrlP
