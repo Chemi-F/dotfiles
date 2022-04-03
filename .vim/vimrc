@@ -108,6 +108,19 @@ function! s:SetTerminalMap(shell_name = "") abort
     execute "tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen('" . a:shell_name . "')<CR>"
 endfunction
 
+function! s:QuitWindow() abort
+    let l:cur_bufnr = bufnr()
+    let l:new_bufnr = bufadd('')
+    execute "buffer " . l:new_bufnr
+    try
+        execute "bdelete " . l:cur_bufnr
+    catch
+        execute "buffer " . l:cur_bufnr . " | bdelete " . l:new_bufnr
+    endtry
+endfunction
+
+"autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
+
 "Default plugin disable
 let g:loaded_zip = 1
 let g:loaded_zipPlugin = 1
@@ -304,7 +317,6 @@ augroup myAutocmd
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
     autocmd QuickFixCmdPost *grep*,make if len(getqflist()) != 0 | cwindow | endif
 
-    autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
     autocmd TerminalWinOpen * call s:TerminalModeSettings()
 augroup END
 
