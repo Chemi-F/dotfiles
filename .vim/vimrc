@@ -391,8 +391,10 @@ function! s:OptPluginCss() abort
 endfunction
 
 function! s:OptPluginVue() abort
-    packadd vim-vue
+    "call s:OptPluginHtml()
+    call s:OptPluginPug()
     call s:OptPluginCss()
+    packadd vim-vue
 endfunction
 
 function! s:OptPluginMarkdown() abort
