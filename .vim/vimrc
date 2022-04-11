@@ -352,12 +352,12 @@ function! s:PackInit() abort
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Language
-    call minpac#add('digitaltoad/vim-pug')
-    call minpac#add('posva/vim-vue')
     call minpac#add('mattn/emmet-vim', {'type': 'opt'})
     call minpac#add('alvan/closetag.vim', {'type': 'opt'})
+    call minpac#add('digitaltoad/vim-pug', {'type': 'opt'})
     call minpac#add('dNitro/vim-pug-complete', {'type': 'opt'})
     call minpac#add('gko/vim-coloresque', {'type': 'opt'})
+    call minpac#add('posva/vim-vue', {'type': 'opt'})
     call minpac#add('previm/previm', {'type': 'opt'})
     "Git
     call minpac#add('tpope/vim-fugitive')
@@ -382,6 +382,7 @@ function! s:OptPluginHtml() abort
 endfunction
 
 function! s:OptPluginPug() abort
+    packadd vim-pug
     packadd vim-pug-complete
 endfunction
 
@@ -390,7 +391,7 @@ function! s:OptPluginCss() abort
 endfunction
 
 function! s:OptPluginVue() abort
-    call s:OptPluginPug()
+    packadd vim-vue
     call s:OptPluginCss()
 endfunction
 
