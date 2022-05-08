@@ -3,6 +3,5 @@
 set columns=120
 set lines=30
 "10 GUI
-set guifont=HackGen\ Console:h13
 set guioptions-=egmrLtT
 set guioptions+=!

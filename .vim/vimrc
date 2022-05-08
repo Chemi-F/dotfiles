@@ -19,25 +19,25 @@ endfunction
 
 function! s:EditActualFile(filename) abort
     let l:actualFilename = resolve(expand(a:filename))
-    execute "e " . l:actualFilename
+    execute 'e ' . l:actualFilename
 endfunction
 
 function! s:ToggleQuickfix(prefix) abort
     let l:nr = winnr('$')
-    execute a:prefix . "window"
+    execute a:prefix . 'window'
     let l:nr2 = winnr('$')
     if l:nr == l:nr2
-        execute a:prefix . "close"
+        execute a:prefix . 'close'
     endif
 endfunction
 
 "function! s:AdjustWindowHeight(minHeight, maxHeight) abort
-"    execute max([min([line("$"), a:maxHeight]), a:minHeight]) . "wincmd _"
+"    execute max([min([line('$'), a:maxHeight]), a:minHeight]) . 'wincmd _'
 "endfunction
 
 function! s:QuickfixSettings() abort
     setlocal nowrap
-    execute "resize 6"
+    execute 'resize 6'
 endfunction
 
 function! s:GrepSettings() abort
@@ -64,11 +64,11 @@ function! s:TerminalOpen(shell_name) abort
     if !empty(l:term_list)
         let l:active_terminal_winnr = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winnr}), 0)
         if l:active_terminal_winnr != 0
-            execute l:active_terminal_winnr . "wincmd w | terminal ++curwin " . a:shell_name
+            execute l:active_terminal_winnr . 'wincmd w | terminal ++curwin ' . a:shell_name
             return
         endif
     endif
-    execute "botright terminal " . a:shell_name
+    execute 'botright terminal ' . a:shell_name
 endfunction
 
 function! s:TerminalWindowToggle() abort
@@ -78,7 +78,7 @@ function! s:TerminalWindowToggle() abort
     endif
     let l:active_terminal_winid = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winid}), 0)
     if l:active_terminal_winid == 0
-        execute "botright sbuffer " . l:term_list[-1] . "| resize " . &termwinsize[0]
+        execute 'botright sbuffer ' . l:term_list[-1] . '| resize ' . &termwinsize[0]
         setlocal winfixheight
     else
         call win_execute(l:active_terminal_winid,  'q')
@@ -93,29 +93,29 @@ function! s:TerminalActiveBufferToggle() abort
     endif
     let l:term_list_active_index = index(l:term_list, l:active_terminal_bufnr)
     let l:active_terminal_winnr = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.winnr}), 0)
-    execute l:active_terminal_winnr . "wincmd w | buffer " . l:term_list[l:term_list_active_index - 1]
+    execute l:active_terminal_winnr . 'wincmd w | buffer ' . l:term_list[l:term_list_active_index - 1]
 endfunction
 
 function! s:TerminalQuit() abort
     let l:active_terminal_bufnr = get(map(filter(getwininfo(), 'v:val.terminal == 1'), {_, key -> key.bufnr}), 0)
     call s:TerminalActiveBufferToggle()
-    execute "bdelete! " . l:active_terminal_bufnr
+    execute 'bdelete! ' . l:active_terminal_bufnr
 endfunction
 
-function! s:SetTerminalMap(shell_name = "") abort
-    execute "nnoremap <silent> <Leader>to :<C-u>call <SID>TerminalOpen('" . a:shell_name . "')<CR>"
-    execute "tnoremap <silent> <C-w>to <C-w>:<C-u>call <SID>TerminalOpen('" . a:shell_name . "')<CR>"
-    execute "tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen('" . a:shell_name . "')<CR>"
+function! s:SetTerminalMap(shell_name = '') abort
+    execute 'nnoremap <silent> <Leader>to :<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
+    execute 'tnoremap <silent> <C-w>to <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
+    execute 'tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
 endfunction
 
 function! s:QuitWindow() abort
     let l:cur_bufnr = bufnr()
     let l:new_bufnr = bufadd('')
-    execute "buffer " . l:new_bufnr
+    execute 'buffer ' . l:new_bufnr
     try
-        execute "bdelete " . l:cur_bufnr
+        execute 'bdelete ' . l:cur_bufnr
     catch
-        execute "buffer " . l:cur_bufnr . " | bdelete " . l:new_bufnr
+        execute 'buffer ' . l:cur_bufnr . ' | bdelete ' . l:new_bufnr
     endtry
 endfunction
 
@@ -144,7 +144,7 @@ if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
     let s:vimdata_dir = expand('~/vimfiles')
     let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    call s:SetTerminalMap("powershell")
+    call s:SetTerminalMap('powershell')
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
@@ -239,8 +239,8 @@ nnoremap <Leader>tl :<C-u>tags<CR>
 nnoremap <Leader>tm <C-w>T
 nnoremap <silent> <Leader><C-l> :<C-u>nohlsearch<CR><C-l>
 "http://deris.hatenablog.jp/entry/20130404/1365086716
-nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Leader>o", v:count1)<CR>
-nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Leader>O", v:count1)<CR>
+nnoremap <silent> <Leader>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set('<Leader>o', v:count1)<CR>
+nnoremap <silent> <Leader>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set('<Leader>O', v:count1)<CR>
 nnoremap <silent> <Leader>. :<C-u>call <SID>EditActualFile($MYVIMRC)<CR>
 nnoremap <silent> <Leader>g. :<C-u>call <SID>EditActualFile($MYGVIMRC)<CR>
 nnoremap <silent> <Left> <C-w><
@@ -258,8 +258,8 @@ nnoremap [c :<C-u>cprevious<CR>
 nnoremap ]c :<C-u>cnext<CR>
 nnoremap [l :<C-u>lprevious<CR>
 nnoremap ]l :<C-u>lnext<CR>
-nnoremap <silent> co :<C-u>call <SID>ToggleQuickfix("c")<CR>
-nnoremap <silent> <Leader>co :<C-u>call <SID>ToggleQuickfix("l")<CR>
+nnoremap <silent> co :<C-u>call <SID>ToggleQuickfix('c')<CR>
+nnoremap <silent> <Leader>co :<C-u>call <SID>ToggleQuickfix('l')<CR>
 nnoremap <silent> <Leader>tw :<C-u>call <SID>TerminalWindowToggle()<CR>
 nnoremap <silent> <Leader>tt :<C-u>call <SID>TerminalActiveBufferToggle()<CR>
 nnoremap <silent> <Leader>tq :<C-u>call <SID>TerminalQuit()<CR>
@@ -424,11 +424,11 @@ function! s:HelplangToggle() abort
     if s:is_helplang_ja
         set helplang=en,ja
         let s:is_helplang_ja = 0
-        echo "Help language is English"
+        echo 'Help language is English'
     else
         set helplang=ja,en
         let s:is_helplang_ja = 1
-        echo "Help language is Japanese"
+        echo 'Help language is Japanese'
     endif
 endfunction
 
@@ -474,18 +474,18 @@ let g:lightline = {
 \   }
 
 function! ModifiedStr() abort
-    if &modified && &filetype !=# "help" && &buftype !=# "terminal"
-        return " %m" 
+    if &modified && &filetype !=# 'help' && &buftype !=# 'terminal'
+        return ' %m' 
     else
-        return ""
+        return ''
     endif
 endfunction
 
 function! LightlineMode() abort
-    return &filetype ==# "help" ? "HELP" :
-    \      &filetype ==# "qf" ? "" :
-    \      &filetype ==# "ctrlp" ? "" :
-    \      &filetype ==# "molder" ? "MOLDER" :
+    return &filetype ==# 'help' ? 'HELP' :
+    \      &filetype ==# 'qf' ? '' :
+    \      &filetype ==# 'ctrlp' ? '' :
+    \      &filetype ==# 'molder' ? 'MOLDER' :
     \      lightline#mode()
 endfunction
 
@@ -510,22 +510,22 @@ function! LastSearchCount() abort
 endfunction
 
 function! LightlineFugitive() abort
-    if winwidth(0) > 119 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# "terminal"
+    if winwidth(0) > 119 && &filetype !~# '\v(help|qf|ctrlp|quickrun)' && &buftype !=# 'terminal'
         if exists('*FugitiveHead')
             let l:branch = FugitiveHead()
-            return branch !=# "" ? " ". l:branch : ""
+            return branch !=# '' ? ' '. l:branch : ''
         endif
     endif
-    return ""
+    return ''
 endfunction
 
 function! LightlineEncAndFt() abort
-    if winwidth(0) > 70 && &buftype !=# "terminal"
-        let l:encoding = &fileencoding !=# "" ? &fileencoding : &encoding
+    if winwidth(0) > 70 && &buftype !=# 'terminal'
+        let l:encoding = &fileencoding !=# '' ? &fileencoding : &encoding
         let l:format = &fileformat
-        return l:encoding . " " . l:format
+        return l:encoding . ' ' . l:format
     endif
-    return ""
+    return ''
 endfunction
 
 function! LightlineLSPWarnings() abort
@@ -602,13 +602,9 @@ let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
-let g:lsp_settings =  {
+let g:lsp_settings = {
 \       'eslint-language-server': {
-\           'allowlist': [ 'javascript', 'typescript', 'vue' ]
-\       },
-\       'efm-langserver': {
-\           'disabled': v:false,
-\           'allowlist': [ 'pug' ]
+\           'allowlist': ['javascript', 'typescript', 'vue']
 \       }
 \   }
 let g:lsp_settings_filetype_javascript = ['javascript-language-server', 'eslint-language-server']
@@ -622,7 +618,7 @@ function! s:VimlspSettings() abort
     nmap <buffer> <Leader>rn <plug>(lsp-rename)
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    if &filetype != "vim" | nmap <buffer> K <plug>(lsp-hover) | endif
+    if &filetype != 'vim' | nmap <buffer> K <plug>(lsp-hover) | endif
     inoremap <buffer> <expr> <C-f> lsp#scroll(+4)
     inoremap <buffer> <expr> <C-b> lsp#scroll(-4)
 endfunction
@@ -635,7 +631,7 @@ augroup END
 "asyncomplete.vim
 set shortmess+=c
 
-inoremap <expr> <CR> pumvisible() ? asyncomplete#close_popup() : "\<CR>"
+inoremap <expr> <CR> pumvisible() ? asyncomplete#close_popup() : '<CR>'
 
 "vim-vsnip
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -662,35 +658,35 @@ map _ <Plug>(operator-replace)
 "vim-textobj-user
 "https://github.com/lucapette/vim-textobj-underscore
 function! s:SelectCharacter_a(char) abort
-    execute "normal! F" . a:char
+    execute 'normal! F' . a:char
     let end_pos = getpos('.')
-    execute "normal! f" . a:char
+    execute 'normal! f' . a:char
     let start_pos = getpos('.')
     return ['v', start_pos, end_pos]
 endfunction
 
 function! s:SelectCharacter_i(char) abort
-    execute "normal! T" . a:char
+    execute 'normal! T' . a:char
     let end_pos = getpos('.')
-    execute "normal! t" . a:char
+    execute 'normal! t' . a:char
     let start_pos = getpos('.')
     return ['v', start_pos, end_pos]
 endfunction
 
 function! s:SelectUnderscore_a() abort
-    return s:SelectCharacter_a("_")
+    return s:SelectCharacter_a('_')
 endfunction
 
 function! s:SelectUnderscore_i() abort
-    return s:SelectCharacter_i("_")
+    return s:SelectCharacter_i('_')
 endfunction
 
 function! s:SelectDash_a() abort
-    return s:SelectCharacter_a("-")
+    return s:SelectCharacter_a('-')
 endfunction
 
 function! s:SelectDash_i() abort
-    return s:SelectCharacter_i("-")
+    return s:SelectCharacter_i('-')
 endfunction
 
 function! s:TextobjSettings() abort
@@ -732,9 +728,9 @@ command! -nargs=* -complete=file Rg :call ripgrep#search(<q-args>)
 let g:quickrun_config = {
 \       '_': {
 \           'outputter': 'buffer',
-\           'outputter/buffer/name': "[Quickrun Output]",
-\           'outputter/buffer/split': ":botright 8",
-\           'outputter/buffer/running_mark': "[Runninng...]",
+\           'outputter/buffer/name': '[Quickrun Output]',
+\           'outputter/buffer/split': ':botright 8',
+\           'outputter/buffer/running_mark': '[Runninng...]',
 \           'runner': 'job',
 \       },
 \       'tex' : {
@@ -760,6 +756,11 @@ let g:lightline['colorscheme'] = 'iceberg'
 
 syntax enable
 filetype plugin indent on
+
+let s:vimrc_local = s:vimfiles_dir . '/vimrc_local'
+if filereadable(s:vimrc_local)
+    execute 'source ' . s:vimrc_local
+endif
 
 augroup delayAutocmd
     autocmd!
