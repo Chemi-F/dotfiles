@@ -31,10 +31,6 @@ function! s:ToggleQuickfix(prefix) abort
     endif
 endfunction
 
-"function! s:AdjustWindowHeight(minHeight, maxHeight) abort
-"    execute max([min([line('$'), a:maxHeight]), a:minHeight]) . 'wincmd _'
-"endfunction
-
 function! s:QuickfixSettings() abort
     setlocal nowrap
     execute 'resize 6'
@@ -306,7 +302,7 @@ augroup myAutocmd
     autocmd!
     autocmd ColorScheme * highlight clear Cursorline
     autocmd InsertLeave * set nopaste
-    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit' | execute "normal! g`\"" | endif
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line('$') && &ft !~# 'commit' | execute 'normal! g`"' | endif
 
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
@@ -373,27 +369,27 @@ function! s:PackInit() abort
     call minpac#add('tyru/open-browser.vim')
     call minpac#add('kyoh86/vim-ripgrep')
     call minpac#add('thinca/vim-qfhl')
+    call minpac#add('thinca/vim-localrc')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
-function! s:OptPluginHtml() abort
+function! OptPluginHtml() abort
     packadd emmet-vim
     packadd closetag.vim
 endfunction
 
-function! s:OptPluginPug() abort
+function! OptPluginPug() abort
     packadd vim-pug
     packadd vim-pug-complete
 endfunction
 
-function! s:OptPluginCss() abort
+function! OptPluginCss() abort
     packadd vim-coloresque
 endfunction
 
-function! s:OptPluginVue() abort
-    "call s:OptPluginHtml()
-    call s:OptPluginPug()
-    call s:OptPluginCss()
+function! OptPluginVue() abort
+    call OptPluginHtml()
+    call OptPluginCss()
     packadd vim-vue
 endfunction
 
@@ -407,10 +403,10 @@ command! PackStatus packadd minpac | call minpac#status()
 
 augroup optPlugin
     autocmd!
-    autocmd FileType html call s:OptPluginHtml()
-    autocmd FileType pug call s:OptPluginPug()
-    autocmd FileType css,scss call s:OptPluginCss()
-    autocmd FileType vue call s:OptPluginVue()
+    autocmd FileType html call OptPluginHtml()
+    autocmd FileType pug call OptPluginPug()
+    autocmd FileType css,scss call OptPluginCss()
+    autocmd FileType vue call OptPluginVue()
     autocmd FileType markdown call s:OptPluginMarkdown()
     autocmd CmdUndefined QuickRun packadd vim-quickrun
 augroup END
@@ -602,14 +598,6 @@ let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
-let g:lsp_settings = {
-\       'eslint-language-server': {
-\           'allowlist': ['javascript', 'typescript', 'vue']
-\       }
-\   }
-let g:lsp_settings_filetype_javascript = ['javascript-language-server', 'eslint-language-server']
-let g:lsp_settings_filetype_typescript = ['typescript-language-server', 'eslint-language-server']
-let g:lsp_settings_filetype_vue = ['vls', 'eslint-language-server']
 let g:lsp_settings_enable_suggestions = 0
 
 function! s:VimlspSettings() abort
@@ -642,9 +630,6 @@ smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
 smap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
-
-"vim-vue
-let g:vue_pre_processors = ['pug', 'typescript', 'scss']
 
 "vim-gitgutter
 let g:gitgutter_map_keys = 0
@@ -757,7 +742,7 @@ let g:lightline['colorscheme'] = 'iceberg'
 syntax enable
 filetype plugin indent on
 
-let s:vimrc_local = s:vimfiles_dir . '/vimrc_local'
+let s:vimrc_local = s:vimfiles_dir . '/vimrc_machine_local'
 if filereadable(s:vimrc_local)
     execute 'source ' . s:vimrc_local
 endif
