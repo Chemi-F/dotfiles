@@ -369,7 +369,6 @@ function! s:PackInit() abort
     call minpac#add('tyru/open-browser.vim')
     call minpac#add('kyoh86/vim-ripgrep')
     call minpac#add('thinca/vim-qfhl')
-    call minpac#add('vim-test/vim-test')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
@@ -709,9 +708,6 @@ vmap gx <Plug>(openbrowser-smart-search)
 "vim-ripgrep
 command! -nargs=* -complete=file Rg :call ripgrep#search(<q-args>)
 
-"vim-test
-let g:test#strategy="asyncrun_background"
-
 "quickrun
 let g:quickrun_config = {
 \       '_': {
@@ -745,12 +741,12 @@ let g:lightline['colorscheme'] = 'iceberg'
 syntax enable
 filetype plugin indent on
 
-let s:vimrc_machine_local_path = s:vimfiles_dir . '/vimrc_machine_local'
+let s:vimrc_machine_local_path = s:vimfiles_dir . '/vimrc_local'
 if filereadable(s:vimrc_machine_local_path)
     execute 'source ' . s:vimrc_machine_local_path
 endif
 
-let s:vimrc_project_local_path = getcwd() . '/vimrc_project_local'
+let s:vimrc_project_local_path = getcwd() . '/.vim_local' . '/vimrc'
 if filereadable(s:vimrc_project_local_path)
     execute 'source ' . s:vimrc_project_local_path
 endif
