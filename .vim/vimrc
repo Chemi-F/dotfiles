@@ -746,7 +746,7 @@ if filereadable(s:vimrc_machine_local_path)
     execute 'source ' . s:vimrc_machine_local_path
 endif
 
-let s:vimrc_project_local_path = getcwd() . '/.vim_local' . '/vimrc'
+let s:vimrc_project_local_path = getcwd() . '/.vim_local/vimrc'
 if filereadable(s:vimrc_project_local_path)
     execute 'source ' . s:vimrc_project_local_path
 endif
