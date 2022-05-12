@@ -9,8 +9,10 @@ tools:
     lint-stdin: true
     lint-formats:
       - '%f:%l:%c: %m'
-    root-markers:
-      - setup.cfg
+
+  autopep8: &autopep8
+    format-command: 'autopep8 -'
+    format-stdin: true
 
   pug-lint: &pug-lint
     lint-command: 'pug-lint -r inline'
@@ -21,6 +23,7 @@ tools:
 languages:
   python:
     - <<: *flake8
+    - <<: *autopep8
 
   pug:
     - <<: *pug-lint

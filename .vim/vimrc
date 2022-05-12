@@ -372,7 +372,7 @@ function! s:PackInit() abort
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
-function! OptPluginHtml() abort
+function! s:OptPluginHtml() abort
     packadd emmet-vim
     packadd closetag.vim
 endfunction
@@ -387,7 +387,7 @@ function! OptPluginCss() abort
 endfunction
 
 function! OptPluginVue() abort
-    call OptPluginHtml()
+    call s:OptPluginHtml()
     call OptPluginCss()
     packadd vim-vue
 endfunction
@@ -402,7 +402,7 @@ command! PackStatus packadd minpac | call minpac#status()
 
 augroup optPlugin
     autocmd!
-    autocmd FileType html call OptPluginHtml()
+    autocmd FileType html call s:OptPluginHtml()
     autocmd FileType pug call OptPluginPug()
     autocmd FileType css,scss call OptPluginCss()
     autocmd FileType vue call OptPluginVue()
@@ -466,6 +466,7 @@ let g:lightline = {
 \           'lsp_errors': 'error',
 \           'lsp_warnings': 'warning',
 \       },
+\       'colorscheme': 'iceberg'
 \   }
 
 function! ModifiedStr() abort
@@ -736,7 +737,6 @@ augroup END
 
 "Colorscheme
 colorscheme iceberg
-let g:lightline['colorscheme'] = 'iceberg'
 
 syntax enable
 filetype plugin indent on
