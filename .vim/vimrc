@@ -137,8 +137,8 @@ let g:vim_indent_cont = 0
 let g:mapleader = "\<Space>"
 
 let s:root_markers = [
-\       '.vim_local',
-\       '.vscode',
+\       '.vim_local/',
+\       '.vscode/',
 \       '.git',
 \       '.git/',
 \       '.svn',
