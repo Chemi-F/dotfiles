@@ -136,6 +136,16 @@ let g:did_install_syntax_menu = 1
 let g:vim_indent_cont = 0
 let g:mapleader = "\<Space>"
 
+let s:root_markers = [
+\       '.vim_local',
+\       '.vscode',
+\       '.git',
+\       '.git/',
+\       '.svn',
+\       '.hg',
+\       '.bzr'
+\   ]
+
 if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
     let s:vimdata_dir = expand('~/vimfiles')
@@ -583,7 +593,7 @@ augroup END
 "CtrlP
 let g:ctrlp_match_window = 'min:8,max:8'
 let g:ctrlp_cache_dir = s:vimfiles_dir . '/cache/ctrlp'
-let g:ctrlp_root_markers = ['.vim_local', '.vscode']
+let g:ctrlp_root_markers = s:root_markers
 let g:ctrlp_custom_ignore = {
 \       'dir':  '\v([\/]\.(git|hg|svn))|node_modules$',
 \       'file': '\v\.(exe|so|dll)$',
@@ -600,6 +610,7 @@ let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
 let g:lsp_settings_enable_suggestions = 0
+let g:lsp_settings_root_markers = s:root_markers
 
 function! s:VimlspSettings() abort
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
@@ -739,9 +750,6 @@ augroup END
 "Colorscheme
 colorscheme iceberg
 
-syntax enable
-filetype plugin indent on
-
 let s:vimrc_machine_local_path = s:vimfiles_dir . '/vimrc_local'
 if filereadable(s:vimrc_machine_local_path)
     execute 'source ' . s:vimrc_machine_local_path
@@ -751,6 +759,9 @@ let s:vimrc_project_local_path = getcwd() . '/.vim_local/vimrc'
 if filereadable(s:vimrc_project_local_path)
     execute 'source ' . s:vimrc_project_local_path
 endif
+
+syntax enable
+filetype plugin indent on
 
 augroup delayAutocmd
     autocmd!
