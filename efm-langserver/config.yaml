@@ -5,10 +5,17 @@ lint-debounce: 1s
 
 tools:
   flake8: &flake8
-    lint-command: 'flake8 --stdin-display-name ${INPUT} -'
+    lint-command: 'flake8 --format=%(path)s:%(row)d:%(col)d:%(code)s:%(code)s:%(text)s --stdin-display-name ${INPUT} -'
     lint-stdin: true
     lint-formats:
-      - '%f:%l:%c: %m'
+      - '%f:%l:%c:%t%n:%m'
+    lint-category-map:
+      C: I
+      N: I
+      Q: I
+      W: W
+      E: E
+      F: E
 
   autopep8: &autopep8
     format-command: 'autopep8 -'
