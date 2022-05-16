@@ -719,6 +719,8 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 "vim-ripgrep
+let g:ripgrep#root_marks = s:root_markers
+
 command! -nargs=* -complete=file Rg :call ripgrep#search(<q-args>)
 
 "quickrun
@@ -729,14 +731,6 @@ let g:quickrun_config = {
 \           'outputter/buffer/split': ':botright 8',
 \           'outputter/buffer/running_mark': '[Runninng...]',
 \           'runner': 'job',
-\       },
-\       'tex' : {
-\           'command': 'lualatex',
-\           'exec': ['%c -interaction=nonstopmode -file-line-error %s']
-\       },
-\       'scss' : {
-\           'command': 'sass',
-\           'exec': ['%c %s:%s.css']
 \       }
 \   }
 
