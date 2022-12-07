@@ -98,7 +98,7 @@ function! s:TerminalQuit() abort
     execute 'bdelete! ' . l:active_terminal_bufnr
 endfunction
 
-function! s:SetTerminalMap(shell_name = '') abort
+function! SetTerminalMap(shell_name = '') abort
     execute 'nnoremap <silent> <Leader>to :<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
     execute 'tnoremap <silent> <C-w>to <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
     execute 'tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
@@ -150,12 +150,12 @@ if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
     let s:vimdata_dir = expand('~/vimfiles')
     let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    call s:SetTerminalMap('powershell')
+    call SetTerminalMap('powershell')
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
     set shell=/bin/bash
-    call s:SetTerminalMap()
+    call SetTerminalMap()
 endif
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
