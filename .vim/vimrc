@@ -149,14 +149,11 @@ let s:root_markers = [
 if has('win32')
     let s:vimfiles_dir = expand('~/vimfiles')
     let s:vimdata_dir = expand('~/vimfiles')
-    let $PATH = s:vimfiles_dir . '\tool;' . $PATH
-    call SetTerminalMap('powershell')
 else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
-    set shell=/bin/bash
-    call SetTerminalMap()
 endif
+let $PATH = s:vimfiles_dir . '\tool;' . $PATH
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
@@ -609,6 +606,7 @@ let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_float_delay = 200
 let g:lsp_diagnostics_signs_enabled = 1
 let g:lsp_diagnostics_signs_priority = 11
+let g:lsp_diagnostics_virtual_text_enabled = 0
 let g:lsp_settings_enable_suggestions = 0
 let g:lsp_settings_root_markers = s:root_markers
 
@@ -748,6 +746,10 @@ let s:vimrc_machine_local_path = s:vimfiles_dir . '/vimrc_local'
 if filereadable(s:vimrc_machine_local_path)
     execute 'source ' . s:vimrc_machine_local_path
 endif
+"Windows vimrc_local
+"call SetTerminalMap('powershell or pwsh')
+"Linux vimrc_local
+"call SetTerminalMap('bash or ...')
 
 let s:vimrc_project_local_path = getcwd() . '/.vim_local/vimrc'
 if filereadable(s:vimrc_project_local_path)
