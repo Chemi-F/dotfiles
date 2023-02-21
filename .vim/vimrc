@@ -153,7 +153,6 @@ else
     let s:vimfiles_dir = expand('~/.vim')
     let s:vimdata_dir = expand('~/.vim')
 endif
-let $PATH = s:vimfiles_dir . '\tool;' . $PATH
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 
