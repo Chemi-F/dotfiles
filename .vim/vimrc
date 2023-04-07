@@ -10,6 +10,45 @@ if &compatible
     set nocompatible
 endif
 
+"Default plugin disable
+let g:loaded_zip = 1
+let g:loaded_zipPlugin = 1
+let g:loaded_tar = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_gzip = 1
+let g:loaded_getscript = 1
+let g:loaded_getscriptPlugin = 1
+let g:loaded_vimball = 1
+let g:loaded_vimballPlugin = 1
+let g:loaded_rrhelper = 1
+let g:loaded_2html_plugin = 1
+let g:skip_loading_mswin = 1
+let g:did_install_default_menus = 1
+let g:did_install_syntax_menu = 1
+
+let g:vim_indent_cont = 0
+let g:mapleader = "\<Space>"
+
+let s:root_markers = [
+\       '.vim_local/',
+\       '.vscode/',
+\       '.git',
+\       '.git/',
+\       '.svn',
+\       '.hg',
+\       '.bzr'
+\   ]
+
+if has('win32')
+    let s:vimfiles_dir = expand('~/vimfiles')
+    let s:vimdata_dir = expand('~/vimfiles')
+else
+    let s:vimfiles_dir = expand('~/.vim')
+    let s:vimdata_dir = expand('~/.vim')
+endif
+let s:swap_dir = s:vimfiles_dir . '/swap'
+let s:undo_dir = s:vimfiles_dir . '/undo'
+
 "Function
 function! s:MakeDir(dir) abort
     if !isdirectory(a:dir)
@@ -22,6 +61,17 @@ function! s:EditActualFile(filename) abort
     execute 'e ' . l:actualFilename
 endfunction
 
+function! s:QuitWindow() abort
+    let l:cur_bufnr = bufnr()
+    let l:new_bufnr = bufadd('')
+    execute 'buffer ' . l:new_bufnr
+    try
+        execute 'bdelete ' . l:cur_bufnr
+    catch
+        execute 'buffer ' . l:cur_bufnr . ' | bdelete ' . l:new_bufnr
+    endtry
+endfunction
+
 function! s:ToggleQuickfix(prefix) abort
     let l:nr = winnr('$')
     execute a:prefix . 'window'
@@ -29,22 +79,6 @@ function! s:ToggleQuickfix(prefix) abort
     if l:nr == l:nr2
         execute a:prefix . 'close'
     endif
-endfunction
-
-function! s:QuickfixSettings() abort
-    setlocal nowrap
-    execute 'resize 6'
-endfunction
-
-function! s:GrepSettings() abort
-    setlocal wildignore+=*/node_modules/*
-    setlocal wildignore+=*/.git/*
-endfunction
-
-function! s:WebLangSettings() abort
-    setlocal tabstop=2
-    setlocal shiftwidth=2
-    setlocal iskeyword+=-
 endfunction
 
 function! s:TerminalModeSettings() abort
@@ -98,63 +132,31 @@ function! s:TerminalQuit() abort
     execute 'bdelete! ' . l:active_terminal_bufnr
 endfunction
 
+function! s:QuickfixSettings() abort
+    setlocal nowrap
+    execute 'resize 6'
+endfunction
+
+function! s:GrepSettings() abort
+    setlocal wildignore+=*/node_modules/*
+    setlocal wildignore+=*/.git/*
+endfunction
+
+function! s:WebLangSettings() abort
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+    setlocal iskeyword+=-
+endfunction
+
+function! GetLocalVimFilesDir() abort
+    return s:vimfiles_dir
+endfunction
+
 function! SetTerminalMap(shell_name = '') abort
     execute 'nnoremap <silent> <Leader>to :<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
     execute 'tnoremap <silent> <C-w>to <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
     execute 'tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
 endfunction
-
-function! s:QuitWindow() abort
-    let l:cur_bufnr = bufnr()
-    let l:new_bufnr = bufadd('')
-    execute 'buffer ' . l:new_bufnr
-    try
-        execute 'bdelete ' . l:cur_bufnr
-    catch
-        execute 'buffer ' . l:cur_bufnr . ' | bdelete ' . l:new_bufnr
-    endtry
-endfunction
-
-"autocmd BufEnter * if (winnr('$') == 1 && (&buftype ==# 'terminal' || &filetype ==# 'qf')) | q! | endif
-
-"Default plugin disable
-let g:loaded_zip = 1
-let g:loaded_zipPlugin = 1
-let g:loaded_tar = 1
-let g:loaded_tarPlugin = 1
-let g:loaded_gzip = 1
-let g:loaded_getscript = 1
-let g:loaded_getscriptPlugin = 1
-let g:loaded_vimball = 1
-let g:loaded_vimballPlugin = 1
-let g:loaded_rrhelper = 1
-let g:loaded_2html_plugin = 1
-let g:skip_loading_mswin = 1
-let g:did_install_default_menus = 1
-let g:did_install_syntax_menu = 1
-
-let g:vim_indent_cont = 0
-let g:mapleader = "\<Space>"
-
-let s:root_markers = [
-\       '.vim_local/',
-\       '.vscode/',
-\       '.git',
-\       '.git/',
-\       '.svn',
-\       '.hg',
-\       '.bzr'
-\   ]
-
-if has('win32')
-    let s:vimfiles_dir = expand('~/vimfiles')
-    let s:vimdata_dir = expand('~/vimfiles')
-else
-    let s:vimfiles_dir = expand('~/.vim')
-    let s:vimdata_dir = expand('~/.vim')
-endif
-let s:swap_dir = s:vimfiles_dir . '/swap'
-let s:undo_dir = s:vimfiles_dir . '/undo'
 
 call s:MakeDir(s:undo_dir)
 call s:MakeDir(s:swap_dir)
@@ -192,6 +194,8 @@ set termwinsize=6x0
 "8 terminal
 set title
 set titlestring=%F
+"9 using the mouse
+set mouse=n
 "12 messages and info
 set showcmd
 set noerrorbells
@@ -373,7 +377,7 @@ function! s:PackInit() abort
     call minpac#add('kana/vim-textobj-user')
     call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
-    call minpac#add('kyoh86/vim-ripgrep')
+    call minpac#add('kyoh86/vim-ripgrep', {'frozen': v:true})
     call minpac#add('thinca/vim-qfhl')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction

@@ -3,7 +3,31 @@ root-markers:
   - .git/
 lint-debounce: 1s
 
+commands:
+  - title: Reload
+    command: :reload-config
+
 tools:
+  # lint-category-map
+  # E:Error(1)
+  # W:Warning(2)
+  # I:Information(3)
+  # N:Hint(4)
+
+  autopep8: &autopep8
+    format-command: 'autopep8 -'
+    format-stdin: true
+    env:
+      - 'PYTHONIOENCODING=UTF-8'
+
+  cspell: &cspell
+    lint-command: 'cspell lint --no-progress --no-summary --no-color ${INPUT}'
+    # lint-command: 'cspell lint --no-progress --no-summary --no-color --config .\.vim_local\cspell.json ${INPUT}'
+    lint-formats:
+      - '%f:%l:%c %t %m'
+    lint-category-map:
+      -: N
+
   flake8: &flake8
     lint-command: 'flake8 --format=%(path)s:%(row)d:%(col)d:%(code)s:%(code)s:%(text)s --stdin-display-name ${INPUT} -'
     lint-stdin: true
@@ -17,10 +41,6 @@ tools:
       E: E
       F: E
 
-  autopep8: &autopep8
-    format-command: 'autopep8 -'
-    format-stdin: true
-
   pug-lint: &pug-lint
     lint-command: 'pug-lint -r inline'
     lint-stdin: false
@@ -28,9 +48,12 @@ tools:
       - '%f:%l:%c %m'
 
 languages:
+  pug:
+    - <<: *pug-lint
+
   python:
     - <<: *flake8
     - <<: *autopep8
 
-  pug:
-    - <<: *pug-lint
+  =:
+    - <<: *cspell
