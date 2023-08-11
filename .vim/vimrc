@@ -148,11 +148,11 @@ function! s:WebLangSettings() abort
     setlocal iskeyword+=-
 endfunction
 
-function! GetLocalVimFilesDir() abort
+function! CFRCGetLocalVimFilesDir() abort
     return s:vimfiles_dir
 endfunction
 
-function! SetTerminalMap(shell_name = '') abort
+function! CFRCSetTerminalMap(shell_name = '') abort
     execute 'nnoremap <silent> <Leader>to :<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
     execute 'tnoremap <silent> <C-w>to <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
     execute 'tnoremap <silent> <M-t>o <C-w>:<C-u>call <SID>TerminalOpen("' . a:shell_name . '")<CR>'
@@ -335,7 +335,7 @@ end
 "Plugin
 packadd! matchit
 "minpack
-function! s:PackInit() abort
+function! CFRCPackInit() abort
     packadd minpac
 
     call minpac#init()
@@ -382,41 +382,41 @@ function! s:PackInit() abort
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
-function! s:OptPluginHtml() abort
+function! CFRCOptPluginHtml() abort
     packadd emmet-vim
     packadd closetag.vim
 endfunction
 
-function! OptPluginPug() abort
+function! CFRCOptPluginPug() abort
     packadd vim-pug
     packadd vim-pug-complete
 endfunction
 
-function! OptPluginCss() abort
+function! CFRCOptPluginCss() abort
     packadd vim-coloresque
 endfunction
 
-function! OptPluginVue() abort
-    call s:OptPluginHtml()
-    call OptPluginCss()
+function! CFRCOptPluginVue() abort
+    call CFRCOptPluginHtml()
+    call CFRCOptPluginCss()
     packadd vim-vue
 endfunction
 
-function! s:OptPluginMarkdown() abort
+function! CFRCOptPluginMarkdown() abort
     packadd previm
 endfunction
 
-command! PackUpdate call <SID>PackInit() | call minpac#update()
-command! PackClean  call <SID>PackInit() | call minpac#clean()
+command! PackUpdate call CFRCPackInit() | call minpac#update()
+command! PackClean  call CFRCPackInit() | call minpac#clean()
 command! PackStatus packadd minpac | call minpac#status()
 
 augroup optPlugin
     autocmd!
-    autocmd FileType html call s:OptPluginHtml()
-    autocmd FileType pug call OptPluginPug()
-    autocmd FileType css,scss call OptPluginCss()
-    autocmd FileType vue call OptPluginVue()
-    autocmd FileType markdown call s:OptPluginMarkdown()
+    autocmd FileType html call CFRCOptPluginHtml()
+    autocmd FileType pug call CFRCOptPluginPug()
+    autocmd FileType css,scss call CFRCOptPluginCss()
+    autocmd FileType vue call CFRCOptPluginVue()
+    autocmd FileType markdown call CFRCOptPluginMarkdown()
     autocmd CmdUndefined QuickRun packadd vim-quickrun
 augroup END
 
@@ -457,7 +457,7 @@ let g:lightline = {
 \           'right': [ ['lineinfo'] ],
 \       },
 \       'component': {
-\           'filename': '%f%{%ModifiedStr()%}',
+\           'filename': '%f%{%CFRCModifiedStr()%}',
 \           'lineinfo': '%2l/%L,%-2c%<',
 \           'filetype': '%{&filetype !=# "" ? &filetype : ""}',
 \       },
@@ -479,7 +479,7 @@ let g:lightline = {
 \       'colorscheme': 'iceberg'
 \   }
 
-function! ModifiedStr() abort
+function! CFRCModifiedStr() abort
     if &modified && &filetype !=# 'help' && &buftype !=# 'terminal'
         return ' %m' 
     else
