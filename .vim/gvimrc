@@ -6,7 +6,7 @@ set lines=30
 set guioptions-=egmrLtT
 set guioptions+=!
 
-let s:gvimrc_machine_local_path = s:vimfiles_dir . '/gvimrc_local'
+let s:gvimrc_machine_local_path = CFRCGetLocalVimFilesDir() . '/gvimrc_local'
 if filereadable(s:gvimrc_machine_local_path)
     execute 'source ' . s:gvimrc_machine_local_path
 endif
