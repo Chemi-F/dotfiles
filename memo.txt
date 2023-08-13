@@ -1,44 +1,8 @@
-# Linux
-
-# Link
-#For vim
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-ln -sf ./_vimrc ~/.vimrc
-
-#For neovim
-#curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-#    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-#mkdir -p ~/.config/nvim
-#ln -sf ./.vimrc ~/.config/nvim/init.vim
-
-# apt setting
-cd /etc/apt
-sudo sed -i.bak -e "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" sources.list
-
-# For WSL2 (in .bashrc)
-LOCAL_IP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
-export DISPLAY=$LOCAL_IP:0
-
-# For using git push with ssh
-# 0. git config
+# git config
 git config --global user.email "email"
 git config --global user.name "username"
-git config --global color.ui true
-git config --global push.default simple
-git config --global core.editor vim
+git config --global core.editor vim.bat
 git config --global core.autoCRLF false
-# 1. Write the following sentence in .ssh/config
-# chmod 600 id_rsa_****
-Host github.com
-    HostName github.com
-    IdentityFile ~/.ssh/id_rsa_github
-    User git
-# 2. Execute the following command 
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_rsa_github
-# 3. Execute the following command in dotfiles
-git remote set-url origin git@github.com:Chemi-F/dotfiles.git
 
-# For Windows
-cmd /c mklink .vimrc "path\to\.vimrc"
+# Windows
+cmd /c mklink /D .\vimfiles dotfiles\.vim
