@@ -6,6 +6,11 @@ set lines=30
 set guioptions-=egmrLtT
 set guioptions+=!
 
+"Options (:options)
+"10 GUI
+"set guifont=[fontname]:h[fontsize] - Windows vimrc_local
+"set guifont=[fontname]\ [fontsize] - Linux vimrc_local
+
 let s:gvimrc_machine_local_path = CFRCGetLocalVimFilesDir() . '/gvimrc_local'
 if filereadable(s:gvimrc_machine_local_path)
     execute 'source ' . s:gvimrc_machine_local_path

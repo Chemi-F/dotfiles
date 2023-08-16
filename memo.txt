@@ -5,4 +5,9 @@ git config --global core.editor vim.bat
 git config --global core.autoCRLF false
 
 # Windows
+## vimfiles setup
 cmd /c mklink /D .\vimfiles dotfiles\.vim
+
+## terminal colorscheme
+https://github.com/cocopon/hyper-iceberg
+index.js

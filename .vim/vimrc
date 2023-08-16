@@ -142,7 +142,7 @@ function! s:GrepSettings() abort
     setlocal wildignore+=*/.git/*
 endfunction
 
-function! s:WebLangSettings() abort
+function! CFRCWebLangSettings() abort
     setlocal tabstop=2
     setlocal shiftwidth=2
     setlocal iskeyword+=-
@@ -317,7 +317,7 @@ augroup myAutocmd
     autocmd FileType help,vim setlocal keywordprg=:help
     autocmd FileType help,qf nnoremap <silent> <buffer> q :<C-u>q<CR>
     autocmd FileType qf call s:QuickfixSettings()
-    autocmd FileType html,pug,javascript,typescript,css,scss,vue call s:WebLangSettings()
+    autocmd FileType html,pug,javascript,typescript,typescriptreact,css,scss,vue call CFRCWebLangSettings()
 
     autocmd QuickFixCmdPre *grep* call s:GrepSettings()
     autocmd QuickFixCmdPost *grep* setlocal wildignore&
@@ -688,24 +688,28 @@ function! s:SelectDash_i() abort
 endfunction
 
 function! s:TextobjSettings() abort
-    call textobj#user#plugin('underscore', {
-    \       '-': {
-    \           'sfile': $MYVIMRC,
-    \           'select-a-function': 's:SelectUnderscore_a',
-    \           'select-a': 'a_',
-    \           'select-i-function': 's:SelectUnderscore_i',
-    \           'select-i': 'i_'
-    \       }
-    \   })
-    call textobj#user#plugin('dash', {
-    \       '-': {
-    \           'sfile': $MYVIMRC,
-    \           'select-a-function': 's:SelectDash_a',
-    \           'select-a': 'a-',
-    \           'select-i-function': 's:SelectDash_i',
-    \           'select-i': 'i-'
-    \       }
-    \   })
+    try
+        call textobj#user#plugin('underscore', {
+        \       '-': {
+        \           'sfile': $MYVIMRC,
+        \           'select-a-function': 's:SelectUnderscore_a',
+        \           'select-a': 'a_',
+        \           'select-i-function': 's:SelectUnderscore_i',
+        \           'select-i': 'i_'
+        \       }
+        \   })
+        call textobj#user#plugin('dash', {
+        \       '-': {
+        \           'sfile': $MYVIMRC,
+        \           'select-a-function': 's:SelectDash_a',
+        \           'select-a': 'a-',
+        \           'select-i-function': 's:SelectDash_i',
+        \           'select-i': 'i-'
+        \       }
+        \   })
+    catch /E117.*/
+        echo 'kana/vim-textobj-user not found'
+    endtry
 endfunction
 
 augroup textobjAutocmd
@@ -743,16 +747,21 @@ augroup quickrunAutocmd
 augroup END
 
 "Colorscheme
-colorscheme iceberg
+try
+    colorscheme iceberg
+catch /E185.*/
+    colorscheme desert
+endtry
+
+"Windows vimrc_local
+"call SetTerminalMap('powershell or pwsh')
+"Linux vimrc_local
+"call SetTerminalMap('bash or ...')
 
 let s:vimrc_machine_local_path = s:vimfiles_dir . '/vimrc_local'
 if filereadable(s:vimrc_machine_local_path)
     execute 'source ' . s:vimrc_machine_local_path
 endif
-"Windows vimrc_local
-"call SetTerminalMap('powershell or pwsh')
-"Linux vimrc_local
-"call SetTerminalMap('bash or ...')
 
 let s:vimrc_project_local_path = getcwd() . '/.vim_local/vimrc'
 if filereadable(s:vimrc_project_local_path)
