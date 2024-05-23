@@ -499,7 +499,7 @@ function! LastSearchCount() abort
     if !v:hlsearch
         return ''
     endif
-    let result = searchcount(#{recompute: v:true})
+    let result = searchcount(#{recompute: v:true, maxcount: 999})
     if empty(result)
         return ''
     endif
