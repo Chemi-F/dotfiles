@@ -1,0 +1,92 @@
+let $PATH = CFRCGetLocalVimFilesDir() . '\tool;' . $PATH "Only Windows
+
+"Options (:options)
+"10 GUI
+set guifont=Udev\ Gothic:h14
+"18 reading and writing files
+set nofixeol
+
+call CFRCSetTerminalMap('shell_name')
+
+"Plugin
+"vim-lsp, vim-lsp-settings
+let g:lsp_settings = {
+\   'efm-langserver': {
+\       'disabled': v:false
+\       'cmd': ['-c', '.vim_local/efm-langserver-config.yaml'],
+\       'allowlist': ['filetype']
+\   },
+\   'pyright-langserver': {
+\       'workspace_config': {
+\           'python': {
+\               'analysis': {
+\                   'useLibraryCodeForTypes': v:true,
+\                   'extraPaths': ['path/to/src'],
+\                   'typeCheckingMode': 'basic'
+\               },
+\               'pythonPath': 'path/to/python',
+\               'venvPath': 'path/to/venv'
+\           }
+\       }
+\   },
+\   'vscode-eslint-language-server': {
+\       'allowlist': ['vue', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact']
+\       'workspace_config': {
+\           'validate': 'probe',
+\           'packageManager': 'npm',
+\           'useESLintClass': v:false,
+\           'experimental': {
+\               'useFlatConfig': v:false
+\           },
+\           'codeAction': {
+\               'disableRuleComment': {
+\                   'enable': v:true,
+\                   'location': 'separateLine'
+\               },
+\               'showDocumentation': {
+\                   'enable': v:true,
+\               },
+\           },
+\           'codeActionOnSave': {
+\               'enable': v:true,
+\               'mode': 'all'
+\           },
+\           'format': v:false,
+\           'quiet': v:false,
+\           'onIgnoredFiles': 'off',
+\           'options': {},
+\           'rulesCustomizations': [],
+\           'run': 'onType',
+\           'problems': {
+\               'shortenToSingleLine': v:true
+\           },
+\           'nodePath': v:null,
+\           'workingDirectory': {
+\               'directory': 'path/to/directory',
+\               '!cwd': v:true
+\           }
+\       }
+\   },
+\   'yaml-language-server': {
+\       'workspace_config': {
+\           'yaml': {
+\               'schemas': {
+\                   'path/to/schema': ['path/to/yaml']
+\               },
+\               'completion': v:true,
+\               'hover': v:true,
+\               'validate': v:true,
+\               'customTags': ['tags']
+\           }
+\       }
+\   }
+\}
+let g:lsp_settings_filetype_xxx = ['lsp-name']
+
+"vim-vue
+let g:vue_pre_processors = ['html', 'javascript', 'css']
+
+augroup vimlspProjectLocalAutocmd
+    autocmd!
+    autocmd BufWritePre *.ext LspDocumentFormatSync
+augroup END
