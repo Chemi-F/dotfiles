@@ -359,7 +359,6 @@ function! CFRCPackInit() abort
     call minpac#add('hrsh7th/vim-vsnip-integ')
     "Test
     call minpac#add('vim-test/vim-test')
-    call minpac#add('tpope/vim-dispatch')
     "Language
     call minpac#add('mattn/emmet-vim', {'type': 'opt'})
     call minpac#add('alvan/closetag.vim', {'type': 'opt'})
@@ -427,20 +426,6 @@ augroup END
 let s:is_helplang_ja = 0
 
 set helplang=en,ja
-
-function! s:HelplangToggle() abort
-    if s:is_helplang_ja
-        set helplang=en,ja
-        let s:is_helplang_ja = 0
-        echo 'Help language is English'
-    else
-        set helplang=ja,en
-        let s:is_helplang_ja = 1
-        echo 'Help language is Japanese'
-    endif
-endfunction
-
-nnoremap <silent> <Leader>jh :<C-u>call <SID>HelplangToggle()<CR>
 
 "lightline.vim
 let g:ctrlp_status_func = {
@@ -648,7 +633,7 @@ smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
 "vim-test
-let g:test#strategy = 'dispatch'
+let g:test#strategy = 'vimterminal'
 
 "vim-gitgutter
 let g:gitgutter_map_keys = 0
@@ -758,11 +743,6 @@ try
 catch /E185.*/
     colorscheme desert
 endtry
-
-"Windows vimrc_local
-"call SetTerminalMap('powershell or pwsh')
-"Linux vimrc_local
-"call SetTerminalMap('bash or ...')
 
 let s:vimrc_machine_local_path = s:vimfiles_dir . '/vimrc_local'
 if filereadable(s:vimrc_machine_local_path)
