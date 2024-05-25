@@ -15,21 +15,21 @@ tools:
   # N:Hint(4)
 
   autopep8: &autopep8
-    format-command: 'autopep8 -'
+    format-command: 'path/to/autopep8 -'
     format-stdin: true
     env:
       - 'PYTHONIOENCODING=UTF-8'
 
   cspell: &cspell
-    lint-command: 'cspell lint --no-progress --no-summary --no-color ${INPUT}'
-    # lint-command: 'cspell lint --no-progress --no-summary --no-color --config .\.vim_local\cspell.json ${INPUT}'
+    lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color ${INPUT}'
+    # lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color --config .\.vim_local\cspell.json ${INPUT}'
     lint-formats:
       - '%f:%l:%c %t %m'
     lint-category-map:
       -: N
 
   flake8: &flake8
-    lint-command: 'flake8 --format=%(path)s:%(row)d:%(col)d:%(code)s:%(code)s:%(text)s --stdin-display-name ${INPUT} -'
+    lint-command: 'path/to/flake8 --format=%(path)s:%(row)d:%(col)d:%(code)s:%(code)s:%(text)s --stdin-display-name ${INPUT} -'
     lint-stdin: true
     lint-formats:
       - '%f:%l:%c:%t%n:%m'
@@ -42,7 +42,7 @@ tools:
       F: E
 
   pug-lint: &pug-lint
-    lint-command: 'pug-lint -r inline'
+    lint-command: 'path/to/pug-lint -r inline'
     lint-stdin: false
     lint-formats:
       - '%f:%l:%c %m'

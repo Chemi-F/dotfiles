@@ -357,6 +357,9 @@ function! CFRCPackInit() abort
     call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
     call minpac#add('hrsh7th/vim-vsnip')
     call minpac#add('hrsh7th/vim-vsnip-integ')
+    "Test
+    call minpac#add('vim-test/vim-test')
+    call minpac#add('tpope/vim-dispatch')
     "Language
     call minpac#add('mattn/emmet-vim', {'type': 'opt'})
     call minpac#add('alvan/closetag.vim', {'type': 'opt'})
@@ -643,6 +646,9 @@ smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
 smap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
 smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
+
+"vim-test
+let g:test#strategy = 'dispatch'
 
 "vim-gitgutter
 let g:gitgutter_map_keys = 0

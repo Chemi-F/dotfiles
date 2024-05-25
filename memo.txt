@@ -8,6 +8,7 @@ git config --global core.autoCRLF false
 ## vimfiles setup
 cmd /c mklink /D .\vimfiles dotfiles\.vim
 
-## terminal colorscheme
+## link
+https://github.com/yuru7/udev-gothic
 https://github.com/cocopon/hyper-iceberg
-index.js
+https://github.com/k-takata/minpac
