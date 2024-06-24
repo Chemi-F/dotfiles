@@ -52,8 +52,8 @@ languages:
     - <<: *pug-lint
 
   python:
-    - <<: *flake8
     - <<: *autopep8
+    - <<: *flake8
 
   =:
     - <<: *cspell

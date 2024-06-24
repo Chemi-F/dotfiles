@@ -12,7 +12,7 @@ call CFRCSetTerminalMap('shell_name')
 "vim-lsp, vim-lsp-settings
 let g:lsp_settings = {
 \   'efm-langserver': {
-\       'disabled': v:false
+\       'disabled': v:false,
 \       'cmd': ['-c', '.vim_local/efm-langserver-config.yaml'],
 \       'allowlist': ['filetype']
 \   },

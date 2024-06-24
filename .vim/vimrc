@@ -355,8 +355,6 @@ function! CFRCPackInit() abort
     call minpac#add('mattn/vim-lsp-settings')
     call minpac#add('prabirshrestha/asyncomplete.vim')
     call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-    call minpac#add('hrsh7th/vim-vsnip')
-    call minpac#add('hrsh7th/vim-vsnip-integ')
     "Test
     call minpac#add('vim-test/vim-test')
     "Language
@@ -621,16 +619,6 @@ augroup END
 set shortmess+=c
 
 inoremap <expr> <CR> pumvisible() ? asyncomplete#close_popup() : '<CR>'
-
-"vim-vsnip
-imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
-imap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-imap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
-imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
-smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
-smap <expr> <C-l> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <Tab> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'
-smap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
 "vim-test
 let g:test#strategy = 'vimterminal'
