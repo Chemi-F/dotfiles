@@ -1,0 +1,15 @@
+version: 2
+lint-debounce: 1s
+
+tools:
+  cspell: &cspell
+    lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color ${INPUT}'
+    lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color --config path/to/cspell.json ${INPUT}'
+    lint-formats:
+      - '%f:%l:%c %t %m'
+    lint-category-map:
+      -: N
+
+languages:
+  =:
+    - <<: *cspell

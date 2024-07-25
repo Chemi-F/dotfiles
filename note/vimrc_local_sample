@@ -83,6 +83,15 @@ let g:lsp_settings = {
 \}
 let g:lsp_settings_filetype_xxx = ['lsp-name']
 
+augroup vimlspCspellAutocmd
+    autocmd!
+    autocmd User lsp_setup call lsp#register_server({
+    \   'name': 'efm-langserver-for-cspell',
+    \   'cmd': {server_info->['efm-langserver', '-c=/path/to/your/config.yaml']},
+    \   'allowlist': ['*'],
+    \   })
+augroup END
+
 "vim-vue
 let g:vue_pre_processors = ['html', 'javascript', 'css']
 

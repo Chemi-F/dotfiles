@@ -20,14 +20,6 @@ tools:
     env:
       - 'PYTHONIOENCODING=UTF-8'
 
-  cspell: &cspell
-    lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color ${INPUT}'
-    # lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color --config .\.vim_local\cspell.json ${INPUT}'
-    lint-formats:
-      - '%f:%l:%c %t %m'
-    lint-category-map:
-      -: N
-
   flake8: &flake8
     lint-command: 'path/to/flake8 --format=%(path)s:%(row)d:%(col)d:%(code)s:%(code)s:%(text)s --stdin-display-name ${INPUT} -'
     lint-stdin: true
@@ -54,6 +46,3 @@ languages:
   python:
     - <<: *autopep8
     - <<: *flake8
-
-  =:
-    - <<: *cspell

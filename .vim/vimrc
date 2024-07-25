@@ -229,6 +229,12 @@ set signcolumn=yes
 set viminfo='50,<500,s100,h
 execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/viminfo'
 
+if executable('rg')
+    "22 running make and jumping to errors (quickfix)
+    set grepprg=rg\ --vimgrep
+    set grepformat=%f:%l:%c:%m
+endif
+
 "Mapping
 nnoremap <Space> <Nop>
 nnoremap <Leader>w :<C-u>write<CR>
@@ -377,7 +383,6 @@ function! CFRCPackInit() abort
     call minpac#add('kana/vim-textobj-user')
     call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
-    call minpac#add('kyoh86/vim-ripgrep', {'frozen': v:true})
     call minpac#add('thinca/vim-qfhl')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
@@ -701,11 +706,6 @@ let g:openbrowser_no_default_menus = 1
 
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
-
-"vim-ripgrep
-let g:ripgrep#root_marks = s:root_markers
-
-command! -nargs=* -complete=file Rg :call ripgrep#search(<q-args>)
 
 "quickrun
 let g:quickrun_config = {
