@@ -162,7 +162,7 @@ call s:MakeDir(s:undo_dir)
 call s:MakeDir(s:swap_dir)
 
 "Command
-command Cd execute 'lcd %:h'
+command! Cd execute 'lcd %:h'
 
 "Options (:options)
 "2 moving around, searching and patterns
@@ -228,12 +228,6 @@ set wildmenu
 set signcolumn=yes
 set viminfo='50,<500,s100,h
 execute 'set viminfo+=n' . escape(s:vimfiles_dir, '\') . '/viminfo'
-
-if executable('rg')
-    "22 running make and jumping to errors (quickfix)
-    set grepprg=rg\ --vimgrep
-    set grepformat=%f:%l:%c:%m
-endif
 
 "Mapping
 nnoremap <Space> <Nop>
@@ -332,6 +326,17 @@ augroup myAutocmd
     autocmd TerminalWinOpen * call s:TerminalModeSettings()
 augroup END
 
+"External
+if executable('rg')
+    "Options
+    "22 running make and jumping to errors (quickfix)
+    set grepprg=rg\ --vimgrep
+    set grepformat=%f:%l:%c:%m
+
+    "Command
+    command! -nargs=+ Rg execute 'silent grep! <args>'
+endif
+
 "Finish when using git commit
 if $HOME != $USERPROFILE && $GIT_EXEC_PATH != ''
     colorscheme desert
@@ -346,7 +351,6 @@ function! CFRCPackInit() abort
 
     call minpac#init()
     call minpac#add('k-takata/minpac', {'type': 'opt'})
-    call minpac#add('vim-jp/vimdoc-ja')
     "Theme, highlight
     call minpac#add('cocopon/iceberg.vim')
     call minpac#add('itchyny/lightline.vim')
@@ -375,6 +379,7 @@ function! CFRCPackInit() abort
     call minpac#add('tpope/vim-fugitive')
     call minpac#add('airblade/vim-gitgutter')
     "Others
+    call minpac#add('vim-jp/vimdoc-ja')
     call minpac#add('tpope/vim-surround')
     call minpac#add('tpope/vim-repeat')
     call minpac#add('jiangmiao/auto-pairs')
@@ -383,7 +388,6 @@ function! CFRCPackInit() abort
     call minpac#add('kana/vim-textobj-user')
     call minpac#add('kana/vim-textobj-lastpat')
     call minpac#add('tyru/open-browser.vim')
-    call minpac#add('thinca/vim-qfhl')
     call minpac#add('thinca/vim-quickrun', {'type': 'opt'})
 endfunction
 
