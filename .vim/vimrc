@@ -330,7 +330,7 @@ augroup END
 if executable('rg')
     "Options
     "22 running make and jumping to errors (quickfix)
-    set grepprg=rg\ --vimgrep
+    set grepprg=rg\ --vimgrep\ --ignore-case
     set grepformat=%f:%l:%c:%m
 
     "Command
