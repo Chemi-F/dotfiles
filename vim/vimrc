@@ -39,13 +39,7 @@ let s:root_markers = [
 \       '.bzr'
 \   ]
 
-if has('win32')
-    let s:vimfiles_dir = expand('~/vimfiles')
-    let s:vimdata_dir = expand('~/vimfiles')
-else
-    let s:vimfiles_dir = expand('~/.vim')
-    let s:vimdata_dir = expand('~/.vim')
-endif
+let s:vimfiles_dir = expand('<script>:p:h')
 let s:swap_dir = s:vimfiles_dir . '/swap'
 let s:undo_dir = s:vimfiles_dir . '/undo'
 

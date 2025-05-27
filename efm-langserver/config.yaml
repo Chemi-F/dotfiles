@@ -39,6 +39,14 @@ tools:
     lint-formats:
       - '%f:%l:%c %m'
 
+  cspell: &cspell
+    lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color ${INPUT}'
+    lint-command: 'path/to/cspell lint --no-progress --no-summary --no-color --config path/to/cspell.json ${INPUT}'
+    lint-formats:
+      - '%f:%l:%c %t %m'
+    lint-category-map:
+      -: N
+
 languages:
   pug:
     - <<: *pug-lint
