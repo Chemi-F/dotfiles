@@ -1,4 +1,5 @@
-# XDG Base Directory env
+# env XDG Base Directory
+# bash -> .bash_profile / .profile
 # zsh -> .zshenv
 export XDG_DATA_HOME="$HOME"/.local/share
 export XDG_CONFIG_HOME="$HOME"/.config
@@ -6,15 +7,11 @@ export XDG_STATE_HOME="$HOME"/.local/state
 export XDG_CACHE_HOME="$HOME"/.cache
 export XDG_RUNTIME_DIR=/run/user/"$UID"
 
-# env zsh
-export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
-export SHELL_SESSIONS_DISABLE=1
+# env bash
+export HISTFILE="$XDG_STATE_HOME"/bash/history
 
-# env pyenv
-export PYENV_ROOT="$XDG_DATA_HOME"/pyenv
-
-# env nvm
-export NVM_DIR="$XDG_DATA_HOME"/nvm
+# env go
+export GOPATH="$XDG_DATA_HOME"/go
 
 # env node.js
 export NODE_REPL_HISTORY="$XDG_STATE_HOME"/node_repl_history
@@ -23,6 +20,23 @@ export NODE_REPL_HISTORY="$XDG_STATE_HOME"/node_repl_history
 export NPM_CONFIG_INIT_MODULE="$XDG_CONFIG_HOME"/npm/config/npm-init.js
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME"/npm
 export NPM_CONFIG_TMP="$XDG_RUNTIME_DIR"/npm
+
+# env nvm
+export NVM_DIR="$XDG_DATA_HOME"/nvm
+
+# env pipenv
+export PIPENV_VENV_IN_PROJECT=1
+
+# env pyenv
+export PYENV_ROOT="$XDG_DATA_HOME"/pyenv
+
+# env zsh
+export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
+export SHELL_SESSIONS_DISABLE=1
+
+# env PATH
+export PATH="$GOPATH/bin:$PATH"
+export PATH="$PYENV_ROOT/bin:$PATH"
 
 # zshrc
 export HISTFILE="$XDG_STATE_HOME"/zsh/history
@@ -33,6 +47,8 @@ git config --global user.email "email"
 git config --global user.name "username"
 git config --global core.editor vim
 git config --global core.autoCRLF false
+git config --global core.commentChar ";"
+git config --global push.autoSetupRemote true
 
 # Windows
 cmd /c mklink /D .\vimfiles dotfiles\vim # vimfiles setup
