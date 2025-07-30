@@ -745,5 +745,6 @@ filetype plugin indent on
 
 augroup delayAutocmd
     autocmd!
-    autocmd Filetype * set formatoptions-=ro
+    autocmd Filetype * set formatoptions-=r
+    autocmd Filetype * set formatoptions-=o
 augroup END
