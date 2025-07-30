@@ -3,7 +3,13 @@
 set columns=120
 set lines=30
 "10 GUI
-set guioptions-=egmrLtT
+set guioptions-=e
+set guioptions-=g
+set guioptions-=m
+set guioptions-=r
+set guioptions-=L
+set guioptions-=t
+set guioptions-=T
 set guioptions+=!
 
 "Options (:options)
