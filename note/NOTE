@@ -49,6 +49,7 @@ git config --global core.editor vim
 git config --global core.autoCRLF false
 git config --global core.commentChar ";"
 git config --global push.autoSetupRemote true
+git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
 
 # Windows
 cmd /c mklink /D .\vimfiles dotfiles\vim # vimfiles setup
