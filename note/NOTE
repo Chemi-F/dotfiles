@@ -39,6 +39,7 @@ export PATH="$GOPATH/bin:$PATH"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
 # zshrc
+export PROMPT="%F{green}%n@%m$f:%F{blue}%~%f %# "
 export HISTFILE="$XDG_STATE_HOME"/zsh/history
 compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
 

@@ -258,6 +258,8 @@ nnoremap [c :<C-u>cprevious<CR>
 nnoremap ]c :<C-u>cnext<CR>
 nnoremap [l :<C-u>lprevious<CR>
 nnoremap ]l :<C-u>lnext<CR>
+nnoremap ,,V `[V`]
+nnoremap ,,v `[v`]
 nnoremap <silent> co :<C-u>call <SID>ToggleQuickfix('c')<CR>
 nnoremap <silent> <Leader>co :<C-u>call <SID>ToggleQuickfix('l')<CR>
 nnoremap <silent> <Leader>tw :<C-u>call <SID>TerminalWindowToggle()<CR>
@@ -560,10 +562,6 @@ augroup lightlineAutocmd
 augroup END
 
 "vim-molder
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-let g:loaded_netrwSettings = 1
-let g:loaded_netrwFileHandlers = 1
 let g:molder_show_hidden = 1
 
 function! s:VimMolderSettings() abort
@@ -591,14 +589,11 @@ let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 
 "vim-lsp, vim-lsp-settings
 let g:lsp_use_lua = has('nvim-0.4.0') || (has('lua') && has('patch-8.2.0775'))
-let g:lsp_semantic_enabled = 0
-let g:lsp_format_sync_timeout = 1000
-let g:lsp_diagnostics_enabled = 1
+let g:lsp_use_native_client = 1
 let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_diagnostics_float_delay = 200
-let g:lsp_diagnostics_signs_enabled = 1
+let g:lsp_format_sync_timeout = 1000
 let g:lsp_diagnostics_signs_priority = 11
-let g:lsp_diagnostics_virtual_text_enabled = 0
 let g:lsp_settings_enable_suggestions = 0
 let g:lsp_settings_root_markers = s:root_markers
 

@@ -1,8 +1,4 @@
-let $PATH = CFRCGetLocalVimFilesDir() . '\tool;' . $PATH "Only Windows
-
 "Options (:options)
-"10 GUI
-set guifont=Udev\ Gothic:h14
 "18 reading and writing files
 set nofixeol
 
